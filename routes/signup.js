@@ -54,9 +54,9 @@ router.post('/', checkNotLogin, (req, res, next) => {
   }, (err, user) => {
     if (err.message.match('E11000 duplicate key')) {
       req.flash('error', '用户名已被占用');
-      res.redirect('/signup');
+      res.redirect('back');
     } else if (err) {
-      req.flash('error', '发生错误');
+      req.flash('error', err);
       res.redirect('back');
     } else {
       req.session.user = {

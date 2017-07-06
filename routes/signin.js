@@ -19,14 +19,20 @@ router.post('/', checkNotLogin, (req, res, next) => {
     .findOne({ name })
     .exec((err, user) => {
       if (err) {
+        req.flash('error', err);
+        res.redirect('back');
+      } else if (!user) {
+        req.flash('error', '用户不存在');
         res.redirect('back');
       } else if (pw === user.pw) {
         req.session.user = {
           name: user.name,
           role: user.role,
         };
+        req.flash('success', '登录成功');
         res.redirect('/');
       } else {
+        req.flash('error', '用户名或密码错误');
         res.redirect('back');
       }
     });
