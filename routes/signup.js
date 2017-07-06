@@ -52,12 +52,14 @@ router.post('/', checkNotLogin, (req, res, next) => {
       .digest('hex'),
     role,
   }, (err, user) => {
-    if (err.message.match('E11000 duplicate key')) {
-      req.flash('error', '用户名已被占用');
-      res.redirect('back');
-    } else if (err) {
-      req.flash('error', err);
-      res.redirect('back');
+    if (err) {
+      if (err.message.match('E11000 duplicate key')) {
+        req.flash('error', '用户名已被占用');
+        res.redirect('back');
+      } else {
+        req.flash('error', err);
+        res.redirect('back');
+      }
     } else {
       req.session.user = {
         name: user.name,
