@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="css/style.css" rel="stylesheet">
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+
+            form {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                width: 37.5em;
+            }
+
+            form>input {
+                width: 30em;
+                height: 2em;
+                margin-top: .75em;
+                border: none;
+                border-bottom: 1px solid #B2C5BA;
+            }
+
+            form>input:last-of-type {
+                border: none;
+                margin-top: 2em;
+            }
+        </style>
+    </head>
+
+    <body>
+        <form action="/signup" method="post">
+            <input type="text" name="name" value="" placeholder="账号">
+            <input type="password" name="pw" value="" placeholder="密码">
+            <input type="password" name="pw_confirm" value="" placeholder="确认密码">
+            <input type="text" name="invitationCode" value="" placeholder="神秘邀请码">
+            <input type="submit" name="" value="注册">
+        </form>
+    </body>
+
+</html>
