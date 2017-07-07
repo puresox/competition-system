@@ -7,12 +7,12 @@ const config = require('config-lite')(__dirname);
 const router = express.Router();
 
 // GET /signup
-router.get('/', checkNotLogin, (req, res, next) => {
+router.get('/', checkNotLogin, (req, res) => {
   res.render('signup');
 });
 
 // POST /signup
-router.post('/', checkNotLogin, (req, res, next) => {
+router.post('/', checkNotLogin, (req, res) => {
   const name = req.fields.name;
   const password = req.fields.pw;
   const repassword = req.fields.pw_confirm;
