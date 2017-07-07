@@ -1,10 +1,8 @@
-const express = require('express');
-const userModels = require('../lib/mongo').User;
+const router = require('express').Router();
+const adminModels = require('../lib/mongo').Admin;
 const crypto = require('crypto');
 const checkNotLogin = require('../middlewares/check').checkNotLogin;
 const config = require('config-lite')(__dirname);
-
-const router = express.Router();
 
 // GET /signup
 router.get('/', checkNotLogin, (req, res) => {
@@ -32,10 +30,6 @@ router.post('/', checkNotLogin, (req, res) => {
     }
     if (invitationCode === config.invitationCode.admin) {
       role = 0;
-    } else if (invitationCode === config.invitationCode.host) {
-      role = 1;
-    } else if (invitationCode === config.invitationCode.rater) {
-      role = 2;
     } else {
       throw new Error('邀请码不正确');
     }
@@ -44,7 +38,7 @@ router.post('/', checkNotLogin, (req, res) => {
     return res.redirect('back');
   }
 
-  userModels.create({
+  adminModels.create({
     name,
     pw: crypto
       .createHash('sha256')
@@ -57,7 +51,7 @@ router.post('/', checkNotLogin, (req, res) => {
         req.flash('error', '用户名已被占用');
         res.redirect('back');
       } else {
-        req.flash('error', err);
+        req.flash('error', `注册失败：${err}`);
         res.redirect('back');
       }
     } else {
@@ -66,7 +60,7 @@ router.post('/', checkNotLogin, (req, res) => {
         role: user.role,
       };
       req.flash('success', '注册成功');
-      res.redirect('/');
+      res.redirect('/manage');
     }
   });
 });

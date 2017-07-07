@@ -1,33 +1,55 @@
-const express = require('express');
+const router = require('express').Router();
 const userModels = require('../lib/mongo').User;
+const adminModels = require('../lib/mongo').Admin;
 const crypto = require('crypto');
 const checkNotLogin = require('../middlewares/check').checkNotLogin;
 
-const router = express.Router();
-
 // GET /signin
-router.get('/', checkNotLogin, (req, res, next) => {
+router.get('/', checkNotLogin, (req, res) => {
   res.render('signin');
 });
 
 // POST /signin
-router.post('/', checkNotLogin, (req, res, next) => {
+router.post('/', checkNotLogin, (req, res) => {
   const name = req.fields.name;
-  const pw = crypto.createHash('sha256').update(req.fields.password).digest('hex');
+  const pw = crypto
+    .createHash('sha256')
+    .update(req.fields.password)
+    .digest('hex');
 
   userModels
     .findOne({ name })
     .exec((err, user) => {
       if (err) {
-        req.flash('error', err);
+        req.flash('error', `登录失败：${err}`);
         res.redirect('back');
       } else if (!user) {
-        req.flash('error', '用户不存在');
-        res.redirect('back');
+        adminModels
+          .findOne({ name })
+          .exec((error, admin) => {
+            if (error) {
+              req.flash('error', `登录失败：${error}`);
+              res.redirect('back');
+            } else if (!admin) {
+              req.flash('error', '用户不存在');
+              res.redirect('back');
+            } else if (pw === admin.pw) {
+              req.session.user = {
+                name: admin.name,
+                role: admin.role,
+              };
+              req.flash('success', '登录成功');
+              res.redirect('/manage');
+            } else {
+              req.flash('error', '用户名或密码错误');
+              res.redirect('back');
+            }
+          });
       } else if (pw === user.pw) {
         req.session.user = {
           name: user.name,
           role: user.role,
+          competition: user.competition,
         };
         req.flash('success', '登录成功');
         res.redirect('/');

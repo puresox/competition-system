@@ -8,7 +8,5 @@ module.exports = {
   mongodb: 'mongodb://name:password@localhost:27017/competition',
   invitationCode: {
     admin: '',
-    host: '',
-    rater: '',
   },
 };
