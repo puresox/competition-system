@@ -8,7 +8,12 @@ const participantModels = require('../lib/mongo').Participant;
 const scoreModels = require('../lib/mongo').Score;
 
 // GET /manage
-router.get('/', checkLogin, checkAdmin, (req, res) => {
+router.get('/', (req, res) => {
+  res.redirect('/manage/competitions');
+});
+
+// GET /manage/competitions
+router.get('/competitions', checkLogin, checkAdmin, (req, res) => {
   competitionModels.find({}, (err, competitions) => {
     req.flash('error', err);
     res.render('manage/index', { competitions });
@@ -69,6 +74,14 @@ router.get('/:competitionId/scores', checkLogin, checkAdmin, (req, res) => {
   }, (err, scores) => {
     req.flash('error', err);
     res.render('manage/scores', { scores });
+  });
+});
+
+// DELETE /manage
+router.delete('/', checkLogin, checkAdmin, (req, res) => {
+  competitionModels.find({}, (err, competitions) => {
+    req.flash('error', err);
+    res.render('manage/index', { competitions });
   });
 });
 
