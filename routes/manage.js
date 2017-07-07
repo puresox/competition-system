@@ -1,9 +1,9 @@
 const router = require('express').Router();
-// const checkNotLogin = require('../middlewares/check').checkNotLogin;
-// const checkLogin = require('../middlewares/check').checkLogin;
+const checkLogin = require('../middlewares/check').checkLogin;
+const checkAdmin = require('../middlewares/check').checkAdmin;
 
-/* GET home page. */
-router.get('/', (req, res, next) => {
+// GET /manage
+router.get('/', checkLogin, checkAdmin, (req, res, next) => {
   res.render('index');
 });
 
