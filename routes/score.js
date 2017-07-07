@@ -26,10 +26,18 @@ router.get('/raterScore', (req, res, next) => {
 // POST /score/raterScore
 router.post('/raterScore', (req, res, next) => {
   scoreModels.create({ size: 'small' })
-  .then((score) => {
-    res.render('score/index');
-  })
-  .catch();
+    .then((score) => {
+      res.render('score/index');
+    })
+    .catch();
 });
+
+router.get('/judges', (req, res, next) => {
+  res.render('score/index_judges')
+})
+
+router.get('/refer', (req, res, next) => {
+  res.render('score/index_referee')
+})
 
 module.exports = router;
