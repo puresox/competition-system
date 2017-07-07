@@ -21,34 +21,34 @@ router.get('/competitions', checkLogin, checkAdmin, (req, res) => {
   });
 });
 
-// GET /manage/:competitionId/hosts
-router.get('/:competitionId/hosts', checkLogin, checkAdmin, (req, res) => {
+// GET /manage/competitions/:competitionId/hosts
+router.get('/competitions/:competitionId/hosts', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
 
   userModels.find({
     role: 1,
     competition: competitionId,
-  }, 'name', (err, hosts) => {
+  }, '_id name', (err, hosts) => {
     req.flash('error', err);
     res.render('manage/hosts', { hosts });
   });
 });
 
-// GET /manage/:competitionId/raters
-router.get('/:competitionId/raters', checkLogin, checkAdmin, (req, res) => {
+// GET /manage/competitions/:competitionId/raters
+router.get('/competitions/:competitionId/raters', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
 
   userModels.find({
     role: 2,
     competition: competitionId,
-  }, 'name', (err, raters) => {
+  }, '_id name', (err, raters) => {
     req.flash('error', err);
     res.render('manage/raters', { raters });
   });
 });
 
-// GET /manage/:competitionId/items
-router.get('/:competitionId/items', checkLogin, checkAdmin, (req, res) => {
+// GET /manage/competitions/:competitionId/items
+router.get('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
 
   itemModels.find({
@@ -59,8 +59,8 @@ router.get('/:competitionId/items', checkLogin, checkAdmin, (req, res) => {
   });
 });
 
-// GET /manage/:competitionId/participants
-router.get('/:competitionId/participants', checkLogin, checkAdmin, (req, res) => {
+// GET /manage/competitions/:competitionId/participants
+router.get('/competitions/:competitionId/participants', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
 
   participantModels.find({
@@ -71,28 +71,63 @@ router.get('/:competitionId/participants', checkLogin, checkAdmin, (req, res) =>
   });
 });
 
-// GET /manage/:competitionId/scores
-router.get('/:competitionId/scores', checkLogin, checkAdmin, (req, res) => {
+// GET /manage/competitions/:competitionId/scores
+router.get('/competitions/:competitionId/scores', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
 
-  scoreModels.find({
+  scoreModels
+    .find({ competition: competitionId })
+    .populate('rater', '_id name')
+    .exec((err, scores) => {
+      req.flash('error', err);
+      res.render('manage/scores', { scores });
+    });
+});
+
+// DELETE /manage/competitions router.delete('/competitions', checkLogin,
+// checkAdmin, (req, res) => {   competitionModels.find({}, (err, competitions)
+// => {     req.flash('error', err);     res.render('manage/index', {
+// competitions });   }); }); DELETE
+// /manage/competitions/:competitionId/hosts/:hostId
+router.delete('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+  const hostId = req.params.hostId;
+
+  userModels.remove({
+    _id: hostId,
     competition: competitionId,
-  }, (err, scores) => {
-    req.flash('error', err);
-    res.render('manage/scores', { scores });
+  }, (error) => {
+    if (error) {
+      req.flash('error', `删除失败:${error}`);
+      res.redirect('back');
+    } else {
+      req.flash('success', '删除成功');
+      res.redirect(`/manage/competitions/${competitionId}/hosts`);
+    }
   });
 });
 
-// DELETE /manage/competitions
-// router.delete('/competitions', checkLogin, checkAdmin, (req, res) => {
-//   competitionModels.find({}, (err, competitions) => {
-//     req.flash('error', err);
-//     res.render('manage/index', { competitions });
-//   });
-// });
+// DELETE /manage/competitions/:competitionId/raters/:raterId
+router.delete('/competitions/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+  const raterId = req.params.raterId;
 
-// DELETE /manage/:competitionId/:itemId
-router.delete('/:competitionId/:itemId', checkLogin, checkAdmin, (req, res) => {
+  userModels.remove({
+    _id: raterId,
+    competition: competitionId,
+  }, (error) => {
+    if (error) {
+      req.flash('error', `删除失败:${error}`);
+      res.redirect('back');
+    } else {
+      req.flash('success', '删除成功');
+      res.redirect(`/manage/competitions/${competitionId}/raters`);
+    }
+  });
+});
+
+// DELETE /manage/competitions/:competitionId/items/:itemId
+router.delete('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const itemId = req.params.itemId;
 
@@ -105,13 +140,13 @@ router.delete('/:competitionId/:itemId', checkLogin, checkAdmin, (req, res) => {
       res.redirect('back');
     } else {
       req.flash('success', '删除成功');
-      res.redirect(`/manage/${competitionId}/items`);
+      res.redirect(`/manage/competitions/${competitionId}/items`);
     }
   });
 });
 
-// DELETE /manage/:competitionId/:participantId
-router.delete('/:competitionId/:participantId', checkLogin, checkAdmin, (req, res) => {
+// DELETE /manage/competitions/:competitionId/participants/:participantId
+router.delete('/competitions/:competitionId/participants/:participantId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const participantId = req.params.participantId;
 
@@ -135,7 +170,7 @@ router.delete('/:competitionId/:participantId', checkLogin, checkAdmin, (req, re
           res.redirect('back');
         } else {
           req.flash('success', '删除成功');
-          res.redirect(`/manage/${competitionId}/participants`);
+          res.redirect(`/manage/competitions/${competitionId}/participants`);
         }
       });
     }
