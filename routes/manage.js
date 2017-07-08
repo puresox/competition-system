@@ -315,8 +315,8 @@ router.post('/competitions/:competitionId/participants', checkLogin, checkAdmin,
   });
 });
 
-// PATCH /manage/competitions/:competitionId
-router.patch('/competitions/:competitionId', checkLogin, checkAdmin, (req, res) => {
+// PUT /manage/competitions/:competitionId
+router.put('/competitions/:competitionId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const name = req.fields.name;
   const introduction = req.fields.introduction;
@@ -352,8 +352,8 @@ router.patch('/competitions/:competitionId', checkLogin, checkAdmin, (req, res) 
   });
 });
 
-// PATCH /manage/competitions/:competitionId/hosts/:hostId
-router.patch('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) => {
+// PUT /manage/competitions/:competitionId/hosts/:hostId
+router.put('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const hostId = req.params.hostId;
   const name = req.fields.name;
@@ -398,8 +398,8 @@ router.patch('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmi
   });
 });
 
-// PATCH /manage/competitions/:competitionId/raters/:raterId
-router.patch('/competitions/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res) => {
+// PUT /manage/competitions/:competitionId/raters/:raterId
+router.put('/competitions/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const raterId = req.params.raterId;
   const name = req.fields.name;
@@ -444,8 +444,8 @@ router.patch('/competitions/:competitionId/raters/:raterId', checkLogin, checkAd
   });
 });
 
-// PATCH /manage/competitions/:competitionId/items/:itemId
-router.patch('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) => {
+// PUT /manage/competitions/:competitionId/items/:itemId
+router.put('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const itemId = req.params.itemId;
   const name = req.fields.name;
@@ -478,8 +478,8 @@ router.patch('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmi
   });
 });
 
-// PATCH /manage/competitions/:competitionId/participants/:participantId
-router.patch('/competitions/:competitionId/participants/:participantId', checkLogin, checkAdmin, (req, res) => {
+// PUT /manage/competitions/:competitionId/participants/:participantId
+router.put('/competitions/:competitionId/participants/:participantId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const participantId = req.params.participantId;
   const name = req.fields.name;
