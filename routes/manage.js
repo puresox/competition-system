@@ -91,13 +91,13 @@ router.post('/competitions', checkLogin, checkAdmin, (req, res) => {
   const name = req.fields.name;
   const introduction = req.fields.introduction;
 
-    // 校验参数
+  // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
     }
     if (!(introduction.length >= 1 && introduction.length <= 1000)) {
-      throw new Error('个人简介请限制在 1-1000 个字符');
+      throw new Error('简介请限制在 1-1000 个字符');
     }
   } catch (e) {
     req.flash('error', e.message);
@@ -115,7 +115,7 @@ router.post('/competitions', checkLogin, checkAdmin, (req, res) => {
       req.flash('err', err);
       return res.redirect('back');
     }
-      // 写入 flash
+    // 写入 flash
     req.flash('success', '新建成功');
     res.redirect('/manage/competitions');
   });
@@ -128,7 +128,7 @@ router.post('/competitions/:competitionId/hosts', checkLogin, checkAdmin, (req, 
   const password = req.fields.password;
   const repassword = req.fields.repassword;
 
-    // 校验参数
+  // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
@@ -160,7 +160,7 @@ router.post('/competitions/:competitionId/hosts', checkLogin, checkAdmin, (req, 
       req.flash('err', err);
       return res.redirect('back');
     }
-      // 写入 flash
+    // 写入 flash
     req.flash('success', '新建成功');
     res.redirect(`/manage/competitions/${competitionId}/hosts`);
   });
@@ -173,7 +173,7 @@ router.post('/competitions/:competitionId/raters', checkLogin, checkAdmin, (req,
   const password = req.fields.password;
   const repassword = req.fields.repassword;
 
-    // 校验参数
+  // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
@@ -205,7 +205,7 @@ router.post('/competitions/:competitionId/raters', checkLogin, checkAdmin, (req,
       req.flash('err', err);
       return res.redirect('back');
     }
-      // 写入 flash
+    // 写入 flash
     req.flash('success', '新建成功');
     res.redirect(`/manage/competitions/${competitionId}/raters`);
   });
@@ -216,7 +216,7 @@ router.post('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, 
   const competitionId = req.params.competitionId;
   const name = req.fields.name;
 
-    // 校验参数
+  // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
@@ -239,7 +239,7 @@ router.post('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, 
       req.flash('err', err);
       return res.redirect('back');
     }
-      // 写入 flash
+    // 写入 flash
     req.flash('success', '新建成功');
     res.redirect(`/manage/competitions/${competitionId}/items`);
   });
@@ -250,16 +250,26 @@ router.post('/competitions/:competitionId/participants', checkLogin, checkAdmin,
   const competitionId = req.params.competitionId;
   const name = req.fields.name;
   const introduction = req.fields.introduction;
-  const logo = req.files.logo.path.split(path.sep).pop();
-  const report = req.files.report.path.split(path.sep).pop();
+  const logo = req
+    .files
+    .logo
+    .path
+    .split(path.sep)
+    .pop();
+  const report = req
+    .files
+    .report
+    .path
+    .split(path.sep)
+    .pop();
 
-    // 校验参数
+  // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
     }
     if (!(introduction.length >= 1 && introduction.length <= 1000)) {
-      throw new Error('个人简介请限制在 1-1000 个字符');
+      throw new Error('简介请限制在 1-1000 个字符');
     }
     if (!req.files.logo.name) {
       throw new Error('缺少logo');
@@ -299,9 +309,246 @@ router.post('/competitions/:competitionId/participants', checkLogin, checkAdmin,
       req.flash('err', err);
       return res.redirect('back');
     }
-      // 写入 flash
+    // 写入 flash
     req.flash('success', '新建成功');
     res.redirect(`/manage/competitions/${competitionId}/participants`);
+  });
+});
+
+// PATCH /manage/competitions/:competitionId
+router.patch('/competitions/:competitionId', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+  const name = req.fields.name;
+  const introduction = req.fields.introduction;
+
+  // 校验参数
+  try {
+    if (!(name.length >= 1 && name.length <= 30)) {
+      throw new Error('名字请限制在 1-30 个字符');
+    }
+    if (!(introduction.length >= 1 && introduction.length <= 1000)) {
+      throw new Error('简介请限制在 1-1000 个字符');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  userModels.update({
+    _id: competitionId,
+  }, {
+    $set: {
+      name,
+      introduction,
+    },
+  }, (error) => {
+    if (error) {
+      req.flash('error', `修改失败:${error}`);
+      res.redirect('back');
+    } else {
+      req.flash('success', '修改成功');
+      res.redirect('/manage/competitions');
+    }
+  });
+});
+
+// PATCH /manage/competitions/:competitionId/hosts/:hostId
+router.patch('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+  const hostId = req.params.hostId;
+  const name = req.fields.name;
+  const password = req.fields.password;
+  const repassword = req.fields.repassword;
+
+  // 校验参数
+  try {
+    if (!(name.length >= 1 && name.length <= 30)) {
+      throw new Error('名字请限制在 1-30 个字符');
+    }
+    if (password.length < 6) {
+      throw new Error('密码至少 6 个字符');
+    }
+    if (password !== repassword) {
+      throw new Error('两次输入密码不一致');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  userModels.update({
+    _id: hostId,
+    competition: competitionId,
+  }, {
+    $set: {
+      name,
+      pw: crypto
+        .createHash('sha256')
+        .update(password)
+        .digest('hex'),
+    },
+  }, (error) => {
+    if (error) {
+      req.flash('error', `修改失败:${error}`);
+      res.redirect('back');
+    } else {
+      req.flash('success', '修改成功');
+      res.redirect(`/manage/competitions/${competitionId}/hosts`);
+    }
+  });
+});
+
+// PATCH /manage/competitions/:competitionId/raters/:raterId
+router.patch('/competitions/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+  const raterId = req.params.raterId;
+  const name = req.fields.name;
+  const password = req.fields.password;
+  const repassword = req.fields.repassword;
+
+  // 校验参数
+  try {
+    if (!(name.length >= 1 && name.length <= 30)) {
+      throw new Error('名字请限制在 1-30 个字符');
+    }
+    if (password.length < 6) {
+      throw new Error('密码至少 6 个字符');
+    }
+    if (password !== repassword) {
+      throw new Error('两次输入密码不一致');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  userModels.update({
+    _id: raterId,
+    competition: competitionId,
+  }, {
+    $set: {
+      name,
+      pw: crypto
+        .createHash('sha256')
+        .update(password)
+        .digest('hex'),
+    },
+  }, (error) => {
+    if (error) {
+      req.flash('error', `修改失败:${error}`);
+      res.redirect('back');
+    } else {
+      req.flash('success', '修改成功');
+      res.redirect(`/manage/competitions/${competitionId}/raters`);
+    }
+  });
+});
+
+// PATCH /manage/competitions/:competitionId/items/:itemId
+router.patch('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+  const itemId = req.params.itemId;
+  const name = req.fields.name;
+
+  // 校验参数
+  try {
+    if (!(name.length >= 1 && name.length <= 30)) {
+      throw new Error('名字请限制在 1-30 个字符');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  itemModels.update({
+    _id: itemId,
+    competition: competitionId,
+  }, {
+    $set: {
+      name,
+    },
+  }, (error) => {
+    if (error) {
+      req.flash('error', `修改失败:${error}`);
+      res.redirect('back');
+    } else {
+      req.flash('success', '修改成功');
+      res.redirect(`/manage/competitions/${competitionId}/items`);
+    }
+  });
+});
+
+// PATCH /manage/competitions/:competitionId/participants/:participantId
+router.patch('/competitions/:competitionId/participants/:participantId', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+  const participantId = req.params.participantId;
+  const name = req.fields.name;
+  const introduction = req.fields.introduction;
+  const logo = req
+    .files
+    .logo
+    .path
+    .split(path.sep)
+    .pop();
+  const report = req
+    .files
+    .report
+    .path
+    .split(path.sep)
+    .pop();
+
+  // 校验参数
+  try {
+    if (!(name.length >= 1 && name.length <= 30)) {
+      throw new Error('名字请限制在 1-30 个字符');
+    }
+    if (!(introduction.length >= 1 && introduction.length <= 1000)) {
+      throw new Error('简介请限制在 1-1000 个字符');
+    }
+    if (!req.files.logo.name) {
+      throw new Error('缺少logo');
+    }
+    if (!req.files.report.name) {
+      throw new Error('缺少项目报告书');
+    }
+  } catch (e) {
+    // 注册失败，异步删除上传文件
+    fs.unlink(req.files.logo.path);
+    fs.unlink(req.files.report.path);
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  participantModels.findOne({
+    _id: participantId,
+    competition: competitionId,
+  }, (err, participant) => {
+    if (err) {
+      fs.unlink(req.files.logo.path);
+      fs.unlink(req.files.report.path);
+      req.flash('error', `修改失败:${err}`);
+      res.redirect('back');
+    } else {
+      const updateParticipant = participant;
+      updateParticipant.name = name;
+      updateParticipant.logo = logo;
+      updateParticipant.introduction = introduction;
+      updateParticipant.report = report;
+
+      updateParticipant.save((error) => {
+        if (error) {
+          fs.unlink(req.files.logo.path);
+          fs.unlink(req.files.report.path);
+          req.flash('error', `修改失败:${error}`);
+          res.redirect('back');
+        } else {
+          fs.unlink(participant.logo);
+          fs.unlink(participant.report);
+          req.flash('success', '修改成功');
+          res.redirect(`/manage/competitions/${competitionId}/participants`);
+        }
+      });
+    }
   });
 });
 
@@ -310,7 +557,6 @@ router.post('/competitions/:competitionId/participants', checkLogin, checkAdmin,
 // => {     req.flash('error', err);     res.render('manage/index', {
 // competitions });   }); }); DELETE
 // /manage/competitions/:competitionId/hosts/:hostId
-
 router.delete('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const hostId = req.params.hostId;
