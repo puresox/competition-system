@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="../css/style.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/manage.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="header">
+                <a href="#">
+                    当前在线 12
+                    <i class="iconfont online">&#xe618;</i>
+                </a>
+                <a href="/signout">
+                    退出
+                    <i class="iconfont">&#xe615;</i>
+                </a>
+            </div>
+            <div class="main">
+                <div class="main-hd">
+                    <span>比赛</span>
+                    <div id="add">
+                        增加
+                        <i class="iconfont">&#xe61b;</i>
+                    </div>
+                </div>
+                <form id="form" class="form" method="post">
+                    <input type="text" name="name" value="" placeholder="比赛名称">
+                    <input type="text" name="introduction" value="" placeholder="比赛简介">
+                    <input type="submit" name="" value="添加比赛">
+                </form>
+                <form id="form2" class="form" action="" method="PATCH">
+                    <input id="changename" type="text" name="name" value="" placeholder="比赛名称">
+                    <input id="changeitro" type="text" name="introduction" value="" placeholder="比赛简介">
+                    <input type="submit" name="" value="修改比赛">
+                </form>
+                <div class="main-list">
+                    <table class="competions">
+                        <thead>
+                            <tr>
+                                <th>比赛名称</th>
+                                <th>比赛简介</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% competitions.forEach((competition)=>{ %>
+                            <tr>
+                                <td>
+                                    <%= competition.name %>
+                                </td>
+                                <td>
+                                    <%= competition.introduction %>
+                                </td>
+                                <td>
+                                    <a href="#" data-id="<%= competition._id %>" class="change">修改</a>
+                                    <a href="/manage/competitions/<%= competition._id %>/hosts">查看</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.getElementById('add').addEventListener('click', function () {
+                document.getElementById('form').classList.toggle('form-active')
+            })
+            
+            var changes = document.getElementsByClassName('change')
+            var currentCompet = ''
+            for(var i = 0, len = changes.length; i < len; i++){
+                changes[i].addEventListener('click',function(){
+                    if(currentCompet == this.getAttribute('data-id')){
+                        document.getElementById('form2').classList.remove('form-active')
+                    }
+                    if(currentCompet !=this.getAttribute('data-id') || currentCompet == ''){
+                        document.getElementById('form2').classList.add('form-active')
+                    }
+                    currentCompet = this.getAttribute('data-id')
+                    document.getElementById('form2').setAttribute('action','/manage/competitions/' + this.getAttribute('data-id'))
+                })
+            }
+        </script>
+    </body>
+
+</html>

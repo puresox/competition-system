@@ -1,0 +1,162 @@
+a {
+    text-decoration: none;
+    font-style: normal;
+}
+
+body {
+    background-color: #FAFAFA;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.header {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 50px;
+    padding: 0 2em;
+    box-sizing: border-box;
+    background-color: #33505F;
+    box-shadow: 0 3px 1.5px #7A8A91;
+}
+
+.header>a {
+    display: inline-block;
+    line-height: 50px;
+    font-size: 16px;
+    color: white;
+    transition: all .5s;
+}
+
+.header>a:hover {
+    background-color: #4F6D7D;
+}
+
+.online {
+    margin-left: 5px;
+    color: #33B26D;
+}
+
+.header a:nth-last-child(1) {
+    float: right;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+    min-height: 50%;
+    max-height: 80%;
+    box-sizing: border-box;
+    /*border: 1px solid #33505F;*/
+    border-radius: .2em;
+    box-shadow: 0 2px 4px #7A8A91;
+    font-size: 16px;
+    /*overflow: scroll;*/
+}
+
+.main-hd {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 2em;
+    box-sizing: border-box;
+    padding: 0 2em;
+    background-color: #33505F;
+}
+
+.main-hd>span {
+    margin-right: auto;
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: .2em;
+}
+
+#add {
+    width: 3.5em;
+    color: white;
+    cursor: pointer;
+    transition: all .5s;
+}
+
+#add>i {
+    color: white;
+}
+
+#add:hover {
+    background-color: #4F6D7D;
+}
+
+.form {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    position: relative;
+    width: 100%;
+    height: 8em;
+    margin-bottom: 1em;
+    padding: 0 2em;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px #999;
+}
+
+.form-active {
+    display: flex;
+}
+
+.form>input {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    width: 100%;
+    height: 2em;
+    border: none;
+    box-sizing: border-box;
+    border-bottom: 1px solid #3C8541;
+    text-decoration: none;
+    outline: none;
+}
+
+.form>input:last-child {
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    background-color: #33505F;
+    border: none;
+    letter-spacing: 2em;
+}
+
+.main-list {
+    width: 100%;
+    overflow: auto;
+}
+
+.competions {
+    width: 100%;
+    padding: 0 2em;
+}
+
+.competions tr {
+    height: 2em;
+}
+
+.competions td {
+    text-align: center;
+}
+
+.competions td a {
+    display: inline-block;
+    width: 40%;
+    height: 100%;
+    background-color: #33505F;
+    color: white;
+}
