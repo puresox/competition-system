@@ -6,6 +6,9 @@ const signin = require('./signin');
 const signout = require('./signout');
 const draw = require('./draw');
 const manage = require('./manage');
+const rater = require('./rater');
+const host = require('./host');
+const screen = require('./screen');
 
 module.exports = (app) => {
   app.get('/', (req, res) => {
@@ -28,6 +31,12 @@ module.exports = (app) => {
   app.use('/draw', draw);
   // 后台管理
   app.use('/manage', manage);
+  // 大屏幕
+  app.use('/screen', screen);
+  // 评委
+  app.use('/rater', rater);
+  // 主持人
+  app.use('/host', host);
 
   // 404 page
   app.use((req, res) => {
