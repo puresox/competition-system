@@ -11,7 +11,18 @@
     </head>
 
     <body>
-
+        <div id="spa">
+            <p>
+                <template v-for="route in routes">
+                    <router-link v-bind:to="{ path:route.url, params:{userId: 1 }}">{{ route.name }}</router-link>
+                </template>
+            </p>
+            <router-view v-bind:player="playerData"></router-view>
+        </div>
+        <template id="test">
+            <p>{{ data }}</p>
+        </template>
+        <script src="../js/index_judges.js"></script>
     </body>
 
 </html>
