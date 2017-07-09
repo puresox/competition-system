@@ -32,7 +32,7 @@ router.get('/competitions/:competitionId/hosts', checkLogin, checkAdmin, (req, r
     competition: competitionId,
   }, '_id name competition', (err, hosts) => {
     req.flash('error', err);
-    res.render('manage/hosts', { hosts });
+    res.render('manage/hosts', { hosts, competitionId });
   });
 });
 
@@ -45,7 +45,7 @@ router.get('/competitions/:competitionId/raters', checkLogin, checkAdmin, (req, 
     competition: competitionId,
   }, '_id name competition', (err, raters) => {
     req.flash('error', err);
-    res.render('manage/raters', { raters });
+    res.render('manage/raters', { raters, competitionId });
   });
 });
 
@@ -57,7 +57,7 @@ router.get('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, r
     competition: competitionId,
   }, (err, items) => {
     req.flash('error', err);
-    res.render('manage/items', { items });
+    res.render('manage/items', { items, competitionId });
   });
 });
 
@@ -69,7 +69,7 @@ router.get('/competitions/:competitionId/participants', checkLogin, checkAdmin, 
     competition: competitionId,
   }, (err, participants) => {
     req.flash('error', err);
-    res.render('manage/participants', { participants });
+    res.render('manage/participants', { participants, competitionId });
   });
 });
 
@@ -82,7 +82,7 @@ router.get('/competitions/:competitionId/scores', checkLogin, checkAdmin, (req, 
     .populate('rater', '_id name competition')
     .exec((err, scores) => {
       req.flash('error', err);
-      res.render('manage/scores', { scores });
+      res.render('manage/scores', { scores, competitionId });
     });
 });
 
