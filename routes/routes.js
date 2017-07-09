@@ -9,6 +9,7 @@ const manage = require('./manage');
 const rater = require('./rater');
 const host = require('./host');
 const screen = require('./screen');
+const api = require('./api');
 
 module.exports = (app) => {
   app.get('/', (req, res) => {
@@ -37,11 +38,15 @@ module.exports = (app) => {
   app.use('/rater', rater);
   // 主持人
   app.use('/host', host);
+  // api
+  app.use('/api', api);
 
   // 404 page
   app.use((req, res) => {
     if (!res.headersSent) {
-      res.status(404).render('error');
+      res
+        .status(404)
+        .render('error');
     }
   });
 };
