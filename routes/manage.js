@@ -30,7 +30,7 @@ router.get('/competitions/:competitionId/hosts', checkLogin, checkAdmin, (req, r
   userModels.find({
     role: 1,
     competition: competitionId,
-  }, '_id name', (err, hosts) => {
+  }, '_id name competition', (err, hosts) => {
     req.flash('error', err);
     res.render('manage/hosts', { hosts });
   });
@@ -43,7 +43,7 @@ router.get('/competitions/:competitionId/raters', checkLogin, checkAdmin, (req, 
   userModels.find({
     role: 2,
     competition: competitionId,
-  }, '_id name', (err, raters) => {
+  }, '_id name competition', (err, raters) => {
     req.flash('error', err);
     res.render('manage/raters', { raters });
   });
@@ -79,7 +79,7 @@ router.get('/competitions/:competitionId/scores', checkLogin, checkAdmin, (req, 
 
   scoreModels
     .find({ competition: competitionId })
-    .populate('rater', '_id name')
+    .populate('rater', '_id name competition')
     .exec((err, scores) => {
       req.flash('error', err);
       res.render('manage/scores', { scores });
