@@ -35,11 +35,11 @@
                     <input type="text" name="introduction" value="" placeholder="比赛简介">
                     <input type="submit" name="" value="添加比赛">
                 </form>
-                <form id="form2" class="form" action="" method="PATCH">
+                <div id="form2" class="form" data-action="">
                     <input id="changename" type="text" name="name" value="" placeholder="比赛名称">
                     <input id="changeintro" type="text" name="introduction" value="" placeholder="比赛简介">
-                    <input id="putchange" type="button" name="" value="修改比赛">
-                </form>
+                    <button id="putchange">提交</button>
+                </div>
                 <div class="main-list">
                     <table class="competition">
                         <thead>
@@ -78,19 +78,20 @@
             var currentCompet = ''
             for (var i = 0, len = changes.length; i < len; i++) {
                 changes[i].addEventListener('click', function () {
+                    if (!document.getElementById('form2').classList.contains('form-active') || currentCompet == '') {
+                        document.getElementById('form2').classList.add('form-active')
+                    }
                     if (currentCompet == this.getAttribute('data-id')) {
                         document.getElementById('form2').classList.remove('form-active')
                     }
-                    if (currentCompet != this.getAttribute('data-id') || currentCompet == '') {
-                        document.getElementById('form2').classList.add('form-active')
-                    }
                     currentCompet = this.getAttribute('data-id')
-                    document.getElementById('form2').setAttribute('action', '/manage/competitions/' + this.getAttribute('data-id'))
+                    document.getElementById('form2').setAttribute('data-action', '/manage/competitions/' + this.getAttribute('data-id'))
                     var index = this.getAttribute('data-index')
                     var competitionName = document.getElementsByClassName('competition-name')[index].innerText
                     var competitionIntro = document.getElementsByClassName('competition-introduction')[index].innerText
                     document.getElementById('changename').value = competitionName
                     document.getElementById('changeintro').value = competitionIntro
+                    document.getElementById('form2').setAttribute('data-id', this.getAttribute('data-id'))
                 })
             }
             // 提交修改监听
@@ -99,15 +100,17 @@
                     name: document.getElementById('changename').value,
                     introduction: document.getElementById('changeintro').value
                 }
+                var url = document.getElementById('form2').getAttribute('data-action')
+                console.log(url)
                 $.ajax({
-                    url: '/manage/competitions/:competitionId',
+                    url: '/manage/competitions/5960ddbf6dc8187b9c22af11',
                     type: 'put',
                     data: data,
                     success: function () {
                         window.location.reload()
                     },
                     error: function () {
-
+                        console.log('提交失败')
                     }
                 })
             })
