@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="../css/style.css" rel="stylesheet">
         <link rel="stylesheet" href="../css/manage.css">
+        <script src="../js/jquery-3.2.0.min.js"></script>
     </head>
 
     <body>
@@ -36,11 +37,11 @@
                 </form>
                 <form id="form2" class="form" action="" method="PATCH">
                     <input id="changename" type="text" name="name" value="" placeholder="比赛名称">
-                    <input id="changeitro" type="text" name="introduction" value="" placeholder="比赛简介">
-                    <input type="submit" name="" value="修改比赛">
+                    <input id="changeintro" type="text" name="introduction" value="" placeholder="比赛简介">
+                    <input id="putchange" type="button" name="" value="修改比赛">
                 </form>
                 <div class="main-list">
-                    <table class="competions">
+                    <table class="competition">
                         <thead>
                             <tr>
                                 <th>比赛名称</th>
@@ -49,20 +50,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% competitions.forEach((competition)=>{ %>
-                            <tr>
-                                <td>
-                                    <%= competition.name %>
-                                </td>
-                                <td>
-                                    <%= competition.introduction %>
-                                </td>
-                                <td>
-                                    <a href="#" data-id="<%= competition._id %>" class="change">修改</a>
-                                    <a href="/manage/competitions/<%= competition._id %>/hosts">查看</a>
-                                </td>
-                            </tr>
-                            <% }) %>
+                            <% competitions.forEach((competition, i)=>{ %>
+                                <tr>
+                                    <td class="competition-name">
+                                        <%= competition.name %>
+                                    </td>
+                                    <td class="competition-introduction">
+                                        <%= competition.introduction %>
+                                    </td>
+                                    <td>
+                                        <a href="#" data-id="<%= competition._id %>" data-index="<%= i %>" class="change">修改</a>
+                                        <a href="/manage/competitions/<%= competition._id %>/hosts">查看</a>
+                                    </td>
+                                </tr>
+                                <% }) %>
                         </tbody>
                     </table>
                 </div>
@@ -72,21 +73,44 @@
             document.getElementById('add').addEventListener('click', function () {
                 document.getElementById('form').classList.toggle('form-active')
             })
-            
+
             var changes = document.getElementsByClassName('change')
             var currentCompet = ''
-            for(var i = 0, len = changes.length; i < len; i++){
-                changes[i].addEventListener('click',function(){
-                    if(currentCompet == this.getAttribute('data-id')){
+            for (var i = 0, len = changes.length; i < len; i++) {
+                changes[i].addEventListener('click', function () {
+                    if (currentCompet == this.getAttribute('data-id')) {
                         document.getElementById('form2').classList.remove('form-active')
                     }
-                    if(currentCompet !=this.getAttribute('data-id') || currentCompet == ''){
+                    if (currentCompet != this.getAttribute('data-id') || currentCompet == '') {
                         document.getElementById('form2').classList.add('form-active')
                     }
                     currentCompet = this.getAttribute('data-id')
-                    document.getElementById('form2').setAttribute('action','/manage/competitions/' + this.getAttribute('data-id'))
+                    document.getElementById('form2').setAttribute('action', '/manage/competitions/' + this.getAttribute('data-id'))
+                    var index = this.getAttribute('data-index')
+                    var competitionName = document.getElementsByClassName('competition-name')[index].innerText
+                    var competitionIntro = document.getElementsByClassName('competition-introduction')[index].innerText
+                    document.getElementById('changename').value = competitionName
+                    document.getElementById('changeintro').value = competitionIntro
                 })
             }
+            // 提交修改监听
+            document.getElementById('putchange').addEventListener('click', function () {
+                var data = {
+                    name: document.getElementById('changename').value,
+                    introduction: document.getElementById('changeintro').value
+                }
+                $.ajax({
+                    url: '/manage/competitions/:competitionId',
+                    type: 'put',
+                    data: data,
+                    success: function () {
+                        window.location.reload()
+                    },
+                    error: function () {
+
+                    }
+                })
+            })
         </script>
     </body>
 

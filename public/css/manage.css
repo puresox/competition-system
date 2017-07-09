@@ -140,20 +140,20 @@ body {
     overflow: auto;
 }
 
-.competions {
+.competition {
     width: 100%;
     padding: 0 2em;
 }
 
-.competions tr {
+.competition tr {
     height: 2em;
 }
 
-.competions td {
+.competition td {
     text-align: center;
 }
 
-.competions td a {
+.competition td a {
     display: inline-block;
     width: 40%;
     height: 100%;
