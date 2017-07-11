@@ -26,13 +26,13 @@
                 </tr>
             </thead>
             <tbody>
-                <% hosts.forEach((host, i)=>{ %>
+                <% scores.forEach((score, i)=>{ %>
                     <tr>
-                        <td class="host-name">
-                            <%= host.name %>
+                        <td class="score-name">
+                            <%= score.name %>
                         </td>
                         <td>
-                            <a href="#" data-id="<%= host._id %>" data-index="<%= i %>" class="change">修改</a>
+                            <a href="#" data-id="<%= score._id %>" data-index="<%= i %>" class="change">修改</a>
                             <a href="">删除</a>
                         </td>
                     </tr>

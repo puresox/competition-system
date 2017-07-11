@@ -39,5 +39,4 @@ router.get('/judges', (req, res, next) => {
 router.get('/refer', (req, res, next) => {
   res.render('score/index_referee');
 });
-
 module.exports = router;

@@ -8,12 +8,12 @@
         </div>
     </div>
     <form id="form" class="form" method="post">
-        <input type="text" name="name" value="" placeholder="主持人账号">
+        <input type="text" name="name" value="" placeholder="参赛作品">
         <input type="text" name="password" value="" placeholder="主持人密码">
         <input type="submit" name="" value="添加主持人">
     </form>
     <div id="form2" class="form" data-action="">
-        <input id="changename" type="text" name="name" value="" placeholder="主持人账号">
+        <input id="changename" type="text" name="name" value="" placeholder="参赛作品">
         <input id="changeintro" type="text" name="password" value="" placeholder="主持人密码">
         <button id="putchange">提交</button>
     </div>
@@ -26,13 +26,13 @@
                 </tr>
             </thead>
             <tbody>
-                <% hosts.forEach((host, i)=>{ %>
+                <% participants.forEach((participant, i)=>{ %>
                     <tr>
-                        <td class="host-name">
-                            <%= host.name %>
+                        <td class="participant-name">
+                            <%= participant.name %>
                         </td>
                         <td>
-                            <a href="#" data-id="<%= host._id %>" data-index="<%= i %>" class="change">修改</a>
+                            <a href="#" data-id="<%= participant._id %>" data-index="<%= i %>" class="change">修改</a>
                             <a href="">删除</a>
                         </td>
                     </tr>
@@ -87,5 +87,4 @@
         })
     })
 </script>
-
 <%- include('footer') -%>
