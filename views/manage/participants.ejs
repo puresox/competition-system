@@ -69,7 +69,6 @@
                     document.getElementById('form2').classList.remove('form-active')
                 }
                 currentCompet = this.getAttribute('data-id')
-                document.getElementById('form2').setAttribute('data-action', '/manage/competitions/' + this.getAttribute('data-id'))
                 var index = this.getAttribute('data-index')
                 var participantName = document.getElementsByClassName('participant-name')[index].innerText
                 var participantIntro = document.getElementsByClassName('participant-introduction')[index].innerText
