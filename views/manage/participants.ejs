@@ -1,102 +1,118 @@
 <%- include('header') -%>
 
-<div class="main">
-     <div class="main-hd">
-        <div id="add">
-            增加
-            <i class="iconfont">&#xe61b;</i>
+    <div class="main">
+        <div class="main-hd">
+            <div id="add">
+                增加
+                <i class="iconfont">&#xe61b;</i>
+            </div>
+        </div>
+        <form id="form" class="form" method="post" style="height: 20em" enctype="multipart/form-data">
+            <input type="text" name="name" value="" placeholder="参赛作品">
+            <textarea name="introduction" placeholder="简介"></textarea>
+            <input type="file" name="logo" value="">
+            <input type="file" name="report" value="">
+            <input type="submit" name="report" value="添加参赛队伍">
+        </form>
+        <form id="form2" class="form" data-action="" style="height: 20em">
+            <input id="changename" type="text" name="name" value="" placeholder="参赛作品">
+            <textarea id="changeintro" name="introduction" placeholder="简介"></textarea>
+            <input type="file" name="logo" value="">
+            <input type="file" name="report" value="">
+            <button id="putchange">提交</button>
+        </form>
+        <div class="main-list">
+            <table class="competition">
+                <thead>
+                    <tr>
+                        <th>参赛项目</th>
+                        <th>简介</th>
+                        <th>头像</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% participants.forEach((participant, i)=>{ %>
+                        <tr>
+                            <td class="participant-name">
+                                <%= participant.name %>
+                            </td>
+                            <td class="participant-introduction" style="max-width:20em">
+                                <%= participant.introduction %>
+                            </td>
+                            <td class="participant-logo">
+                                <img src="/competition/<%= participant.logo %>" alt="获取图片失败">
+                            </td>
+                            <td style="min-width:100px">
+                                <a href="#" data-id="<%= participant._id %>" data-index="<%= i %>" class="change">修改</a>
+                                <a href="#" data-id="<%= participant._id %>" data-index="<%= i %>" class="delete">删除</a>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
         </div>
     </div>
-    <form id="form" class="form" method="post" style="height: 20em" enctype="multipart/form-data">
-        <input type="text" name="name" value="" placeholder="参赛作品">
-        <textarea name="introduction" placeholder="简介"></textarea>
-        <input type="file" name="logo" value="">
-        <input type="file" name="report" value="">
-        <input type="submit" name="report" value="添加参赛队伍">
-    </form>
-    <div id="form2" class="form" data-action="">
-        <input id="changename" type="text" name="name" value="" placeholder="参赛作品">
-        <textarea name="introduction" placeholder="简介"></textarea>
-        <input type="file" name="logo" value="">
-        <input type="file" name="report" value="">
-        <button id="putchange">提交</button>
-    </div>
-     <div class="main-list">
-        <table class="competition">
-            <thead>
-                <tr>
-                    <th>参赛项目</th>
-                    <th>简介</th>
-                    <th>头像</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% participants.forEach((participant, i)=>{ %>
-                    <tr>
-                        <td class="participant-name">
-                            <%= participant.name %>
-                        </td>
-                        <td class="participant-introduction">
-                            <%= participant.introduction %>
-                        </td>
-                        <td class="participant-logo">
-                            <img src="/competition/<%= participant.logo %>" alt="获取图片失败">
-                        </td>
-                        <td>
-                            <a href="#" data-id="<%= participant._id %>" data-index="<%= i %>" class="change">修改</a>
-                            <a href="">删除</a>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    </div>
-</div>
-<script>
-    document.getElementById('add').addEventListener('click', function () {
-        document.getElementById('form').classList.toggle('form-active')
-    })
+    <script>
+        document.getElementById('add').addEventListener('click', function () {
+            document.getElementById('form').classList.toggle('form-active')
+        })
 
-    var changes = document.getElementsByClassName('change')
-    var currentCompet = ''
-    for (var i = 0, len = changes.length; i < len; i++) {
-        changes[i].addEventListener('click', function () {
-            if (!document.getElementById('form2').classList.contains('form-active') || currentCompet == '') {
-                document.getElementById('form2').classList.add('form-active')
-            }
-            if (currentCompet == this.getAttribute('data-id')) {
-                document.getElementById('form2').classList.remove('form-active')
-            }
-            currentCompet = this.getAttribute('data-id')
-            document.getElementById('form2').setAttribute('data-action', '/manage/competitions/' + this.getAttribute('data-id'))
-            var index = this.getAttribute('data-index')
-            var competitionName = document.getElementsByClassName('competition-name')[index].innerText
-            var competitionIntro = document.getElementsByClassName('competition-introduction')[index].innerText
-            document.getElementById('changename').value = competitionName
-            document.getElementById('changeintro').value = competitionIntro
-            document.getElementById('form2').setAttribute('data-id', this.getAttribute('data-id'))
-        })
-    }
-    // 提交修改监听
-    document.getElementById('putchange').addEventListener('click', function () {
-        var data = {
-            name: document.getElementById('changename').value,
-            introduction: document.getElementById('changeintro').value
+        var changes = document.getElementsByClassName('change')
+        var currentCompet = ''
+        for (var i = 0, len = changes.length; i < len; i++) {
+            changes[i].addEventListener('click', function () {
+                if (!document.getElementById('form2').classList.contains('form-active') || currentCompet == '') {
+                    document.getElementById('form2').classList.add('form-active')
+                }
+                if (currentCompet == this.getAttribute('data-id')) {
+                    document.getElementById('form2').classList.remove('form-active')
+                }
+                currentCompet = this.getAttribute('data-id')
+                document.getElementById('form2').setAttribute('data-action', '/manage/competitions/' + this.getAttribute('data-id'))
+                var index = this.getAttribute('data-index')
+                var participantName = document.getElementsByClassName('participant-name')[index].innerText
+                var participantIntro = document.getElementsByClassName('participant-introduction')[index].innerText
+                document.getElementById('changename').value = participantName
+                document.getElementById('changeintro').value = participantIntro
+                document.getElementById('form2').setAttribute('data-id', this.getAttribute('data-id'))
+            })
         }
-        var url = document.getElementById('form2').getAttribute('data-action')
-        console.log(url)
-        $.ajax({
-            url: '/manage/competitions/5960ddbf6dc8187b9c22af11',
-            type: 'put',
-            data: data,
-            success: function () {
-                window.location.reload()
-            },
-            error: function () {
-                console.log('提交失败')
-            }
+        // 给每个删除按钮绑定事件
+        $('.delete').click(function () {
+            var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/participants/'
+                + this.getAttribute('data-id')
+            $.ajax({
+                url: url,
+                type: 'delete',
+                success: function () {
+                    window.location.reload()
+                },
+                error: function () {
+                    console.log('删除失败')
+                }
+            })
         })
-    })
-</script>
-<%- include('footer') -%>
+        // 提交修改监听
+        document.getElementById('putchange').addEventListener('click', function () {
+            var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/hosts/'
+                + document.getElementById('form2').getAttribute('data-id')
+            var formData = new FormData($("#form2"))
+            $.ajax({
+                url: url,
+                type: 'put',
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    // window.location.reload()
+                },
+                error: function () {
+                    console.log('提交失败')
+                }
+            })
+        })
+    </script>
+    <%- include('footer') -%>

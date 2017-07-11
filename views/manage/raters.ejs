@@ -87,7 +87,7 @@
             password: document.getElementById('changepw').value,
             repassword: document.getElementById('changerepw').value
         }
-         var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/hosts/'
+        var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/hosts/'
         + document.getElementById('form2').getAttribute('data-id')
         $.ajax({
             url: url,

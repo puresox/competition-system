@@ -157,11 +157,17 @@ a {
     padding: 0 2em;
 }
 
+.competition img {
+    max-width: 120px;
+    max-height: 120px;
+}
+
 .competition tr {
-    height: 2em;
+    height: 1em;
 }
 
 .competition td {
+    padding: 0 .5em;
     text-align: center;
 }
 
