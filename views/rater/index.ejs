@@ -6,12 +6,13 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="../css/style.css" rel="stylesheet">
+        <link rel="stylesheet" type="" href="../css/rater.css">
         <script src="../js/vue.js"></script>
         <script src="../js/vue-router.js"></script>
     </head>
 
     <body>
-        <div id="spa">
+        <!--<div id="spa">
             <p>
                 <template v-for="route in routes">
                     <router-link v-bind:to="{ path:route.url, params:{userId: 1 }}">{{ route.name }}</router-link>
@@ -21,7 +22,24 @@
         </div>
         <template id="test">
             <p>{{ data }}</p>
-        </template>
+        </template>-->
+        <div id="spa" class="container">
+            <div class="header">
+                <p>
+                    <template v-for="route in routes">
+                        <router-link v-bind:to="{ path:route.url }">{{ route.name }}</router-link>
+                    </template>
+                </p>
+            </div>
+            <router-view class="main" v-bind:players="players"></router-view>
+        </div>
+        <template id="test">
+            <div>
+                <div class="min-div">
+                    {{ playerData }}
+                </div>
+            </div>
+        </template>-->
         <script src="../js/rater.js"></script>
     </body>
 

@@ -6,10 +6,27 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="../css/style.css" rel="stylesheet">
+        <link rel="stylesheet" type="" href="../css/host.css">
+        <script src="../js/vue.js"></script>
+        <script src="../js/vue-router.js"></script>
     </head>
 
     <body>
-        <h1>欢迎您，裁判</h1>
+        <div id="demo">
+            <button v-on:click="show = !show">
+                Toggle
+            </button>
+            <transition name="fade">
+                <p v-if="show">hello</p>
+            </transition>
+        </div>
+        <div id="example-2">
+            <button @click="show = !show">Toggle show</button>
+            <transition name="bounce">
+                <p v-if="show">Look at me!</p>
+            </transition>
+        </div>
+        <script src="../js/host.js"></script>
     </body>
 
 </html>

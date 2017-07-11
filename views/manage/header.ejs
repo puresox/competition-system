@@ -7,12 +7,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="/css/style.css" rel="stylesheet">
         <link rel="stylesheet" type="" href="/css/edit.css">
+        <script src="/js/jquery-3.2.0.min.js"></script>
     </head>
 
     <body>
         <div class="container">
             <div class="side">
-                <span class="side-hd">
+                <span class="side-hd" data-id="<%= competitionId %>">
                     比赛设置
                 </span>
                 <a href="/manage/competitions/<%= competitionId %>/hosts">

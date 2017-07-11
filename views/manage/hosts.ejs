@@ -9,12 +9,14 @@
     </div>
     <form id="form" class="form" method="post">
         <input type="text" name="name" value="" placeholder="主持人账号">
-        <input type="text" name="password" value="" placeholder="主持人密码">
+        <input type="text" name="password" value="" placeholder="密码">
+        <input type="text" name="repassword" value="" placeholder="再次输入密码">
         <input type="submit" name="" value="添加主持人">
     </form>
     <div id="form2" class="form" data-action="">
         <input id="changename" type="text" name="name" value="" placeholder="主持人账号">
-        <input id="changeintro" type="text" name="password" value="" placeholder="主持人密码">
+        <input id="changepw" type="text" name="password" value="" placeholder="主持人密码">
+        <input id="changerepw" type="text" name="repassword" value="" placeholder="主持人密码">
         <button id="putchange">提交</button>
     </div>
      <div class="main-list">
@@ -33,10 +35,10 @@
                         </td>
                         <td>
                             <a href="#" data-id="<%= host._id %>" data-index="<%= i %>" class="change">修改</a>
-                            <a href="">删除</a>
+                            <a href="#" data-id="<%= host._id %>" data-index="<%= i %>" class="delete">删除</a>
                         </td>
                     </tr>
-                    <% }) %>
+                <% }) %>
             </tbody>
         </table>
     </div>
@@ -45,7 +47,7 @@
     document.getElementById('add').addEventListener('click', function () {
         document.getElementById('form').classList.toggle('form-active')
     })
-
+    // 给每个的修改按钮绑定事件
     var changes = document.getElementsByClassName('change')
     var currentCompet = ''
     for (var i = 0, len = changes.length; i < len; i++) {
@@ -57,25 +59,39 @@
                 document.getElementById('form2').classList.remove('form-active')
             }
             currentCompet = this.getAttribute('data-id')
-            document.getElementById('form2').setAttribute('data-action', '/manage/competitions/' + this.getAttribute('data-id'))
+            document.getElementById('form2').setAttribute('data-id', this.getAttribute('data-id'))
             var index = this.getAttribute('data-index')
-            var competitionName = document.getElementsByClassName('competition-name')[index].innerText
-            var competitionIntro = document.getElementsByClassName('competition-introduction')[index].innerText
-            document.getElementById('changename').value = competitionName
-            document.getElementById('changeintro').value = competitionIntro
+            var hostName = document.getElementsByClassName('host-name')[index].innerText
+            document.getElementById('changename').value = hostName
             document.getElementById('form2').setAttribute('data-id', this.getAttribute('data-id'))
         })
     }
+    // 给每个删除按钮绑定事件
+    $('.delete').click(function(){
+        var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/hosts/'
+        + this.getAttribute('data-id')
+        $.ajax({
+            url: url,
+            type: 'delete',
+            success: function () {
+                window.location.reload()
+            },
+            error: function () {
+                console.log('删除失败')
+            }
+        })
+    })
     // 提交修改监听
     document.getElementById('putchange').addEventListener('click', function () {
         var data = {
             name: document.getElementById('changename').value,
-            introduction: document.getElementById('changeintro').value
+            password: document.getElementById('changepw').value,
+            repassword:document.getElementById('changerepw').value
         }
-        var url = document.getElementById('form2').getAttribute('data-action')
-        console.log(url)
+        var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/hosts/'
+        + document.getElementById('form2').getAttribute('data-id')
         $.ajax({
-            url: '/manage/competitions/5960ddbf6dc8187b9c22af11',
+            url: url,
             type: 'put',
             data: data,
             success: function () {
@@ -86,6 +102,8 @@
             }
         })
     })
+
+    $('')
 </script>
 
 <%- include('footer') -%>

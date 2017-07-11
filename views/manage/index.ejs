@@ -73,7 +73,7 @@
             document.getElementById('add').addEventListener('click', function () {
                 document.getElementById('form').classList.toggle('form-active')
             })
-
+            // 给每个的修改按钮绑定事件
             var changes = document.getElementsByClassName('change')
             var currentCompet = ''
             for (var i = 0, len = changes.length; i < len; i++) {
@@ -85,7 +85,7 @@
                         document.getElementById('form2').classList.remove('form-active')
                     }
                     currentCompet = this.getAttribute('data-id')
-                    document.getElementById('form2').setAttribute('data-action', '/manage/competitions/' + this.getAttribute('data-id'))
+                    document.getElementById('form2').setAttribute('data-action', '/api/competitions/' + this.getAttribute('data-id'))
                     var index = this.getAttribute('data-index')
                     var competitionName = document.getElementsByClassName('competition-name')[index].innerText
                     var competitionIntro = document.getElementsByClassName('competition-introduction')[index].innerText
@@ -100,10 +100,8 @@
                     name: document.getElementById('changename').value,
                     introduction: document.getElementById('changeintro').value
                 }
-                var url = document.getElementById('form2').getAttribute('data-action')
-                console.log(url)
                 $.ajax({
-                    url: '/manage/competitions/5960ddbf6dc8187b9c22af11',
+                    url: document.getElementById('form2').getAttribute('data-action'),
                     type: 'put',
                     data: data,
                     success: function () {
