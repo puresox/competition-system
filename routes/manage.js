@@ -215,11 +215,15 @@ router.post('/competitions/:competitionId/raters', checkLogin, checkAdmin, (req,
 router.post('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const name = req.fields.name;
+  const value = req.fields.value;
 
   // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
+    }
+    if (!(typeof value === 'number')) {
+      throw new Error('分值请输入数字');
     }
     if (!competitionId) {
       throw new Error('无属于的比赛');
@@ -232,6 +236,8 @@ router.post('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, 
   itemModels.create({
     // 评分项名称
     name,
+    // 分值
+    value,
     // 所属比赛Id
     competition: competitionId,
   }, (err) => {

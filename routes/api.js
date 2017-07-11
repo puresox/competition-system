@@ -15,7 +15,7 @@ router.put('/competitions/:competitionId', checkLogin, checkAdmin, (req, res) =>
   const name = req.fields.name;
   const introduction = req.fields.introduction;
 
-    // 校验参数
+  // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
@@ -49,7 +49,7 @@ router.put('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin,
   const password = req.fields.password;
   const repassword = req.fields.repassword;
 
-    // 校验参数
+  // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
@@ -71,9 +71,9 @@ router.put('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin,
     $set: {
       name,
       pw: crypto
-                .createHash('sha256')
-                .update(password)
-                .digest('hex'),
+        .createHash('sha256')
+        .update(password)
+        .digest('hex'),
     },
   }, (error) => {
     if (error) {
@@ -92,7 +92,7 @@ router.put('/competitions/:competitionId/raters/:raterId', checkLogin, checkAdmi
   const password = req.fields.password;
   const repassword = req.fields.repassword;
 
-    // 校验参数
+  // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
@@ -114,9 +114,9 @@ router.put('/competitions/:competitionId/raters/:raterId', checkLogin, checkAdmi
     $set: {
       name,
       pw: crypto
-                .createHash('sha256')
-                .update(password)
-                .digest('hex'),
+        .createHash('sha256')
+        .update(password)
+        .digest('hex'),
     },
   }, (error) => {
     if (error) {
@@ -132,11 +132,15 @@ router.put('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmin,
   const competitionId = req.params.competitionId;
   const itemId = req.params.itemId;
   const name = req.fields.name;
+  const value = req.fields.value;
 
-    // 校验参数
+  // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
+    }
+    if (!(typeof value === 'number')) {
+      throw new Error('分值请输入数字');
     }
   } catch (e) {
     return res.send({ status: 'error', message: e.message });
@@ -148,6 +152,7 @@ router.put('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmin,
   }, {
     $set: {
       name,
+      value,
     },
   }, (error) => {
     if (error) {
@@ -165,19 +170,19 @@ router.put('/competitions/:competitionId/participants/:participantId', checkLogi
   const name = req.fields.name;
   const introduction = req.fields.introduction;
   const logo = req
-        .files
-        .logo
-        .path
-        .split(path.sep)
-        .pop();
+    .files
+    .logo
+    .path
+    .split(path.sep)
+    .pop();
   const report = req
-        .files
-        .report
-        .path
-        .split(path.sep)
-        .pop();
+    .files
+    .report
+    .path
+    .split(path.sep)
+    .pop();
 
-    // 校验参数
+  // 校验参数
   try {
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
@@ -192,7 +197,7 @@ router.put('/competitions/:competitionId/participants/:participantId', checkLogi
       throw new Error('缺少项目报告书');
     }
   } catch (e) {
-        // 注册失败，异步删除上传文件
+    // 注册失败，异步删除上传文件
     fs.unlink(req.files.logo.path);
     fs.unlink(req.files.report.path);
     return res.send({ status: 'error', message: e.message });
@@ -219,8 +224,8 @@ router.put('/competitions/:competitionId/participants/:participantId', checkLogi
           fs.unlink(req.files.report.path);
           res.send({ status: 'error', message: error });
         } else {
-          fs.unlink(participant.logo);
-          fs.unlink(participant.report);
+          fs.unlink(`public/competition/${participant.logo}`);
+          fs.unlink(`public/competition/${participant.report}`);
           res.send({ status: 'success', message: `/manage/competitions/${competitionId}/participants` });
         }
       });
@@ -228,11 +233,51 @@ router.put('/competitions/:competitionId/participants/:participantId', checkLogi
   });
 });
 
-// DELETE /api/competitions router.delete('/competitions', checkLogin,
-// checkAdmin, (req, res) => {   competitionModels.find({}, (err, competitions)
-// => {     req.flash('error', err);     res.render('manage/index', {
-// competitions });   }); }); DELETE
-// /api/competitions/:competitionId/hosts/:hostId
+// DELETE /api/competitions
+router.delete('/competitions/:competitionId', checkLogin, checkAdmin, (req, res, next) => {
+  const competitionId = req.params.competitionId;
+
+  Promise.all([
+    userModels
+      .remove({ competition: competitionId })
+      .exec(),
+    itemModels
+      .remove({ competition: competitionId })
+      .exec(),
+  ])
+  .then(() => {
+    participantModels
+      .find({ competition: competitionId })
+      .exec();
+  })
+  .then((err, participants) => {
+    if (err) {
+      res.send({ status: 'error', message: err });
+    } else {
+      participants.forEach((participant) => {
+        fs.unlink(`public/competition/${participant.logo}`);
+        fs.unlink(`public/competition/${participant.report}`);
+
+        participantModels
+          .remove({ _id: participant._id, competition: competitionId })
+          .exec();
+      });
+    }
+  })
+  .then(() => {
+    competitionModels
+      .remove({ _id: competitionId })
+      .exec();
+  })
+  .then(() => {
+    res.send({ status: 'success', message: '/manage/competitions' });
+  })
+  .catch((error) => {
+    res.send({ status: 'error', message: error });
+  });
+});
+
+// DELETE /api/competitions/:competitionId/hosts/:hostId
 router.delete('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const hostId = req.params.hostId;
@@ -295,8 +340,8 @@ router.delete('/competitions/:competitionId/participants/:participantId', checkL
     if (err) {
       res.send({ status: 'error', message: err });
     } else {
-      fs.unlink(participant.logo);
-      fs.unlink(participant.report);
+      fs.unlink(`public/competition/${participant.logo}`);
+      fs.unlink(`public/competition/${participant.report}`);
 
       participantModels.remove({
         _id: participantId,
