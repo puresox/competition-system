@@ -139,7 +139,7 @@ router.put('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmin,
     if (!(name.length >= 1 && name.length <= 30)) {
       throw new Error('名字请限制在 1-30 个字符');
     }
-    if (!(typeof value === 'number')) {
+    if (!(Number(value) > 0 && Number(value) <= 100)) {
       throw new Error('分值请输入数字');
     }
   } catch (e) {
