@@ -33,11 +33,11 @@ router.post('/raterScore', (req, res, next) => {
 });
 
 router.get('/judges', (req, res, next) => {
-  res.render('score/index_judges')
-})
+  res.render('score/index_judges');
+});
 
 router.get('/refer', (req, res, next) => {
-  res.render('score/index_referee')
-})
+  res.render('score/index_referee');
+});
 
 module.exports = router;

@@ -19,6 +19,7 @@ router.post('/', checkNotLogin, (req, res) => {
 
   userModels
     .findOne({ name })
+    .populate('competition')
     .exec((err, user) => {
       if (err) {
         req.flash('error', `登录失败：${err}`);
