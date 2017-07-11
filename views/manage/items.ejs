@@ -71,7 +71,7 @@
     }
     // 给每个删除按钮绑定事件
     $('.delete').click(function(){
-        var url = '/api/items/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/raters/'
+        var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/items/'
         + this.getAttribute('data-id')
         $.ajax({
             url: url,
@@ -88,9 +88,9 @@
     document.getElementById('putchange').addEventListener('click', function () {
         var data = {
             name: document.getElementById('changename').value,
-            value: document.getElementById('changeintro').value
+            value: document.getElementById('changevalue').value
         }
-        var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/hosts/'
+        var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/items/'
         + document.getElementById('form2').getAttribute('data-id')
         $.ajax({
             url: url,
