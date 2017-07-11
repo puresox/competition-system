@@ -126,11 +126,24 @@ body {
 }
 
 .form>input:last-child {
-    line-height: 16px;
+    /*line-height: 16px;*/
     text-align: center;
     cursor: pointer;
     color: white;
     background-color: #33505F;
+    font-size: 14px;
+    border: none;
+    letter-spacing: 2em;
+}
+
+.form>button {
+    /*line-height: 16px;*/
+    height: 2em;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    background-color: #33505F;
+    font-size: 14px;
     border: none;
     letter-spacing: 2em;
 }

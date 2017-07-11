@@ -51,6 +51,111 @@ a {
 }
 
 .main {
+    display: flex;
+    flex-direction: column;
     flex: 1;
     height: 100%;
+}
+
+.main-hd {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 2em;
+    box-sizing: border-box;
+    padding: 0 2em;
+    background-color: #33505F;
+    font-size: 20px;
+}
+
+#add {
+    width: 3.5em;
+    margin-left: auto;
+    color: white;
+    cursor: pointer;
+    transition: all .5s;
+}
+
+#add:hover {
+    background-color: #4F6D7D;
+}
+
+.form {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    position: relative;
+    width: 100%;
+    height: 8em;
+    margin-bottom: 1em;
+    padding: 0 5em;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px #999;
+}
+
+.form-active {
+    display: flex;
+}
+
+.form>input {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    width: 100%;
+    height: 2em;
+    border: none;
+    box-sizing: border-box;
+    border-bottom: 1px solid #3C8541;
+    text-decoration: none;
+    outline: none;
+}
+
+.form>input:last-child {
+    /*line-height: 16px;*/
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    background-color: #33505F;
+    font-size: 14px;
+    border: none;
+    letter-spacing: 2em;
+}
+
+.form>button {
+    /*line-height: 16px;*/
+    height: 2em;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    background-color: #33505F;
+    font-size: 14px;
+    border: none;
+    letter-spacing: 2em;
+}
+
+.main-list {
+    flex: 1;
+    width: 100%;
+    overflow: auto;
+}
+
+.competition {
+    width: 100%;
+    padding: 0 2em;
+}
+
+.competition tr {
+    height: 2em;
+}
+
+.competition td {
+    text-align: center;
+}
+
+.competition td a {
+    display: inline-block;
+    width: 40%;
+    height: 100%;
+    background-color: #33505F;
+    color: white;
 }
