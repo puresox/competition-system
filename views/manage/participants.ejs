@@ -7,21 +7,27 @@
             <i class="iconfont">&#xe61b;</i>
         </div>
     </div>
-    <form id="form" class="form" method="post">
+    <form id="form" class="form" method="post" style="height: 20em" enctype="multipart/form-data">
         <input type="text" name="name" value="" placeholder="参赛作品">
-        <input type="text" name="password" value="" placeholder="主持人密码">
-        <input type="submit" name="" value="添加主持人">
+        <textarea name="introduction" placeholder="简介"></textarea>
+        <input type="file" name="logo" value="">
+        <input type="file" name="report" value="">
+        <input type="submit" name="report" value="添加参赛队伍">
     </form>
     <div id="form2" class="form" data-action="">
         <input id="changename" type="text" name="name" value="" placeholder="参赛作品">
-        <input id="changeintro" type="text" name="password" value="" placeholder="主持人密码">
+        <textarea name="introduction" placeholder="简介"></textarea>
+        <input type="file" name="logo" value="">
+        <input type="file" name="report" value="">
         <button id="putchange">提交</button>
     </div>
      <div class="main-list">
         <table class="competition">
             <thead>
                 <tr>
-                    <th>主持人账号</th>
+                    <th>参赛项目</th>
+                    <th>简介</th>
+                    <th>头像</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -31,12 +37,18 @@
                         <td class="participant-name">
                             <%= participant.name %>
                         </td>
+                        <td class="participant-introduction">
+                            <%= participant.introduction %>
+                        </td>
+                        <td class="participant-logo">
+                            <img src="/competition/<%= participant.logo %>" alt="获取图片失败">
+                        </td>
                         <td>
                             <a href="#" data-id="<%= participant._id %>" data-index="<%= i %>" class="change">修改</a>
                             <a href="">删除</a>
                         </td>
                     </tr>
-                    <% }) %>
+                <% }) %>
             </tbody>
         </table>
     </div>
