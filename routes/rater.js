@@ -4,7 +4,7 @@ const router = require('express').Router();
 
 // GET /enroll
 router.get('/', (req, res, next) => {
-  res.render('index');
+  res.render('rater/index');
 });
 
 module.exports = router;

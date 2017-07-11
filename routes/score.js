@@ -32,12 +32,4 @@ router.post('/raterScore', (req, res, next) => {
     .catch();
 });
 
-router.get('/judges', (req, res, next) => {
-  res.render('score/index_judges')
-})
-
-router.get('/refer', (req, res, next) => {
-  res.render('score/index_referee')
-})
-
 module.exports = router;
