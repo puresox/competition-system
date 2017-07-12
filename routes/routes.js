@@ -1,15 +1,15 @@
-const enroll = require('./enroll');
-const score = require('./score');
-const index = require('./index');
 const signup = require('./signup');
 const signin = require('./signin');
 const signout = require('./signout');
-const draw = require('./draw');
+const index = require('./index');
 const manage = require('./manage');
 const rater = require('./rater');
 const host = require('./host');
 const screen = require('./screen');
-const api = require('./api');
+const apiCompetitions = require('./api/competitions');
+const apiHosts = require('./api/hosts');
+const apiRaters = require('./api/raters');
+const apiScreen = require('./api/screen');
 
 module.exports = (app) => {
   app.get('/', (req, res) => {
@@ -22,14 +22,9 @@ module.exports = (app) => {
   app.use('/signin', signin);
   // 登出
   app.use('/signout', signout);
-  // 报名
-  app.use('/enroll', enroll);
-  // 评分
-  app.use('/score', score);
+
   // 主页
   app.use('/index', index);
-  // 抽签
-  app.use('/draw', draw);
   // 后台管理
   app.use('/manage', manage);
   // 大屏幕
@@ -38,8 +33,15 @@ module.exports = (app) => {
   app.use('/rater', rater);
   // 主持人
   app.use('/host', host);
-  // api
-  app.use('/api', api);
+
+  // api/competition
+  app.use('/api/competitions', apiCompetitions);
+  // api/host
+  app.use('/api/hosts', apiHosts);
+  // api/rater
+  app.use('/api/raters', apiRaters);
+  // api/screen
+  app.use('/api/screen', apiScreen);
 
   // 404 page
   app.use((req, res) => {

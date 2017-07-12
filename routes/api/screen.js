@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-// GET /screen
+// GET /api/screen
 router.get('/', (req, res) => {
   const competition = req.session.user.competition;
   res.render('screen/index', { competition });

@@ -2,15 +2,15 @@ const router = require('express').Router();
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const checkLogin = require('../middlewares/check').checkLogin;
-const checkAdmin = require('../middlewares/check').checkAdmin;
-const competitionModels = require('../lib/mongo').Competition;
-const userModels = require('../lib/mongo').User;
-const itemModels = require('../lib/mongo').Item;
-const participantModels = require('../lib/mongo').Participant;
+const checkLogin = require('../../middlewares/check').checkLogin;
+const checkAdmin = require('../../middlewares/check').checkAdmin;
+const competitionModels = require('../../lib/mongo').Competition;
+const userModels = require('../../lib/mongo').User;
+const itemModels = require('../../lib/mongo').Item;
+const participantModels = require('../../lib/mongo').Participant;
 
 // PUT /api/competitions/:competitionId
-router.put('/competitions/:competitionId', checkLogin, checkAdmin, (req, res) => {
+router.put('/:competitionId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const name = req.fields.name;
   const introduction = req.fields.introduction;
@@ -42,7 +42,7 @@ router.put('/competitions/:competitionId', checkLogin, checkAdmin, (req, res) =>
 });
 
 // PUT /api/competitions/:competitionId/hosts/:hostId
-router.put('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) => {
+router.put('/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const hostId = req.params.hostId;
   const name = req.fields.name;
@@ -85,7 +85,7 @@ router.put('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin,
 });
 
 // PUT /api/competitions/:competitionId/raters/:raterId
-router.put('/competitions/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res) => {
+router.put('/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const raterId = req.params.raterId;
   const name = req.fields.name;
@@ -128,7 +128,7 @@ router.put('/competitions/:competitionId/raters/:raterId', checkLogin, checkAdmi
 });
 
 // PUT /api/competitions/:competitionId/items/:itemId
-router.put('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) => {
+router.put('/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const itemId = req.params.itemId;
   const name = req.fields.name;
@@ -164,7 +164,7 @@ router.put('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmin,
 });
 
 // PUT /api/competitions/:competitionId/participants/:participantId
-router.put('/competitions/:competitionId/participants/:participantId', checkLogin, checkAdmin, (req, res) => {
+router.put('/:competitionId/participants/:participantId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const participantId = req.params.participantId;
   const name = req.fields.name;
@@ -234,7 +234,7 @@ router.put('/competitions/:competitionId/participants/:participantId', checkLogi
 });
 
 // DELETE /api/competitions
-router.delete('/competitions/:competitionId', checkLogin, checkAdmin, (req, res, next) => {
+router.delete('/:competitionId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
 
   Promise.all([
@@ -278,7 +278,7 @@ router.delete('/competitions/:competitionId', checkLogin, checkAdmin, (req, res,
 });
 
 // DELETE /api/competitions/:competitionId/hosts/:hostId
-router.delete('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) => {
+router.delete('/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const hostId = req.params.hostId;
 
@@ -295,7 +295,7 @@ router.delete('/competitions/:competitionId/hosts/:hostId', checkLogin, checkAdm
 });
 
 // DELETE /api/competitions/:competitionId/raters/:raterId
-router.delete('/competitions/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res) => {
+router.delete('/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const raterId = req.params.raterId;
 
@@ -312,7 +312,7 @@ router.delete('/competitions/:competitionId/raters/:raterId', checkLogin, checkA
 });
 
 // DELETE /api/competitions/:competitionId/items/:itemId
-router.delete('/competitions/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) => {
+router.delete('/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const itemId = req.params.itemId;
 
@@ -329,7 +329,7 @@ router.delete('/competitions/:competitionId/items/:itemId', checkLogin, checkAdm
 });
 
 // DELETE /api/competitions/:competitionId/participants/:participantId
-router.delete('/competitions/:competitionId/participants/:participantId', checkLogin, checkAdmin, (req, res) => {
+router.delete('/:competitionId/participants/:participantId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const participantId = req.params.participantId;
 
