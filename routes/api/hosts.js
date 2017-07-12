@@ -22,18 +22,51 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
       participant,
     ]))
     .then(([
-      participants,
-      {
+      participants, {
         status: score,
       },
       status,
       participant,
     ]) => {
-      res.send({ status: 'success', message: { participants, status, participant, score } });
+      res.send({
+        status: 'success',
+        message: {
+          participants,
+          status,
+          participant,
+          score,
+        },
+      });
     })
     .catch((error) => {
       res.send({ status: 'error', message: error });
     });
+});
+
+// POST /api/hosts/draw
+router.post('/draw', checkLogin, checkHost, (req, res) => {
+  const competitionId = req.session.user.competition;
+  const participants = req.fields.participants;
+
+  participants.forEach((participant, i) => {
+    participantModels.update({
+      _id: participant.id,
+    }, {
+      order: participant.order,
+    }, (err) => {
+      if (err) {
+        return res.send({ status: 'error', message: err });
+      } else if (i === participants.length - 1) {
+        competitionModels.update({
+          _id: competitionId,
+        }, {
+          $set: {
+            status: 1,
+          },
+        }, error => res.send({ status: 'error', message: error }));
+      }
+    });
+  });
 });
 
 module.exports = router;
