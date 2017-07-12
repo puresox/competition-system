@@ -245,36 +245,30 @@ router.delete('/:competitionId', checkLogin, checkAdmin, (req, res) => {
       .remove({ competition: competitionId })
       .exec(),
   ])
-  .then(() => {
-    participantModels
-      .find({ competition: competitionId })
-      .exec();
-  })
-  .then((err, participants) => {
-    if (err) {
-      res.send({ status: 'error', message: err });
-    } else {
-      participants.forEach((participant) => {
+    .then(() => participantModels.find({ competition: competitionId }).exec())
+    .then((participants) => {
+      participants.forEach((participant, i) => {
         fs.unlink(`public/competition/${participant.logo}`);
         fs.unlink(`public/competition/${participant.report}`);
+
+        if (i === participants.length - 1) {
+          return participantModels
+            .remove({ _id: participant._id, competition: competitionId })
+            .exec();
+        }
 
         participantModels
           .remove({ _id: participant._id, competition: competitionId })
           .exec();
       });
-    }
-  })
-  .then(() => {
-    competitionModels
-      .remove({ _id: competitionId })
-      .exec();
-  })
-  .then(() => {
-    res.send({ status: 'success', message: '/manage/competitions' });
-  })
-  .catch((error) => {
-    res.send({ status: 'error', message: error });
-  });
+    })
+    .then(() => competitionModels.remove({ _id: competitionId }).exec())
+    .then(() => {
+      res.send({ status: 'success', message: '/manage/competitions' });
+    })
+    .catch((error) => {
+      res.send({ status: 'error', message: error });
+    });
 });
 
 // DELETE /api/competitions/:competitionId/hosts/:hostId

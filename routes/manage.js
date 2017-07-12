@@ -108,7 +108,7 @@ router.post('/competitions', checkLogin, checkAdmin, (req, res) => {
     name,
     // 比赛简介
     introduction,
-    // 比赛状态 0 TO DO;1 DOING;2 DONE
+    // 比赛状态 0 比赛未开始;1 抽签;2 准备开始;3 比赛进行中;4 比赛结束
     status: 0,
   }, (err) => {
     if (err) {

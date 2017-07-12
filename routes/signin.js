@@ -36,6 +36,7 @@ router.post('/', checkNotLogin, (req, res) => {
               res.redirect('back');
             } else if (pw === admin.pw) {
               req.session.user = {
+                id: admin._id,
                 name: admin.name,
                 role: admin.role,
               };
@@ -48,6 +49,7 @@ router.post('/', checkNotLogin, (req, res) => {
           });
       } else if (pw === user.pw) {
         req.session.user = {
+          id: user._id,
           name: user.name,
           role: user.role,
           competition: user.competition,
