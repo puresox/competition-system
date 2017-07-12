@@ -52,8 +52,16 @@ router.post('/', checkNotLogin, (req, res) => {
           role: user.role,
           competition: user.competition,
         };
-        req.flash('success', '登录成功');
-        res.redirect('/');
+        if (user.role === 1) {
+          req.flash('success', '登录成功');
+          res.redirect('/host');
+        } else if (user.role === 2) {
+          req.flash('success', '登录成功');
+          res.redirect('/rater');
+        } else {
+          req.flash('error', '身份认证失败');
+          res.redirect('back');
+        }
       } else {
         req.flash('error', '用户名或密码错误');
         res.redirect('back');
