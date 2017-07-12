@@ -13,19 +13,23 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
     .exec()
     .then(({ status, participant }) => Promise.all([
       participantModels
+        .find({ competition: competitionId })
+        .exec(),
+      participantModels
         .findOne({ order: participant, competition: competitionId })
         .exec(),
       status,
       participant,
     ]))
     .then(([
+      participants,
       {
         status: score,
       },
       status,
       participant,
     ]) => {
-      res.send({ status, participant, score });
+      res.send({ participants, status, participant, score });
     })
     .catch((error) => {
       res.send({ status: 'error', message: error });
