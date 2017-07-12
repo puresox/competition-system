@@ -110,6 +110,8 @@ router.post('/competitions', checkLogin, checkAdmin, (req, res) => {
     introduction,
     // 比赛状态 0 比赛未开始;1 抽签;2 准备开始;3 比赛进行中;4 比赛结束
     status: 0,
+    // 正在进行的参赛作品抽签序号
+    participant: 0,
   }, (err) => {
     if (err) {
       req.flash('err', err);
