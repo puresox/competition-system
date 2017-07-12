@@ -29,7 +29,7 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
       status,
       participant,
     ]) => {
-      res.send({ participants, status, participant, score });
+      res.send({ status: 'success', message: { participants, status, participant, score } });
     })
     .catch((error) => {
       res.send({ status: 'error', message: error });
