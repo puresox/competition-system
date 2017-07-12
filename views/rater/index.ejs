@@ -9,6 +9,7 @@
         <link rel="stylesheet" type="" href="../css/rater.css">
         <script src="../js/vue.js"></script>
         <script src="../js/vue-router.js"></script>
+        <script src="../js/picker.min.js"></script>
     </head>
 
     <body>
@@ -24,22 +25,49 @@
             <p>{{ data }}</p>
         </template>-->
         <div id="spa" class="container">
-            <div class="header">
-                <p>
-                    <template v-for="route in routes">
-                        <router-link v-bind:to="{ path:route.url }">{{ route.name }}</router-link>
-                    </template>
-                </p>
-            </div>
-            <router-view class="main" v-bind:players="players"></router-view>
+            <div class="header" v-if="nav"></div>
+            <router-view class="main" v-bind:players="players" v-bind:pitems="items"></router-view>
         </div>
-        <template id="test">
+        <template id="load">
             <div>
-                <div class="min-div">
-                    {{ playerData }}
+                <div class="main-loading">
+                    <h1>加载中...</h1>
                 </div>
             </div>
-        </template>-->
+        </template>
+        <template id="wait">
+            <div>
+                <div class="main-waiting">
+                    <h1>等待抽签完成...</h1>
+                </div>
+            </div>
+        </template>
+        <template id="player">
+            <div>
+                <router-link v-bind:to="prePlayer" class="pre">
+                    <i class="iconfont">&#xe600;</i>
+                </router-link>
+                <div class="main-players">
+                    <h1>{{ order }}号</h1>
+                    <div>
+                        <h3>这里或许要放个头像</h3>
+                        <h3>{{ playerData.name }}</h3>
+                        <h3>{{ playerData.intro }}</h3>
+                    </div>
+                    <div class="items">
+                        <template v-for="(item, index) in items">
+                            <div class="item" v-bind:data-index="index" v-on:click="select(index)">
+                                <span>{{ item.name }}</span>
+                                <span>0</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <router-link v-bind:to="nextPlayer" class="next">
+                    <i class="iconfont">&#xe601;</i>
+                </router-link>
+            </div>
+        </template>
         <script src="../js/rater.js"></script>
     </body>
 

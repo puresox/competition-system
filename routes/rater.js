@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const checkLogin = require('../middlewares/check').checkLogin;
-const checkHost = require('../middlewares/check').checkHost;
+const checkRater = require('../middlewares/check').checkRater;
 
 // GET /rater
-router.get('/', checkLogin, checkHost, (req, res) => {
+router.get('/', checkLogin, checkRater, (req, res) => {
   const competition = req.session.user.competition;
   res.render('rater/index', { competition });
 });
