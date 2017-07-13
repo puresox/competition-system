@@ -11,6 +11,7 @@
         <script src="../js/vue-router.js"></script>
         <script src="../js/picker.min.js"></script>
         <script src="../js/jquery-3.2.0.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
     </head>
 
     <body>
@@ -53,15 +54,18 @@
                     <div>
                         <h3>这里或许要放个头像</h3>
                         <h3>{{ playerData.name }}</h3>
-                        <h3>{{ playerData.intro }}</h3>
+                        <h3>{{ playerData.introduction }}</h3>
                     </div>
                     <div class="items">
                         <template v-for="(item, index) in items">
                             <div class="item" v-bind:data-index="index" v-on:click="select(index)">
                                 <span>{{ item.name }}</span>
-                                <span>0</span>
+                                <span>{{ playerData.scores[index].score }}</span>
                             </div>
                         </template>
+                    </div>
+                    <div class="submit" v-on:click="submit">
+                        提交
                     </div>
                 </div>
                 <router-link v-bind:to="nextPlayer" class="next">

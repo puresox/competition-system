@@ -16,7 +16,7 @@ const player = {
     data: function () {
         return {
             playerData: '',
-            order: 1,
+            order: 0,
             items: [],
             picker: ''
         }
@@ -35,6 +35,7 @@ const player = {
     created: function () {
         this.playerData = this.players[this.$route.params.order - 1]
         this.items = this.pitems
+        this.order = this.$route.params.order
         // 生成筛选器
         let data = []
         for (let i = 0; i < 100; i++) {
@@ -72,9 +73,15 @@ const player = {
             let picker = this.picker
             let func = this.picker.refillColumn
             let item = this.items[index].name
+            // 显示筛选器并重新填东西
             this.picker.show(function () {
                 $('.picker-title').text(item)
                 func.call(picker, 0, data)
+            })
+        },
+        submit: function () {
+            $.ajax({
+
             })
         }
     }
@@ -96,15 +103,24 @@ var vue = new Vue({
     router,
     el: '#spa',
     data: {
-        message: '',
+        // 路由
         routes: [],
+        // 参赛项目
         players: [],
-        // 当前比赛进程的序号
-        order: 0,
-        // 当前浏览器视图所在的序号
+        // 评分项
+        items: [],
+        // 分数
+        scores: [],
+        // 当前进行到的项目的序号
+        participant: 0,
+        // 当前比赛状态
+        status: 0,
+        // 当前浏览器视图所在的序号（估计没用）
         viewOrder: 0,
-        nav: false,
-        items: []
+        // 预留, 暂时没用
+        message: '',
+        // 显示导航栏(暂时没用)
+        nav: false
     },
     computed: {
     },
@@ -117,58 +133,72 @@ var vue = new Vue({
             type: 'get',
             success: function (msg) {
                 console.log(msg)
+                for (let i = 0, len = msg.message.participants.length; i < len; i++) {
+                    // 绑定获取到的数据到Vue实例的players上
+                    self.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
+                    // 设置每个参赛项目的url
+                    self.routes[msg.message.participants[i].order - 1] = {
+                        name: msg.message.participants[i].name,
+                        url: '/player/' + msg.message.participants[i].order
+                    }
+                }
+                // 获取评分项
+                self.items = msg.message.items
+                // 初始化每个player的scores
+                for (let i = 0, len = self.players.length; i < len; i++) {
+                    self.players[i].scores = []
+                    for (let i2 = 0, len2 = self.items.length; i2 < len2; i2++) {
+                        self.players[i].scores[i2] = {
+                            item: self.items[i2]._id,
+                            score: 0
+                        }
+                    }
+                }
+                let scores = msg.message.scores
+                // 获取选手成绩(神奇的后端居然没直接放进participants里要前端自己放!)
+                for (let i = 0, len = scores.length; i < len; i++) {
+                    // 遍历所有成绩并匹配参赛作品
+                    for (let i2 = 0, len2 = self.players.length; i2 < len2 && self.players[i2]._id == scores[i].participant; i2++) {
+                        // 匹配对应player中的成绩项
+                        for (let i3 = 0, len3 = self.players[i2].scores.length; i3 < len3; i3++) {
+                            for (let i4 = 0, len4 = scores[i].scores.length; i4 < len4 && self.players[i2].scores[i3].item == scores[i].scores[i4].item; i4++) {
+                                self.players[i2].scores[i3].score = scores[i].scores[i4].score
+                            }
+                        }
+                    }
+                }
+                // 获取当前比赛进程
+                // 并跳转到相应页面
+                self.status = msg.message.status
+                self.participant = msg.message.participant
+                switch (self.status) {
+                    case -1:
+                        router.push('/')
+                        break
+                    case 0:
+                        // 未开始,等待抽签
+                        router.push('/wait')
+                        break
+                    case 1:
+                        // 抽签完了,主持人没点开始
+                        router.push('/wait')
+                        break
+                    case 2:
+                        // 比赛正式开始
+                        // 跳转到响应的选手页
+                        switch (self.participant) {
+                            default: router.push('/player/' + (self.participant + 1))
+                        }
+                        break
+                    case 3:
+                        // 比赛结束
+                        break
+                    default:
+                }
             },
             error: function (err) {
                 console.log(err)
             }
         })
-        // 假设这个是获取的选手数据
-        var data = [{
-            name: '小马智停',
-            intro: '小马物联网强无敌',
-            order: 2
-        }, {
-            name: '大棚',
-            intro: '智慧农业',
-            order: 3
-        }, {
-            name: '视翼VR',
-            intro: '斜对面',
-            order: 1
-        }]
-        // todo:不知道弃权的队伍会不会有序号，可能要加个判断
-        for (let i = 0, len = data.length; i < len; i++) {
-            // 绑定获取到的数据到Vue实例的data上
-            this.players[data[i].order - 1] = data[i]
-            // 设置每个参赛项目的url
-            this.routes[data[i].order - 1] = {
-                name: data[i].name,
-                url: '/player/' + data[i].order
-            }
-        }
-        // 获取评分项
-        this.items = [{
-            name: '团队协作',
-            value: 100
-        }, {
-            name: '作品创意',
-            value: 90
-        }, {
-            name: '商业价值',
-            value: 80
-        }]
-        // 获取当前比赛进程
-        // 并跳转到相应页面
-        this.viewOrder = this.order = 1
-        switch (this.order) {
-            case -1:
-                router.push('/')
-                break
-            case 0:
-                router.push('/wait')
-                break
-            default:
-                router.push('/player/' + this.order)
-        }
     }
 })
