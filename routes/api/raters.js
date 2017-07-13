@@ -67,6 +67,7 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
           status,
           participant,
           score,
+          scores,
           isscore,
         },
       });
