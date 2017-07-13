@@ -1,3 +1,4 @@
+var socket = io()
 // 加载组件
 const load = {
     props: ['load'],
@@ -110,6 +111,17 @@ var vue = new Vue({
     methods: {
     },
     created: function () {
+        var self = this
+        $.ajax({
+            url: '/api/raters/status',
+            type: 'get',
+            success: function (msg) {
+                console.log(msg)
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
         // 假设这个是获取的选手数据
         var data = [{
             name: '小马智停',
