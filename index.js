@@ -8,24 +8,12 @@ const routes = require('./routes/routes');
 const pkg = require('./package');
 const winston = require('winston');
 const expressWinston = require('express-winston');
+const socketio = require('./socketio');
 
 const app = express();
 const server = require('http').createServer(app);
-const io = require('socket.io').listen(server);
 
-// socket.io
-io.on('connection', (socket) => {
-  socket
-    .broadcast
-    .emit('hi');
-  io.emit('chat message', 'system:a user connected');
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
-  });
-  socket.on('disconnect', () => {
-    io.emit('chat message', 'system:user disconnected');
-  });
-});
+socketio(server);
 
 // 设置模板目录
 app.set('views', path.join(__dirname, 'views'));
@@ -43,7 +31,7 @@ app.use(session({
   cookie: {
     maxAge: config.session.maxAge, // 过期时间，过期后 cookie 中的 session id 自动删除
   },
-  store: new MongoStore({// 将 session 存储到 mongodb
+  store: new MongoStore({ // 将 session 存储到 mongodb
     url: config.mongodb, // mongodb 地址
   }),
 }));
@@ -58,21 +46,22 @@ app.use(require('express-formidable')({
 // 添加模板必需的三个变量
 app.use((req, res, next) => {
   res.locals.user = req.session.user;
-  res.locals.success = req.flash('success').toString();
-  res.locals.error = req.flash('error').toString();
+  res.locals.success = req
+    .flash('success')
+    .toString();
+  res.locals.error = req
+    .flash('error')
+    .toString();
   next();
 });
 
 // 正常请求的日志
 app.use(expressWinston.logger({
   transports: [
-    new (winston.transports.Console)({
-      json: true,
-      colorize: true,
-    }),
-    new winston.transports.File({
-      filename: 'logs/success.log',
-    }),
+    new (winston.transports.Console)({ json: true, colorize: true }),
+    new winston
+      .transports
+      .File({ filename: 'logs/success.log' }),
   ],
 }));
 // 路由
@@ -80,21 +69,18 @@ routes(app);
 // 错误请求的日志
 app.use(expressWinston.errorLogger({
   transports: [
-    new winston.transports.Console({
-      json: true,
-      colorize: true,
-    }),
-    new winston.transports.File({
-      filename: 'logs/error.log',
-    }),
+    new winston
+      .transports
+      .Console({ json: true, colorize: true }),
+    new winston
+      .transports
+      .File({ filename: 'logs/error.log' }),
   ],
 }));
 
 // error page
 app.use((err, req, res, next) => {
-  res.render('error', {
-    error: err,
-  });
+  res.render('error', { error: err });
 });
 
 if (module.parent) {
