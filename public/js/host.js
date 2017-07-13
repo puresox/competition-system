@@ -38,7 +38,17 @@ const random = {
                     participants: JSON.stringify(result)
                 },
                 success: function (msg) {
+                    // todo:
+                    // 1.判断成功
+                    // 2.只有收到错误返回才能再次点击
+
+                    // 发给父组件
                     self.$emit('test', result)
+                    // 发送socket到sever
+                    socket.emit('drawn', {
+                        data: 'draw ready'
+                    })
+                    console.log(msg)
                 },
                 error: function (err) {
                     console.log(err)
