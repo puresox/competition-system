@@ -60,6 +60,9 @@ router.post('/', checkNotLogin, (req, res) => {
         } else if (user.role === 2) {
           req.flash('success', '登录成功');
           res.redirect('/rater');
+        } else if (user.role === 3) {
+          req.flash('success', '登录成功');
+          res.redirect('/screen');
         } else {
           req.flash('error', '身份认证失败');
           res.redirect('back');
