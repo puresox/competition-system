@@ -8,7 +8,7 @@ router.get('/', checkLogin, checkRater, (req, res, next) => {
   const competition = req.session.user.competition;
 
   itemModels.find({
-    competition: competition._Id,
+    competition: competition._id,
   }).exec()
   .then((items) => {
     res.render('rater/index', { competition, items });
