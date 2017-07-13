@@ -1,3 +1,4 @@
+var socket = io()
 // 加载组件
 const load = {
     props: ['load'],
@@ -29,14 +30,15 @@ const random = {
                 }
                 defaultOrders.splice(index, 1)
             }
+            let self = this
             $.ajax({
                 url: '/api/hosts/draw',
                 type: 'post',
                 data: {
-                    participants: result
+                    participants: JSON.stringify(result)
                 },
                 success: function (msg) {
-                    console.log(msg)
+                    self.$emit('test', result)
                 },
                 error: function (err) {
                     console.log(err)
@@ -78,8 +80,8 @@ var vue = new Vue({
     computed: {
     },
     methods: {
-        add: function () {
-            console.log('解耦成功')
+        add: function (msg) {
+            console.log(msg)
         }
     },
     created: function () {
@@ -88,7 +90,11 @@ var vue = new Vue({
             url: '/api/hosts/status',
             type: 'get',
             success: function (data) {
-                // todo:1.判断success2.如果失败怎么办3.不知道弃权的队伍会不会有序号，可能要加个判断
+                // todo:
+                // 1.判断success
+                // 2.如果失败怎么办
+                // 3.不知道弃权的队伍会不会有序号，可能要加个判断
+                // 4.没有参赛队伍的情况
                 console.log(data)
                 // 绑定获取到的数据到Vue实例的data上
                 for (let i = 0, len = data.message.participants.length; i < len; i++) {
