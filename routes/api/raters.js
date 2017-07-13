@@ -7,47 +7,50 @@ const checkRater = require('../../middlewares/check').checkRater;
 
 // GET /api/raters/status
 router.get('/status', checkLogin, checkRater, (req, res) => {
-  const competitionId = req.session.user.competition;
+  const competitionId = req.session.user.competition._id;
   const raterId = req.session.user.id;
 
   competitionModels
     .findOne({ _id: competitionId })
     .exec()
-    .then(({ status, participant }) => Promise.all([
+    .then(({
+      status = 0,
+      participant = 0,
+    }) => Promise.all([
+      participantModels
+        .find({ competition: competitionId })
+        .exec(),
       participantModels
         .findOne({ order: participant, competition: competitionId })
         .exec(),
       status,
       participant,
     ]))
-    .then(([
-      {
-        _id: participantId,
-        status: score,
-      },
-      status,
-      participant,
-    ]) => Promise.all([
-      scoreModels
-        .find({ participant: participantId, competition: competitionId, rater: raterId })
-        .exec(),
-      status,
-      participant,
-      score,
-    ]))
-    .then(([
-      scores,
-      status,
-      participant,
-      score,
-    ]) => {
+    .then(([participants, participantScore, status, participant]) => {
+      let score = 0;
+      let participantId = '0';
+      if (participantScore) {
+        score = participantScore.status;
+        participantId = participantScore._id;
+      }
+      return Promise.all([
+        scoreModels
+          .find({ participant: participantId, competition: competitionId, rater: raterId })
+          .exec(),
+        participants,
+        status,
+        participant,
+        score,
+      ]);
+    })
+    .then(([scores, participants, status, participant, score]) => {
       let isscore;
       if (scores) {
         isscore = 1;
       } else {
         isscore = 0;
       }
-      res.send({ status, participant, score, isscore });
+      res.send({ participants, status, participant, score, isscore });
     })
     .catch((error) => {
       res.send({ status: 'error', message: error });
@@ -71,7 +74,8 @@ router.get('/raterScore', checkLogin, checkRater, (req, res) => {
 
 // POST /api/raters/raterScore
 router.post('/raterScore', checkLogin, checkRater, (req, res) => {
-  scoreModels.create({ size: 'small' })
+  scoreModels
+    .create({ size: 'small' })
     .then((score) => {
       res.render('score/index');
     })

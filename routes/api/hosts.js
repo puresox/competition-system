@@ -6,12 +6,15 @@ const participantModels = require('../../lib/mongo').Participant;
 
 // GET /api/hosts/status
 router.get('/status', checkLogin, checkHost, (req, res) => {
-  const competitionId = req.session.user.competition;
+  const competitionId = req.session.user.competition._id;
 
   competitionModels
     .findOne({ _id: competitionId })
     .exec()
-    .then(({ status, participant }) => Promise.all([
+    .then(({
+      status = 0,
+      participant = 0,
+    }) => Promise.all([
       participantModels
         .find({ competition: competitionId })
         .exec(),
@@ -21,13 +24,11 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
       status,
       participant,
     ]))
-    .then(([
-      participants, {
-        status: score,
-      },
-      status,
-      participant,
-    ]) => {
+    .then(([participants, participantScore, status, participant]) => {
+      let score = 0;
+      if (participantScore) {
+        score = participantScore.status;
+      }
       res.send({
         status: 'success',
         message: {
@@ -45,7 +46,7 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
 
 // POST /api/hosts/draw
 router.post('/draw', checkLogin, checkHost, (req, res) => {
-  const competitionId = req.session.user.competition;
+  const competitionId = req.session.user.competition._id;
   const participants = JSON.parse(req.fields.participants);
 
   participants.forEach((participant, i) => {
