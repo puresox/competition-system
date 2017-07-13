@@ -62,7 +62,7 @@ const player = {
             console.log(index)
             // 按照该项的最高分重新填充筛选器
             let data = []
-            for (let i = 0, len = 20; i < len; i++) {
+            for (let i = 0, len = this.items[index].value; i < len; i++) {
                 data[i] = {
                     text: (i + 1).toString(),
                     value: (i + 1)
@@ -70,10 +70,11 @@ const player = {
             }
             let picker = this.picker
             let func = this.picker.refillColumn
+            let item = this.items[index].name
             this.picker.show(function () {
+                $('.picker-title').text(item)
                 func.call(picker, 0, data)
             })
-            console.log(func)
         }
     }
 }

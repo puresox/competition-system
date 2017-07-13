@@ -9,23 +9,34 @@
         <link rel="stylesheet" type="" href="../css/host.css">
         <script src="../js/vue.js"></script>
         <script src="../js/vue-router.js"></script>
+        <script src="../js/jquery-3.2.0.min.js"></script>
     </head>
 
     <body>
-        <div id="demo">
-            <button v-on:click="show = !show">
-                Toggle
-            </button>
-            <transition name="fade">
-                <p v-if="show">hello</p>
-            </transition>
+        <div id="spa" class="container">
+            <router-view class="main" v-bind:players="players" v-on:test="add"></router-view>
         </div>
-        <div id="example-2">
-            <button @click="show = !show">Toggle show</button>
-            <transition name="bounce">
-                <p v-if="show">Look at me!</p>
-            </transition>
-        </div>
+        <template id="load">
+            <div>
+                <h1>正在加载</h1>
+            </div> 
+        </template>
+        <template id="random">
+            <div>
+                <div class="random">
+                    <div class="btn-random" v-on:click="getRandom">
+                        <i class="iconfont">&#xe62a;</i>
+                    </div>
+                    <div class="btn-begin" v-if="begin" v-on:click="beginMatch">开始比赛</div>
+                    <div class="btn-begin--disable" v-else>开始比赛</div>
+                </div>
+            </div>
+        </template>
+        <template id="matching">
+            <div>
+                
+            </div>
+        </template>
         <script src="../js/host.js"></script>
     </body>
 
