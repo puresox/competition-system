@@ -28,7 +28,7 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
     ]))
     .then(([participants, participantScore, status, participant]) => {
       let score = 0;
-      let participantId = '0';
+      let participantId = '000000000000000000000000';
       if (participantScore) {
         score = participantScore.status;
         participantId = participantScore._id;
@@ -44,11 +44,9 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
       ]);
     })
     .then(([scores, participants, status, participant, score]) => {
-      let isscore;
-      if (scores) {
+      let isscore = 0;
+      if (scores.length) {
         isscore = 1;
-      } else {
-        isscore = 0;
       }
       res.send({ participants, status, participant, score, isscore });
     })
