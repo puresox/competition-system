@@ -1,9 +1,11 @@
 const router = require('express').Router();
 const competitionModels = require('../../lib/mongo').Competition;
 const participantModels = require('../../lib/mongo').Participant;
+const checkLogin = require('../../middlewares/check').checkLogin;
+const checkScreen = require('../../middlewares/check').checkScreen;
 
 // GET /api/screen/status
-router.get('/status', (req, res) => {
+router.get('/status', checkLogin, checkScreen, (req, res) => {
   const competitionId = req.session.user.competition._id;
 
   competitionModels
@@ -27,11 +29,58 @@ router.get('/status', (req, res) => {
       if (participantScore) {
         score = participantScore.status;
       }
-      res.send({ participants, status, participant, score });
+      res.send({
+        status: 'success',
+        message: {
+          participants,
+          status,
+          participant,
+          score,
+        },
+      });
     })
     .catch((error) => {
       res.send({ status: 'error', message: error });
     });
+});
+
+// POST /api/screen/draw
+router.post('/draw', checkLogin, checkScreen, (req, res) => {
+  const competitionId = req.session.user.competition._id;
+  const participants = JSON.parse(req.fields.participants);
+
+  participants.forEach((participant, i) => {
+    participantModels.update({
+      _id: participant.id,
+    }, {
+      $set: {
+        order: participant.order,
+      },
+    })
+      .exec()
+      .then(() => {
+        if (i === participants.length - 1) {
+          return competitionModels.update({
+            _id: competitionId,
+          }, {
+            $set: {
+              status: 1,
+            },
+          })
+            .exec()
+            .then(() => participantModels.find({ competition: competitionId }).exec())
+            .then((orderedParticipants) => {
+              res.send({ status: 'success', message: orderedParticipants });
+            })
+            .catch((error) => {
+              res.send({ status: 'error', message: error });
+            });
+        }
+      })
+      .catch((err) => {
+        res.send({ status: 'error', message: err });
+      });
+  });
 });
 
 module.exports = router;

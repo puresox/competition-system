@@ -16,74 +16,99 @@ router.get('/', checkLogin, checkAdmin, (req, res) => {
 });
 
 // GET /manage/competitions
-router.get('/competitions', checkLogin, checkAdmin, (req, res) => {
-  competitionModels.find({}, (err, competitions) => {
-    req.flash('error', err);
-    res.render('manage/index', { competitions });
-  });
+router.get('/competitions', checkLogin, checkAdmin, (req, res, next) => {
+  competitionModels
+    .find({})
+    .exec()
+    .then((competitions) => {
+      res.render('manage/index', { competitions });
+    })
+    .catch(next);
 });
 
 // GET /manage/competitions/:competitionId/hosts
-router.get('/competitions/:competitionId/hosts', checkLogin, checkAdmin, (req, res) => {
+router.get('/competitions/:competitionId/hosts', checkLogin, checkAdmin, (req, res, next) => {
   const competitionId = req.params.competitionId;
 
   userModels.find({
     role: 1,
     competition: competitionId,
-  }, '_id name competition', (err, hosts) => {
-    req.flash('error', err);
-    res.render('manage/hosts', { hosts, competitionId });
-  });
+  }, '_id name competition')
+    .exec()
+    .then((hosts) => {
+      res.render('manage/hosts', { hosts, competitionId });
+    })
+    .catch(next);
 });
 
 // GET /manage/competitions/:competitionId/raters
-router.get('/competitions/:competitionId/raters', checkLogin, checkAdmin, (req, res) => {
+router.get('/competitions/:competitionId/raters', checkLogin, checkAdmin, (req, res, next) => {
   const competitionId = req.params.competitionId;
 
   userModels.find({
     role: 2,
     competition: competitionId,
-  }, '_id name competition', (err, raters) => {
-    req.flash('error', err);
-    res.render('manage/raters', { raters, competitionId });
-  });
+  }, '_id name competition')
+    .exec()
+    .then((raters) => {
+      res.render('manage/raters', { raters, competitionId });
+    })
+    .catch(next);
+});
+
+// GET /manage/competitions/:competitionId/screen
+router.get('/competitions/:competitionId/screen', checkLogin, checkAdmin, (req, res, next) => {
+  const competitionId = req.params.competitionId;
+
+  userModels.find({
+    role: 3,
+    competition: competitionId,
+  }, '_id name competition')
+    .exec()
+    .then((screen) => {
+      res.render('manage/screen', { screen, competitionId });
+    })
+    .catch(next);
 });
 
 // GET /manage/competitions/:competitionId/items
-router.get('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, res) => {
+router.get('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, res, next) => {
   const competitionId = req.params.competitionId;
 
-  itemModels.find({
-    competition: competitionId,
-  }, (err, items) => {
-    req.flash('error', err);
-    res.render('manage/items', { items, competitionId });
-  });
+  itemModels
+    .find({ competition: competitionId })
+    .exec()
+    .then((items) => {
+      res.render('manage/items', { items, competitionId });
+    })
+    .catch(next);
 });
 
 // GET /manage/competitions/:competitionId/participants
-router.get('/competitions/:competitionId/participants', checkLogin, checkAdmin, (req, res) => {
+router.get('/competitions/:competitionId/participants', checkLogin, checkAdmin, (req, res, next) => {
   const competitionId = req.params.competitionId;
 
-  participantModels.find({
-    competition: competitionId,
-  }, (err, participants) => {
-    req.flash('error', err);
-    res.render('manage/participants', { participants, competitionId });
-  });
+  participantModels
+    .find({ competition: competitionId })
+    .exec()
+    .then((participants) => {
+      res.render('manage/participants', { participants, competitionId });
+    })
+    .catch(next);
 });
 
 // GET /manage/competitions/:competitionId/scores
-router.get('/competitions/:competitionId/scores', checkLogin, checkAdmin, (req, res) => {
+router.get('/competitions/:competitionId/scores', checkLogin, checkAdmin, (req, res, next) => {
   const competitionId = req.params.competitionId;
 
   scoreModels
     .find({ competition: competitionId })
     .populate('rater', '_id name competition')
-    .exec((err, scores) => {
-      req.flash('error', err);
+    .exec()
+    .then((scores) => {
       res.render('manage/scores', { scores, competitionId });
-    });
+    })
+    .catch(next);
 });
 
 // POST /manage/competitions
@@ -210,6 +235,51 @@ router.post('/competitions/:competitionId/raters', checkLogin, checkAdmin, (req,
     // 写入 flash
     req.flash('success', '新建成功');
     res.redirect(`/manage/competitions/${competitionId}/raters`);
+  });
+});
+
+// POST /manage/competitions/:competitionId/screen
+router.post('/competitions/:competitionId/screen', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+  const name = req.fields.name;
+  const password = req.fields.password;
+  const repassword = req.fields.repassword;
+
+  // 校验参数
+  try {
+    if (!(name.length >= 1 && name.length <= 30)) {
+      throw new Error('名字请限制在 1-30 个字符');
+    }
+    if (password.length < 6) {
+      throw new Error('密码至少 6 个字符');
+    }
+    if (password !== repassword) {
+      throw new Error('两次输入密码不一致');
+    }
+    if (!competitionId) {
+      throw new Error('无属于的比赛');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  userModels.create({
+    name,
+    pw: crypto
+      .createHash('sha256')
+      .update(password)
+      .digest('hex'),
+    role: 3,
+    competition: competitionId,
+  }, (err) => {
+    if (err) {
+      req.flash('err', err);
+      return res.redirect('back');
+    }
+    // 写入 flash
+    req.flash('success', '新建成功');
+    res.redirect(`/manage/competitions/${competitionId}/screen`);
   });
 });
 

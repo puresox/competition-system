@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const scoreModels = require('../../lib/mongo').Score;
+const itemModels = require('../../lib/mongo').Item;
 const competitionModels = require('../../lib/mongo').Competition;
 const participantModels = require('../../lib/mongo').Participant;
 const checkLogin = require('../../middlewares/check').checkLogin;
@@ -37,18 +38,38 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
         scoreModels
           .find({ participant: participantId, competition: competitionId, rater: raterId })
           .exec(),
+        itemModels
+          .find({ competition: competitionId })
+          .exec(),
         participants,
         status,
         participant,
         score,
       ]);
     })
-    .then(([scores, participants, status, participant, score]) => {
+    .then(([
+      scores,
+      items,
+      participants,
+      status,
+      participant,
+      score,
+    ]) => {
       let isscore = 0;
       if (scores.length) {
         isscore = 1;
       }
-      res.send({ participants, status, participant, score, isscore });
+      res.send({
+        status: 'success',
+        message: {
+          participants,
+          items,
+          status,
+          participant,
+          score,
+          isscore,
+        },
+      });
     })
     .catch((error) => {
       res.send({ status: 'error', message: error });

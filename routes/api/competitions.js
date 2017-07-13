@@ -66,6 +66,7 @@ router.put('/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) =
 
   userModels.update({
     _id: hostId,
+    role: 1,
     competition: competitionId,
   }, {
     $set: {
@@ -109,6 +110,7 @@ router.put('/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res)
 
   userModels.update({
     _id: raterId,
+    role: 2,
     competition: competitionId,
   }, {
     $set: {
@@ -123,6 +125,50 @@ router.put('/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res)
       res.send({ status: 'error', message: error });
     } else {
       res.send({ status: 'success', message: `/manage/competitions/${competitionId}/raters` });
+    }
+  });
+});
+
+// PUT /api/competitions/:competitionId/screen/:screenId
+router.put('/:competitionId/screen/:screenId', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+  const screenId = req.params.screenId;
+  const name = req.fields.name;
+  const password = req.fields.password;
+  const repassword = req.fields.repassword;
+
+  // 校验参数
+  try {
+    if (!(name.length >= 1 && name.length <= 30)) {
+      throw new Error('名字请限制在 1-30 个字符');
+    }
+    if (password.length < 6) {
+      throw new Error('密码至少 6 个字符');
+    }
+    if (password !== repassword) {
+      throw new Error('两次输入密码不一致');
+    }
+  } catch (e) {
+    return res.send({ status: 'error', message: e.message });
+  }
+
+  userModels.update({
+    _id: screenId,
+    role: 3,
+    competition: competitionId,
+  }, {
+    $set: {
+      name,
+      pw: crypto
+        .createHash('sha256')
+        .update(password)
+        .digest('hex'),
+    },
+  }, (error) => {
+    if (error) {
+      res.send({ status: 'error', message: error });
+    } else {
+      res.send({ status: 'success', message: `/manage/competitions/${competitionId}/screen` });
     }
   });
 });
@@ -278,6 +324,7 @@ router.delete('/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res
 
   userModels.remove({
     _id: hostId,
+    role: 1,
     competition: competitionId,
   }, (error) => {
     if (error) {
@@ -295,12 +342,31 @@ router.delete('/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, r
 
   userModels.remove({
     _id: raterId,
+    role: 2,
     competition: competitionId,
   }, (error) => {
     if (error) {
       res.send({ status: 'error', message: error });
     } else {
       res.send({ status: 'success', message: `/manage/competitions/${competitionId}/raters` });
+    }
+  });
+});
+
+// DELETE /api/competitions/:competitionId/screen/:screenId
+router.delete('/:competitionId/screen/:screenId', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+  const screenId = req.params.screenId;
+
+  userModels.remove({
+    _id: screenId,
+    role: 3,
+    competition: competitionId,
+  }, (error) => {
+    if (error) {
+      res.send({ status: 'error', message: error });
+    } else {
+      res.send({ status: 'success', message: `/manage/competitions/${competitionId}/screen` });
     }
   });
 });

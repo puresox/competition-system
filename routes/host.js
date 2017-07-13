@@ -4,8 +4,7 @@ const checkHost = require('../middlewares/check').checkHost;
 
 // GET /host
 router.get('/', checkLogin, checkHost, (req, res) => {
-  const competition = req.session.user.competition;
-  res.render('host/index', { competition });
+  res.render('host/index');
 });
 
 module.exports = router;

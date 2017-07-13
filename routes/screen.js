@@ -1,9 +1,10 @@
 const router = require('express').Router();
+const checkLogin = require('../middlewares/check').checkLogin;
+const checkScreen = require('../middlewares/check').checkScreen;
 
 // GET /screen
-router.get('/', (req, res) => {
-  const competition = req.session.user.competition;
-  res.render('screen/index', { competition });
+router.get('/', checkLogin, checkScreen, (req, res) => {
+  res.render('screen/index');
 });
 
 module.exports = router;

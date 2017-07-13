@@ -38,4 +38,12 @@ module.exports = {
     }
     next();
   },
+
+  checkScreen: function checkScreen(req, res, next) {
+    if (req.session.user.role !== 3) {
+      req.flash('error', '您不是屏幕');
+      return res.redirect('back');// 返回之前的页面
+    }
+    next();
+  },
 };
