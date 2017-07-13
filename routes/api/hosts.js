@@ -44,4 +44,24 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
     });
 });
 
+// POST /api/hosts/beginCompetition
+router.post('/beginCompetition', checkLogin, checkHost, (req, res) => {
+  const competitionId = req.session.user.competition._id;
+
+  competitionModels.update({
+    _id: competitionId,
+  }, {
+    $set: {
+      status: 2,
+    },
+  })
+    .exec()
+    .then(() => {
+      res.send({ status: 'success', message: {} });
+    })
+    .catch((error) => {
+      res.send({ status: 'error', message: error });
+    });
+});
+
 module.exports = router;

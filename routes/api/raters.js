@@ -76,39 +76,22 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
     });
 });
 
-// GET /api/raters/participant?p=***
-router.get('/participant', checkLogin, checkRater, (req, res) => {
-  res.render('rater/index');
-});
+// POST /api/raters/score/:participantId
+router.post('/score/:participantId', checkLogin, checkRater, (req, res) => {
+  const competitionId = req.session.user.competition._id;
+  const participantId = req.params.participantId;
+  const scores = req.fields.scores;
+  const raterId = req.session.user.id;
 
-// GET /api/raters/score?p=***
-router.get('/score', checkLogin, checkRater, (req, res) => {
-  res.render('rater/index');
-});
-
-// GET /api/raters/raterScore?p=***
-router.get('/raterScore', checkLogin, checkRater, (req, res) => {
-  res.render('score/index');
-});
-
-// POST /api/raters/raterScore
-router.post('/raterScore', checkLogin, checkRater, (req, res) => {
   scoreModels
-    .create({ size: 'small' })
-    .then((score) => {
-      res.render('score/index');
+    .create({ competition: competitionId, participant: participantId, rater: raterId, scores })
+    .exec()
+    .then(() => {
+      res.send({ status: 'success', message: {} });
     })
-    .catch();
-});
-
-// POST /api/raters/judges
-router.get('/judges', checkLogin, checkRater, (req, res) => {
-  res.render('score/index_judges');
-});
-
-// GET /api/raters/refer
-router.get('/refer', checkLogin, checkRater, (req, res) => {
-  res.render('score/index_referee');
+    .catch((error) => {
+      res.send({ status: 'error', message: error });
+    });
 });
 
 module.exports = router;
