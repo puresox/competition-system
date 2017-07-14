@@ -18,16 +18,14 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
       status = 0,
       participant = 0,
     }) => Promise.all([
-        participantModels
-          .find({ competition: competitionId })
-          .exec(),
-        participantModels
-          .findOne({ order: participant, competition: competitionId })
-          .exec(),
-        status,
-        participant,
-      ]))
-    .then(([participants, participantScore, status, participant]) => {
+      participantModels
+        .find({ competition: competitionId })
+        .exec(),
+      status,
+      participant,
+    ]))
+    .then(([participants, status, participant]) => {
+      const participantScore = participants.find(p => p.order === participant);
       let score = 0;
       let participantId = '000000000000000000000000';
       if (participantScore) {
@@ -36,11 +34,13 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
       }
       return Promise.all([
         scoreModels
-          .find({ participant: participantId, competition: competitionId, rater: raterId })
+          .find({ competition: competitionId, rater: raterId })
+          .populate('participant')
           .exec(),
         itemModels
           .find({ competition: competitionId })
           .exec(),
+        participantId,
         participants,
         status,
         participant,
@@ -50,24 +50,33 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
     .then(([
       scores,
       items,
+      participantId,
       participants,
       status,
       participant,
       score,
     ]) => {
+      const theScore = scores.find(s => s.participant._id === participantId);
       let isscore = 0;
-      if (scores.length) {
+      if (theScore) {
         isscore = 1;
       }
       res.send({
         status: 'success',
         message: {
+          // 所有作品信息
           participants,
+          // 评分项
           items,
-          status,
-          participant,
-          score,
+          // 所有参赛作品的评分
           scores,
+          // 比赛状态
+          status,
+          // 正在进行的参赛作品
+          participant,
+          // 参赛作品的评分状态
+          score,
+          // 该评委对参赛作品是否评分
           isscore,
         },
       });
