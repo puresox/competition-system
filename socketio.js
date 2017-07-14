@@ -12,15 +12,15 @@ module.exports = (server) => {
     socket.on('draw', () => {
       screen.emit('draw');
     });
-    // 开始展示
+    // 开始展示参赛作品
     socket.on('nextParticipant', () => {
-      screen.emit('getStatus');
-      rater.emit('getStatus');
+      screen.emit('nextParticipant');
+      rater.emit('nextParticipant');
     });
     // 开始评分
-    socket.on('score', () => {
-      screen.emit('getStatus');
-      rater.emit('getStatus');
+    socket.on('beginScore', () => {
+      screen.emit('beginScore');
+      rater.emit('beginScore');
     });
   });
 
@@ -32,16 +32,16 @@ module.exports = (server) => {
     });
     // 评分结束
     socket.on('endParticipant', () => {
-      host.emit('getStatus');
-      rater.emit('getStatus');
+      host.emit('endParticipant');
+      rater.emit('endParticipant');
     });
   });
 
   rater.on('connection', (socket) => {
     // 评分结束
-    socket.on('endScore', () => {
-      screen.emit('getStatus');
-      host.emit('getStatus');
+    socket.on('endScore', (score) => {
+      screen.emit('getStatus', score);
+      host.emit('getStatus', score);
     });
   });
 };
