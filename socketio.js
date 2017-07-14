@@ -9,8 +9,8 @@ module.exports = (server) => {
 
   host.on('connection', (socket) => {
     // 开始抽签
-    socket.on('drew', () => {
-      screen.emit('drew');
+    socket.on('draw', () => {
+      screen.emit('draw');
     });
     // 开始展示
     socket.on('nextParticipant', () => {
