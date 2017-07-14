@@ -53,9 +53,53 @@ router.post('/beginCompetition', checkLogin, checkHost, (req, res) => {
   }, {
     $set: {
       status: 2,
+      participant: 1,
     },
   })
     .exec()
+    .then(() => {
+      res.send({ status: 'success', message: {} });
+    })
+    .catch((error) => {
+      res.send({ status: 'error', message: error });
+    });
+});
+
+// POST /api/hosts/beginParticipant
+router.post('/beginParticipant', checkLogin, checkHost, (req, res) => {
+  const competitionId = req.session.user.competition._id;
+
+  competitionModels
+    .findById(competitionId)
+    .exec()
+    .then((competition) => {
+      const newCompetition = competition;
+      newCompetition.participant += 1;
+      return newCompetition.save();
+    })
+    .then(() => {
+      res.send({ status: 'success', message: {} });
+    })
+    .catch((error) => {
+      res.send({ status: 'error', message: error });
+    });
+});
+
+// POST /api/hosts/beginScore
+router.post('/beginScore', checkLogin, checkHost, (req, res) => {
+  const competitionId = req.session.user.competition._id;
+
+  competitionModels
+    .find({ _id: competitionId })
+    .exec()
+    .then(competition => participantModels.update({
+      order: competition.participant,
+      competition: competitionId,
+    }, {
+      $set: {
+        status: 1,
+      },
+    }).exec())
     .then(() => {
       res.send({ status: 'success', message: {} });
     })

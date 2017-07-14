@@ -83,24 +83,27 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
   });
 });
 
-// POST /api/screen/score/:participantId
+// POST /api/screen/score
 router.post('/score/:participantId', checkLogin, checkScreen, (req, res) => {
   const competitionId = req.session.user.competition._id;
-  const participantId = req.params.participantId;
   const score = req.fields.score;
 
-  participantModels.update({
-    _id: participantId,
-    competition: competitionId,
-  }, {
-    $set: {
-      status: 2,
-      score,
-    },
-  }).exec()
-  .then(() => {
-    res.send({ status: 'success', message: {} });
-  })
+  competitionModels
+    .find({ _id: competitionId })
+    .exec()
+    .then(competition => participantModels.find({ order: competition.participant, competition: competitionId }).exec())
+    .then(participantId => participantModels.update({
+      _id: participantId,
+      competition: competitionId,
+    }, {
+      $set: {
+        status: 2,
+        score,
+      },
+    }).exec())
+    .then(() => {
+      res.send({ status: 'success', message: {} });
+    })
     .catch((error) => {
       res.send({ status: 'error', message: error });
     });
