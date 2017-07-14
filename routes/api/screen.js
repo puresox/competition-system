@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const competitionModels = require('../../lib/mongo').Competition;
 const participantModels = require('../../lib/mongo').Participant;
+const scoreModels = require('../../lib/mongo').Score;
 const checkLogin = require('../../middlewares/check').checkLogin;
 const checkScreen = require('../../middlewares/check').checkScreen;
 
@@ -18,21 +19,44 @@ router.get('/status', checkLogin, checkScreen, (req, res) => {
       participantModels
         .find({ competition: competitionId })
         .exec(),
-      participantModels
-        .findOne({ order: participant, competition: competitionId })
-        .exec(),
       status,
       participant,
     ]))
-    .then(([participants, participantScore, status, participant]) => {
+    .then(([participants, status, participant]) => {
+      const participantScore = participants.find(p => p.order === participant);
       let score = 0;
+      let participantId = '000000000000000000000000';
       if (participantScore) {
         score = participantScore.status;
+        participantId = participantScore._id;
       }
+      return Promise.all([
+        participants,
+        scoreModels
+          .find({ competition: competitionId, participant: participantId })
+          .populate('participant')
+          .exec(),
+        status,
+        participant,
+        score,
+      ]);
+    })
+    .then(([participants, scoresArray, status, participant, score]) => {
+      const scores = scoresArray;
+      scoresArray.forEach((raterScore, i) => {
+        let sum = 0;
+        raterScore
+          .scores
+          .forEach((itemScore) => {
+            sum += itemScore;
+          });
+        scores[i].score = sum;
+      });
       res.send({
         status: 'success',
         message: {
           participants,
+          scores,
           status,
           participant,
           score,

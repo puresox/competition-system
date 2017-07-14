@@ -18,13 +18,11 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
       participantModels
         .find({ competition: competitionId })
         .exec(),
-      participantModels
-        .findOne({ order: participant, competition: competitionId })
-        .exec(),
       status,
       participant,
     ]))
-    .then(([participants, participantScore, status, participant]) => {
+    .then(([participants, status, participant]) => {
+      const participantScore = participants.find(p => p.order === participant);
       let score = 0;
       if (participantScore) {
         score = participantScore.status;
