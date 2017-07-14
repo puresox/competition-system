@@ -22,6 +22,11 @@ module.exports = (server) => {
       screen.emit('beginScore');
       rater.emit('beginScore');
     });
+    // 结束比赛
+    socket.on('end', () => {
+      screen.emit('end');
+      rater.emit('end');
+    });
   });
 
   screen.on('connection', (socket) => {
@@ -30,7 +35,7 @@ module.exports = (server) => {
       rater.emit('drawn');
       host.emit('drawn');
     });
-    // 评分结束
+    // 该参赛作品评分结束
     socket.on('endParticipant', () => {
       host.emit('endParticipant');
       rater.emit('endParticipant');
@@ -40,8 +45,8 @@ module.exports = (server) => {
   rater.on('connection', (socket) => {
     // 评分结束
     socket.on('endScore', (score) => {
-      screen.emit('getStatus', score);
-      host.emit('getStatus', score);
+      screen.emit('endScore', score);
+      host.emit('endScore', score);
     });
   });
 };
