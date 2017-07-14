@@ -18,15 +18,15 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
       status = 0,
       participant = 0,
     }) => Promise.all([
-      participantModels
-        .find({ competition: competitionId })
-        .exec(),
-      participantModels
-        .findOne({ order: participant, competition: competitionId })
-        .exec(),
-      status,
-      participant,
-    ]))
+        participantModels
+          .find({ competition: competitionId })
+          .exec(),
+        participantModels
+          .findOne({ order: participant, competition: competitionId })
+          .exec(),
+        status,
+        participant,
+      ]))
     .then(([participants, participantScore, status, participant]) => {
       let score = 0;
       let participantId = '000000000000000000000000';
@@ -81,12 +81,11 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
 router.post('/score/:participantId', checkLogin, checkRater, (req, res) => {
   const competitionId = req.session.user.competition._id;
   const participantId = req.params.participantId;
-  const scores = req.fields.scores;
+  const scores = JSON.parse(req.fields.scores);
   const raterId = req.session.user.id;
 
   scoreModels
     .create({ competition: competitionId, participant: participantId, rater: raterId, scores })
-    .exec()
     .then(() => {
       res.send({ status: 'success', message: {} });
     })

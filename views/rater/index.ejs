@@ -28,7 +28,7 @@
         </template>-->
         <div id="spa" class="container">
             <div class="header" v-if="nav"></div>
-            <router-view class="main" v-bind:players="players" v-bind:pitems="items"></router-view>
+            <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-on:select="selectScore"></router-view>
         </div>
         <template id="load">
             <div>

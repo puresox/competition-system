@@ -18,7 +18,9 @@ const player = {
             playerData: '',
             order: 0,
             items: [],
-            picker: ''
+            // 筛选器
+            picker: '',
+            itemIndex: 0
         }
     },
     computed: {
@@ -49,6 +51,11 @@ const player = {
             selectedIndex: [0],
             title: '请选择分数'
         })
+        let self = this
+        this.picker.on('picker.select', function (selectedVal, selectedIndex) {
+            // 将选择结果传递回父组件
+            self.$emit('select', selectedVal[0], self.itemIndex)
+        })
     },
     // 监听路由的变化
     watch: {
@@ -61,7 +68,6 @@ const player = {
         },
         // todo:如果有未打分项,不给提交并提示
         select: function (index) {
-            console.log(index)
             // 按照该项的最高分重新填充筛选器
             let data = []
             for (let i = 0, len = this.items[index].value; i < len; i++) {
@@ -78,10 +84,23 @@ const player = {
                 $('.picker-title').text(item)
                 func.call(picker, 0, data)
             })
+            this.itemIndex = index
         },
         submit: function () {
+            // todo:1.未填分数确认2.分数弹窗再次确认
+            let self = this
             $.ajax({
-
+                url: '/api/raters/score/' + self.playerData._id,
+                type: 'post',
+                data: {
+                    scores: JSON.stringify(self.playerData.scores)
+                },
+                success: function (msg) {
+                    console.log(msg)
+                },
+                error: function (err) {
+                    console.log('提交失败')
+                }
             })
         }
     }
@@ -114,7 +133,7 @@ var vue = new Vue({
         // 当前进行到的项目的序号
         participant: 0,
         // 当前比赛状态
-        status: 0,
+        status: -1,
         // 当前浏览器视图所在的序号（估计没用）
         viewOrder: 0,
         // 预留, 暂时没用
@@ -125,6 +144,12 @@ var vue = new Vue({
     computed: {
     },
     methods: {
+        selectScore: function (score, index) {
+            this.players[this.participant].scores[index].score = score
+        }
+    },
+    beforeCreate: function () {
+        router.push('/')
     },
     created: function () {
         var self = this

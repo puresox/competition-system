@@ -1,4 +1,4 @@
-var socket = io()
+var socket = io.connect('/host')
 // 加载组件
 const load = {
     props: ['load'],
@@ -11,7 +11,6 @@ const random = {
     data: function () {
         return {
             begin: false,
-            playerOrder: []
         }
     },
     methods: {
@@ -32,7 +31,7 @@ const random = {
             }
             let self = this
             $.ajax({
-                url: '/api/hosts/draw',
+                url: '/api/screen/draw',
                 type: 'post',
                 data: {
                     participants: JSON.stringify(result)
@@ -45,10 +44,7 @@ const random = {
                     // 发给父组件
                     self.$emit('test', result)
                     // 发送socket到sever
-                    socket.emit('drawn', {
-                        data: 'draw ready'
-                    })
-                    console.log(msg)
+                    socket.emit('drawn')
                 },
                 error: function (err) {
                     console.log(err)
@@ -57,6 +53,16 @@ const random = {
         },
         beginMatch: function () {
             this.$emit('test')
+            $.ajax({
+                url: '/api/hosts/beginCompetition',
+                type: 'post',
+                success: function (msg) {
+                    console.log('比赛开始')
+                },
+                error: function (err) {
+                    console.log('比赛开始失败')
+                }
+            })
             router.push('/matching')
         }
     }
@@ -84,6 +90,9 @@ var vue = new Vue({
     data: {
         message: '',
         order: 0,
+        // 当前进行到的项目的序号
+        participant: 0,
+        // 当前比赛状态
         status: -1,
         players: []
     },
@@ -93,6 +102,9 @@ var vue = new Vue({
         add: function (msg) {
             console.log(msg)
         }
+    },
+    beforeCreate: function () {
+        router.push('/')
     },
     created: function () {
         let self = this
@@ -110,7 +122,10 @@ var vue = new Vue({
                 for (let i = 0, len = data.message.participants.length; i < len; i++) {
                     self.players[i] = data.message.participants[i]
                 }
+                // 获取当前比赛进程
+                // 并跳转到相应页面
                 self.status = data.message.status
+                self.participant = data.message.participant
                 switch (self.status) {
                     case -1:
                         // 加载中(默认)
