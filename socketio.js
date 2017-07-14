@@ -8,29 +8,40 @@ module.exports = (server) => {
   const rater = io.of('/rater');
 
   host.on('connection', (socket) => {
-    // 抽签
-    socket.on('drawn', () => {
-      screen.emit('getStatus');
+    // 开始抽签
+    socket.on('drew', () => {
+      screen.emit('drew');
     });
-    // 开始比赛
-    socket.on('begin', () => {
-      screen.emit('begin');
+    // 开始展示
+    socket.on('nextParticipant', () => {
+      screen.emit('getStatus');
+      rater.emit('getStatus');
+    });
+    // 开始评分
+    socket.on('score', () => {
+      screen.emit('getStatus');
+      rater.emit('getStatus');
     });
   });
 
   screen.on('connection', (socket) => {
-    socket.emit('chat message', 'hello master');
-    screen.emit('chat message', 'system');
-    socket.on('chat message', (msg) => {
-      screen.emit('chat message', msg);
+    // 抽签完成
+    socket.on('drawn', () => {
+      rater.emit('drawn');
+      host.emit('drawn');
+    });
+    // 评分结束
+    socket.on('endParticipant', () => {
+      host.emit('getStatus');
+      rater.emit('getStatus');
     });
   });
 
   rater.on('connection', (socket) => {
-    socket.emit('chat message', 'hello master');
-    rater.emit('chat message', 'system');
-    socket.on('chat message', (msg) => {
-      rater.emit('chat message', msg);
+    // 评分结束
+    socket.on('endScore', () => {
+      screen.emit('getStatus');
+      host.emit('getStatus');
     });
   });
 };
