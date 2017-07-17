@@ -15,7 +15,7 @@
 
     <body>
         <div id="spa" class="container">
-            <router-view class="main"></router-view>
+            <router-view class="main" v-bind:players="players" v-bind:scoring="score"></router-view>
         </div>
         <template id="load">
             <div>
@@ -23,13 +23,39 @@
             </div>
         </template>
         <template id="ready">
-            <h1>创新创业，共创佳绩</h1>
+            <div>
+                <div class="main-ready">
+                    <h1>京津冀创新创业大赛</h1>
+                </div>
+            </div>
         </template>
         <template id="random">
-            <h1>摇骰子</h1>
+            <div>
+                <div class="main-random">
+                    答辩顺序
+                    <template v-for="(player, index) in players">
+                        <div class="random-index">
+                            {{ player.order }}号{{ player.name }}
+                        </div>
+                    </template>
+                </div>
+            </div>            
         </template>
-        <template id="match">
-            <h1>比赛中</h1>
+        <template id="player">
+            <div>
+                <div class="main-player">
+                    <div class="player-data">
+                        <h1>{{ order }}号{{ playerData.name }}</h1>
+                    </div>
+                    <div class="scores" v-if="scoring == 1">
+                        评委打分
+                        <template v-for="score in playerData.allScores">
+                            <div class="score">{{ score }}分</div>
+                        </template>
+                        <span>当前总分:{{ totalScore }}</span>
+                    </div>
+                </div>
+            </div>
         </template>
         <template id="over">
             <h1>比赛结束</h1>

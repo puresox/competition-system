@@ -15,27 +15,37 @@
 
     <body>
         <div id="spa" class="container">
-            <router-view class="main" v-bind:players="players" v-on:test="add"></router-view>
+            <router-view class="main" v-bind:players="players" v-bind:btns="btnStatus" v-bind:order="participant"></router-view>
         </div>
         <template id="load">
             <div>
                 <h1>正在加载</h1>
-            </div> 
+            </div>
         </template>
         <template id="random">
             <div>
                 <div class="random">
-                    <div class="btn-random" v-on:click="getRandom">
+                    <div v-bind:class="randomStyle" v-on:click="getRandom">
                         <i class="iconfont">&#xe62a;</i>
                     </div>
-                    <div class="btn-begin" v-if="begin" v-on:click="beginMatch">开始比赛</div>
-                    <div class="btn-begin--disable" v-else>开始比赛</div>
+                    <div class="btn-begin" v-if="btns.begin" v-on:click="beginMatch">开始比赛</div>
+                    <div class="btn-begin--disable" v-else>请先抽签</div>
                 </div>
             </div>
         </template>
         <template id="matching">
             <div>
-                
+                <div class="matching">
+                    <div class="player-data">
+                        <h1>{{ order }}号{{ players[order - 1].name }}</h1>
+                    </div>
+                    <div class="btn-score" v-if="btns.score" v-on:click="beginScoring">
+                        开始打分
+                    </div>
+                    <div class="btn-next" v-else v-on:click="nextParticipant">
+                        下一组
+                    </div>
+                </div>
             </div>
         </template>
         <script src="../js/host.js"></script>

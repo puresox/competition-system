@@ -28,7 +28,7 @@
         </template>-->
         <div id="spa" class="container">
             <div class="header" v-if="nav"></div>
-            <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-on:select="selectScore"></router-view>
+            <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:scoring="score" v-bind:index="participant" v-on:select="selectScore"></router-view>
         </div>
         <template id="load">
             <div>
@@ -64,8 +64,17 @@
                             </div>
                         </template>
                     </div>
-                    <div class="submit" v-on:click="submit">
+                    <div class="submit--disable" v-if="canSubmit == 1">
+                        已评分
+                    </div>
+                    <div class="submit" v-else-if="canSubmit == 2" v-on:click="submit">
                         提交
+                    </div>
+                    <div class="submit--disable" v-else-if="canSubmit == 3">
+                        尚未开始评分
+                    </div>
+                    <div class="submit--disable" v-else-if="canSubmit == 4">
+                        等待答辩完成
                     </div>
                 </div>
                 <router-link v-bind:to="nextPlayer" class="next">

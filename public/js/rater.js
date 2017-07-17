@@ -1,4 +1,4 @@
-var socket = io()
+var socket = io('/rater')
 // 加载组件
 const load = {
     props: ['load'],
@@ -11,7 +11,7 @@ const wait = {
 }
 // 选手信息组件
 const player = {
-    props: ['players', 'pitems'],
+    props: ['players', 'pitems', 'scoring', 'index'],
     template: '#player',
     data: function () {
         return {
@@ -32,6 +32,17 @@ const player = {
         nextPlayer: function () {
             var order = parseInt(this.$route.params.order)
             return '/player/' + (order < this.players.length ? order + 1 : this.players.length)
+        },
+        canSubmit: function () {
+            if (this.order < this.index) {
+                return 1
+            } else if (this.order == this.index && this.scoring == 1) {
+                return 2
+            } else if (this.order > this.index) {
+                return 3
+            } else if (this.order == this.index && this.scoring == 0) {
+                return 4
+            }
         }
     },
     created: function () {
@@ -96,7 +107,8 @@ const player = {
                     scores: JSON.stringify(self.playerData.scores)
                 },
                 success: function (msg) {
-                    console.log(msg)
+                    console.log('提交成绩成功')
+                    socket.emit('endScore')
                 },
                 error: function (err) {
                     console.log('提交失败')
@@ -134,18 +146,23 @@ var vue = new Vue({
         participant: 0,
         // 当前比赛状态
         status: -1,
+        // 打分状态
+        score: 0,
         // 当前浏览器视图所在的序号（估计没用）
         viewOrder: 0,
         // 预留, 暂时没用
         message: '',
         // 显示导航栏(暂时没用)
-        nav: false
+        nav: false,
+        btnStatus: {
+            submit: false
+        }
     },
     computed: {
     },
     methods: {
         selectScore: function (score, index) {
-            this.players[this.participant].scores[index].score = score
+            this.players[this.participant - 1].scores[index].score = score
         }
     },
     beforeCreate: function () {
@@ -157,14 +174,27 @@ var vue = new Vue({
             url: '/api/raters/status',
             type: 'get',
             success: function (msg) {
+                // todo:1.如果还没有顺序
                 console.log(msg)
-                for (let i = 0, len = msg.message.participants.length; i < len; i++) {
-                    // 绑定获取到的数据到Vue实例的players上
-                    self.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
-                    // 设置每个参赛项目的url
-                    self.routes[msg.message.participants[i].order - 1] = {
-                        name: msg.message.participants[i].name,
-                        url: '/player/' + msg.message.participants[i].order
+                // 获取比赛进程
+                self.status = msg.message.status
+                self.participant = msg.message.participant
+                self.score = msg.message.score
+                // 绑定获取到的数据到Vue实例的data上
+                // 两种情况
+                // 1.系统status=0时,未生成顺序,直接拉取players绑定到Vue上
+                // 2.status>0时,已生成顺序,拉取之后还要按顺序填进数组
+                if (self.status == 0) {
+                    self.players = msg.message.participants
+                } else {
+                    for (let i = 0, len = msg.message.participants.length; i < len; i++) {
+                        // 绑定获取到的数据到Vue实例的players上
+                        self.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
+                        // 设置每个参赛项目的url
+                        self.routes[msg.message.participants[i].order - 1] = {
+                            name: msg.message.participants[i].name,
+                            url: '/player/' + msg.message.participants[i].order
+                        }
                     }
                 }
                 // 获取评分项
@@ -175,27 +205,19 @@ var vue = new Vue({
                     for (let i2 = 0, len2 = self.items.length; i2 < len2; i2++) {
                         self.players[i].scores[i2] = {
                             item: self.items[i2]._id,
-                            score: 0
+                            score: '点击选择成绩'
                         }
                     }
                 }
                 let scores = msg.message.scores
-                // 获取选手成绩(神奇的后端居然没直接放进participants里要前端自己放!)
-                for (let i = 0, len = scores.length; i < len; i++) {
-                    // 遍历所有成绩并匹配参赛作品
-                    for (let i2 = 0, len2 = self.players.length; i2 < len2 && self.players[i2]._id == scores[i].participant; i2++) {
-                        // 匹配对应player中的成绩项
-                        for (let i3 = 0, len3 = self.players[i2].scores.length; i3 < len3; i3++) {
-                            for (let i4 = 0, len4 = scores[i].scores.length; i4 < len4 && self.players[i2].scores[i3].item == scores[i].scores[i4].item; i4++) {
-                                self.players[i2].scores[i3].score = scores[i].scores[i4].score
-                            }
-                        }
+
+                // status!=0时,拉取成绩
+                if (self.status != 0) {
+                    for (let i = 0, len = scores.length; i < len; i++) {
+                        self.players[i].scores = scores[i].scores
                     }
                 }
-                // 获取当前比赛进程
-                // 并跳转到相应页面
-                self.status = msg.message.status
-                self.participant = msg.message.participant
+                // 跳转到相应页面
                 switch (self.status) {
                     case -1:
                         router.push('/')
@@ -212,7 +234,7 @@ var vue = new Vue({
                         // 比赛正式开始
                         // 跳转到响应的选手页
                         switch (self.participant) {
-                            default: router.push('/player/' + (self.participant + 1))
+                            default: router.push('/player/' + (self.participant))
                         }
                         break
                     case 3:
@@ -226,4 +248,52 @@ var vue = new Vue({
             }
         })
     }
+})
+// // 监听抽签结束
+// socket.on('drawn', function () {
+//     $.ajax({
+//         url: '/api/raters/status',
+//         type: 'get',
+//         success: function (msg) {
+//             vue.status = msg.message.status
+//             vue.participant = msg.message.participant
+//             for (let i = 0, len = msg.message.participants.length; i < len; i++) {
+//                 // 绑定获取到的数据到Vue实例的players上
+//                 vue.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
+//             }
+//         }
+//     })
+// })
+// // 监听比赛开始(下一个选手)
+// socket.on('getStatus', function () {
+//     vue.status = 2
+//     vue.participant++
+//     router.push('/player/' + vue.participant)
+// })
+
+// 监听抽签结束
+socket.on('drawn', function () {
+    $.ajax({
+        url: '/api/raters/status',
+        type: 'get',
+        success: function (msg) {
+            vue.status = msg.message.status
+            vue.participant = msg.message.participant
+            for (let i = 0, len = msg.message.participants.length; i < len; i++) {
+                // 绑定获取到的数据到Vue实例的players上
+                vue.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
+            }
+        }
+    })
+})
+// todo:可能要做的.等待分两种1.等待抽签结束2.等待主持人开始比赛
+// 监听开始比赛/下一个选手
+socket.on('nextParticipant', function () {
+    vue.status = 2
+    vue.participant++
+    router.push('/player/' + vue.participant)
+})
+// 监听开始打分
+socket.on('beginScore', function () {
+    vue.score = 1
 })

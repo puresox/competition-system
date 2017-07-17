@@ -12,6 +12,8 @@ a {
 
 .main {
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
     width: 100%;
     height: 100%;
@@ -26,15 +28,19 @@ a {
     height: 100%;
 }
 
-.btn-random {
+.btn-random, .btn-random--disable {
     width: 150px;
     height: 150px;
-    color: #8D8D8D;
+    color: #3B8451;
     line-height: 150px;
     text-align: center;
 }
 
-.btn-random>i {
+.btn-random--disable {
+    color: #8D8D8D;
+}
+
+.btn-random>i, .btn-random--disable>i {
     font-size: 100px;
 }
 
@@ -53,4 +59,26 @@ a {
 
 .btn-begin--disable {
     background-color: #7D7D7D;
+}
+
+.matching {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.player-data {}
+
+.btn-score, .btn-next {
+    display: block;
+    width: 200px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    color: white;
+    background-color: #3B8451;
+    font-size: 20px;
 }

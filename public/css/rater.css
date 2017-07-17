@@ -78,4 +78,14 @@ a {
     background-color: rebeccapurple;
     color: white;
     font-size: 20px;
+    line-height: 50px;
+}
+
+.submit--disable {
+    width: 200px;
+    height: 50px;
+    background-color: #8F8E90;
+    color: white;
+    font-size: 20px;
+    line-height: 50px;
 }
