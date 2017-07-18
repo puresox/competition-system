@@ -80,6 +80,7 @@ const matching = {
                     console.log(msg)
                     // 发送socket
                     socket.emit('beginScore')
+                    btns.score = false
                 },
                 error: function (err) {
                     console.log(err)
@@ -136,6 +137,7 @@ var vue = new Vue({
         btnStatus: {
             random: true,
             begin: false,
+            // 打分/下一组
             score: true
         }
     },
@@ -169,6 +171,11 @@ var vue = new Vue({
                 for (let i = 0, len = data.message.participants.length; i < len; i++) {
                     self.players[data.message.participants[i].order - 1] = data.message.participants[i]
                 }
+                if (self.score == 0) {
+                    self.btnStatus.score = true
+                } else {
+                    self.btnStatus.score = false
+                }
                 // 跳转到相应页面
                 switch (self.status) {
                     case -1:
@@ -181,6 +188,8 @@ var vue = new Vue({
                         break
                     case 1:
                         // 抽签结束，比赛可以开始
+                        vue.btnStatus.begin = true
+                        vue.btnStatus.random = false
                         router.push('/random')
                         break
                     case 2:

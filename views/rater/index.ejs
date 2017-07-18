@@ -29,7 +29,7 @@
         <div id="spa" class="container">
             <img src="../system-img/pad.jpg" alt="" class="img-bkg">
             <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:scoring="score" v-bind:index="participant"
-                v-on:select="selectScore"></router-view>
+                v-bind:hasScored="isscore" v-on:select="selectScore"></router-view>
         </div>
         <template id="load">
             <div>

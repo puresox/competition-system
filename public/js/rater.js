@@ -11,7 +11,7 @@ const wait = {
 }
 // 选手信息组件
 const player = {
-    props: ['players', 'pitems', 'scoring', 'index'],
+    props: ['players', 'pitems', 'scoring', 'index', 'hasScored'],
     template: '#player',
     data: function () {
         return {
@@ -46,6 +46,8 @@ const player = {
                 return 3
             } else if (this.order == this.index && this.scoring == 0) {
                 return 4
+            } else if (this.order == this.index && this.hasScored == 1) {
+                return 1
             }
         },
         getLogo: function () {
@@ -126,6 +128,7 @@ const player = {
                 success: function (msg) {
                     console.log('提交成绩成功')
                     socket.emit('endScore')
+                    self.hasScored = 1
                 },
                 error: function (err) {
                     console.log('提交失败')
@@ -177,6 +180,7 @@ var vue = new Vue({
         viewOrder: 0,
         // 预留, 暂时没用
         message: '',
+        isscore: 0,
         // 显示导航栏(暂时没用)
         nav: false,
         btnStatus: {
@@ -205,6 +209,7 @@ var vue = new Vue({
                 self.status = msg.message.status
                 self.participant = msg.message.participant
                 self.score = msg.message.score
+                self.isscore = msg.message.isscore
                 // 绑定获取到的数据到Vue实例的data上
                 // 两种情况
                 // 1.系统status=0时,未生成顺序,直接拉取players绑定到Vue上
