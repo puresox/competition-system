@@ -27,8 +27,9 @@
             <p>{{ data }}</p>
         </template>-->
         <div id="spa" class="container">
-            <div class="header" v-if="nav"></div>
-            <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:scoring="score" v-bind:index="participant" v-on:select="selectScore"></router-view>
+            <img src="../system-img/pad.jpg" alt="" class="img-bkg">
+            <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:scoring="score" v-bind:index="participant"
+                v-on:select="selectScore"></router-view>
         </div>
         <template id="load">
             <div>
@@ -40,7 +41,7 @@
         <template id="wait">
             <div>
                 <div class="main-waiting">
-                    <h1>等待抽签完成...</h1>
+                    <span>等待比赛开始</span>
                 </div>
             </div>
         </template>
@@ -50,31 +51,57 @@
                     <i class="iconfont">&#xe600;</i>
                 </router-link>
                 <div class="main-players">
-                    <h1>{{ order }}号</h1>
-                    <div>
-                        <h3>这里或许要放个头像</h3>
-                        <h3>{{ playerData.name }}</h3>
-                        <h3>{{ playerData.introduction }}</h3>
+                    <div class="player-nav">
+                        <span @click="toMessage">查看资料</span>
+                        <span @click="toScore">打分</span>
                     </div>
-                    <div class="items">
-                        <template v-for="(item, index) in items">
-                            <div class="item" v-bind:data-index="index" v-on:click="select(index)">
-                                <span>{{ item.name }}</span>
-                                <span>{{ playerData.scores[index].score }}</span>
+                    <div class="player-msg-hd">
+                        <span>{{ order }}号选手</span>
+                    </div>
+                    <div class="player-msg" v-if="btns.message">
+                        <div class="player-simple">
+                            <div class="wrapper-logo">
+                                <img :src="getLogo" alt="加载logo失败">
                             </div>
-                        </template>
+                            <div class="wrapper-msg">
+                                <span>{{ playerData.name }}</span>
+                            </div>
+                        </div>
+                        <div class="player-intro">
+                            <p>简介</p>
+                            <div>
+                                {{ playerData.introduction }}
+                            </div>
+                        </div>
                     </div>
-                    <div class="submit--disable" v-if="canSubmit == 1">
-                        已评分
-                    </div>
-                    <div class="submit" v-else-if="canSubmit == 2" v-on:click="submit">
-                        提交
-                    </div>
-                    <div class="submit--disable" v-else-if="canSubmit == 3">
-                        尚未开始评分
-                    </div>
-                    <div class="submit--disable" v-else-if="canSubmit == 4">
-                        等待答辩完成
+                    <div class="player-score" v-if="btns.score">
+                        <div class="score-control">
+                            <div class="total-score">
+                                总分:<span>{{ getTotalScore }}</span>分
+                            </div>
+                            <div class="btn-container">
+                                <div class="submit--disable" v-if="canSubmit == 1">
+                                    已评分
+                                </div>
+                                <div class="submit" v-else-if="canSubmit == 2" v-on:click="submit">
+                                    提交
+                                </div>
+                                <div class="submit--disable" v-else-if="canSubmit == 3">
+                                    尚未开始评分
+                                </div>
+                                <div class="submit--disable" v-else-if="canSubmit == 4">
+                                    等待答辩完成
+                                </div>
+                            </div>
+                        </div>
+                        <div class="items">
+                            <template v-for="(item, index) in items">
+                                <div class="item" v-bind:data-index="index" v-on:click="select(index)">
+                                    <span>{{ item.name }}</span>
+                                    <span>{{ playerData.scores[index].score }}分</span>
+                                </div>
+                            </template>
+                        </div>
                     </div>
                 </div>
                 <router-link v-bind:to="nextPlayer" class="next">

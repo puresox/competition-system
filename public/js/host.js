@@ -10,7 +10,9 @@ const random = {
     template: '#random',
     data: function () {
         return {
-
+            modeSelect: true,
+            auto: false,
+            manual: false,
         }
     },
     computed: {
@@ -42,6 +44,14 @@ const random = {
                     console.log('开始比赛失败')
                 }
             })
+        },
+        autoMode: function () {
+            this.modeSelect = false
+            this.auto = true
+        },
+        manualMode: function () {
+            this.modeSelect = false
+            this.manual = true
         }
     }
 }
@@ -52,6 +62,11 @@ const matching = {
     data: function () {
         return {
 
+        }
+    },
+    computed: {
+        getLogo: function () {
+            return '../competition/' + this.players[this.order - 1].logo
         }
     },
     methods: {

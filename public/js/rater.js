@@ -20,7 +20,11 @@ const player = {
             items: [],
             // 筛选器
             picker: '',
-            itemIndex: 0
+            itemIndex: 0,
+            btns: {
+                message: true,
+                score: false
+            }
         }
     },
     computed: {
@@ -43,6 +47,18 @@ const player = {
             } else if (this.order == this.index && this.scoring == 0) {
                 return 4
             }
+        },
+        getLogo: function () {
+            return '../competition/' + this.players[this.$route.params.order - 1].logo
+        },
+        getTotalScore: function () {
+            let totalScore = 0
+            for (let i = 0, len = this.items.length; i < len; i++) {
+                if (typeof (this.players[this.$route.params.order - 1].scores[i].score) == 'number') {
+                    totalScore += this.players[this.index - 1].scores[i].score
+                }
+            }
+            return totalScore
         }
     },
     created: function () {
@@ -114,6 +130,14 @@ const player = {
                     console.log('提交失败')
                 }
             })
+        },
+        toMessage: function () {
+            this.btns.message = true
+            this.btns.score = false
+        },
+        toScore: function () {
+            this.btns.score = true
+            this.btns.message = false
         }
     }
 }

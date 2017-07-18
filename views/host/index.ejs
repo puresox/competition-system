@@ -15,6 +15,7 @@
 
     <body>
         <div id="spa" class="container">
+            <img src="../system-img/pad.jpg" alt="" class="img-bkg">
             <router-view class="main" v-bind:players="players" v-bind:btns="btnStatus" v-bind:order="participant"></router-view>
         </div>
         <template id="load">
@@ -24,26 +25,57 @@
         </template>
         <template id="random">
             <div>
+                <div class="random-hd">
+                    <span>抽签</span>
+                </div>
                 <div class="random">
-                    <div v-bind:class="randomStyle" v-on:click="getRandom">
+                    <div class="random-select" v-if="btns.random">
+                        <div class="random-mode" @click="getRandom">
+                            <i class="iconfont">&#xe62a;</i>
+                            <span>自动抽签</span>
+                        </div>
+                        <div class="random-mode" @click="manualMode">
+                            <i class="iconfont">&#xe64e;</i>
+                            <span>手动抽签</span>
+                        </div>
+                    </div>
+                    <div class="random-option-manual" v-if="manual">
+                        手动抽签
+                    </div>
+                    <div class="begin-match" v-if="btns.begin">
+                        <div class="btn-begin" v-on:click="beginMatch">开始比赛</div>
+                    </div>
+                    <!--<div v-bind:class="randomStyle" v-on:click="getRandom">
                         <i class="iconfont">&#xe62a;</i>
                     </div>
                     <div class="btn-begin" v-if="btns.begin" v-on:click="beginMatch">开始比赛</div>
-                    <div class="btn-begin--disable" v-else>请先抽签</div>
+                    <div class="btn-begin--disable" v-else>请先抽签</div>-->
                 </div>
             </div>
         </template>
         <template id="matching">
             <div>
+                <div class="matching-hd">
+                    <span>选手答辩</span>
+                </div>
                 <div class="matching">
-                    <div class="player-data">
-                        <h1>{{ order }}号{{ players[order - 1].name }}</h1>
+                    <div class="player-msg">
+                        <!--<h1>{{ order }}号{{ players[order - 1].name }}</h1>-->
+                        <div class="wrapper-logo">
+                            <img :src="getLogo" alt="加载logo失败">
+                        </div>
+                        <div class="player-intro">
+                            <span class="player-index">{{ order }}号</span>
+                            <span class="player-name">{{ players[order - 1].name }}</span>
+                        </div>
                     </div>
-                    <div class="btn-score" v-if="btns.score" v-on:click="beginScoring">
-                        开始打分
-                    </div>
-                    <div class="btn-next" v-else v-on:click="nextParticipant">
-                        下一组
+                    <div class="wrapper-btn">
+                        <div class="btn-score" v-if="btns.score" v-on:click="beginScoring">
+                            开始打分
+                        </div>
+                        <div class="btn-next" v-else v-on:click="nextParticipant">
+                            下一组
+                        </div>
                     </div>
                 </div>
             </div>
