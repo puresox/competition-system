@@ -95,7 +95,7 @@ router.post('/score', checkLogin, checkRater, (req, res) => {
   competitionModels
     .findById(competitionId)
     .exec()
-    .then(competition => participantModels.find({ order: competition.participant, competition: competitionId }).exec())
+    .then(competition => participantModels.findOne({ order: competition.participant, competition: competitionId }).exec())
     .then(({ _id: participantId }) => scoreModels.create({ competition: competitionId, participant: participantId, rater: raterId, scores }))
     .then(() => {
       res.send({ status: 'success', message: {} });
