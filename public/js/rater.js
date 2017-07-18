@@ -52,6 +52,7 @@ const player = {
             return '../competition/' + this.players[this.$route.params.order - 1].logo
         },
         getTotalScore: function () {
+            // todo:这里先记着,items过长的情况还没测试
             let totalScore = 0
             for (let i = 0, len = this.items.length; i < len; i++) {
                 if (typeof (this.players[this.$route.params.order - 1].scores[i].score) == 'number') {
@@ -114,10 +115,10 @@ const player = {
             this.itemIndex = index
         },
         submit: function () {
-            // todo:1.未填分数确认2.分数弹窗再次确认
+            // todo:1.未填分数确认2.分数弹窗再次确认3.提交之后按钮的变化(只能提交一次)
             let self = this
             $.ajax({
-                url: '/api/raters/score/' + self.playerData._id,
+                url: '/api/raters/score/',
                 type: 'post',
                 data: {
                     scores: JSON.stringify(self.playerData.scores)

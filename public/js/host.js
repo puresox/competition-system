@@ -71,7 +71,7 @@ const matching = {
     },
     methods: {
         beginScoring: function () {
-            console.log('23')
+            // todo:开始打分成功之后按钮的变化
             let self = this
             $.ajax({
                 url: '/api/hosts/beginScore',

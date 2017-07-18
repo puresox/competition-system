@@ -12,7 +12,17 @@ const ready = {
 
 const random = {
     props: ['players'],
-    template: '#random'
+    template: '#random',
+    data: function () {
+        return {
+            men: []
+        }
+    },
+    created: function () {
+        for (let i = 0; i < 50; i++) {
+            this.men[i] = '小马停车'
+        }
+    },
 }
 
 const player = {
@@ -22,7 +32,8 @@ const player = {
         return {
             playerData: '',
             order: 0,
-            itemIndex: 0
+            itemIndex: 0,
+            showing: true,
         }
     },
     computed: {
@@ -32,6 +43,9 @@ const player = {
                 result += this.playerData.allScores[i]
             }
             return result
+        },
+        getLogo: function () {
+            return '../competition/' + this.players[this.$route.params.order - 1].logo
         }
     },
     created: function () {
@@ -156,6 +170,7 @@ var vue = new Vue({
                         self.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
                     }
                 }
+                // 初始化时每个player加上allScore字段
                 for (let i = 0, len = self.players.length; i < len; i++) {
                     self.players[i].allScores = []
                 }
@@ -241,12 +256,29 @@ socket.on('beginScore', function () {
     vue.score = 1
 })
 // 监听单个评委打分完成
-socket.on('endParticipant', function () {
+socket.on('endScore', function () {
     $.ajax({
-        url: '/api/screen/score/' + vue.players[vue.participant - 1]._id,
+        url: '/api/screen/status',
         type: 'get',
         success: function (msg) {
-            console.log(msg)
+            vue.status = msg.message.status
+            vue.participant = msg.message.participant
+            vue.score = msg.message.score
+            vue.players[vue.participant - 1].allScores = msg.message.scores
+            if (msg.message.score.length == 2) {
+                console.log('评分结束')
+                $.ajax({
+                    url: '/api/screen/score',
+                    type: 'post',
+                    success: function (msg) {
+                        console.log('评分完毕')
+                        socket.emit('endParticipant')
+                    },
+                    error: function (err) {
+
+                    }
+                })
+            }
         },
         error: function (err) {
             console.log(err)

@@ -15,6 +15,7 @@
 
     <body>
         <div id="spa" class="container">
+            <img src="../system-img/screen.jpg" alt="" class="img-bkg">
             <router-view class="main" v-bind:players="players" v-bind:scoring="score"></router-view>
         </div>
         <template id="load">
@@ -25,34 +26,56 @@
         <template id="ready">
             <div>
                 <div class="main-ready">
-                    <h1>京津冀创新创业大赛</h1>
+                    <img src="../system-img/introduction.jpg" alt="">
                 </div>
             </div>
         </template>
         <template id="random">
             <div>
                 <div class="main-random">
-                    答辩顺序
-                    <template v-for="(player, index) in players">
-                        <div class="random-index">
-                            {{ player.order }}号{{ player.name }}
-                        </div>
-                    </template>
+                    <div class="random-hd">
+                        <span>抽签结果</span>
+                    </div>
+                    <div class="order-list">
+                        <template v-for="(player, index) in players">
+                            <div class="random-item">
+                                <div class="random-index">{{ player.order }}号</div>
+                                <div class="random-name">{{ player.name }}</div>
+                            </div>
+                        </template>
+                        <!--<template v-for="(man, index) in men">
+                            <div class="random-item">
+                                <div class="random-index">{{ index }}</div>
+                                <div class="random-name">{{ man }}</div>
+                            </div>
+                        </template>-->
+                    </div>
                 </div>
-            </div>            
+            </div>
         </template>
         <template id="player">
             <div>
                 <div class="main-player">
-                    <div class="player-data">
-                        <h1>{{ order }}号{{ playerData.name }}</h1>
+                    <div class="player-data" v-if="scoring == 0">
+                        <div class="wrapper-logo">
+                            <img :src="getLogo" alt="加载log失败">
+                        </div>
+                        <div class="player-name">
+                            <span>{{ playerData.order }}号</span>
+                            <span>{{ playerData.name }}</span>
+                        </div>
+                        <div class="player-intro">
+                            {{ playerData.introduction }}
+                        </div>
                     </div>
                     <div class="scores" v-if="scoring == 1">
-                        评委打分
-                        <template v-for="score in playerData.allScores">
-                            <div class="score">{{ score }}分</div>
-                        </template>
-                        <span>当前总分:{{ totalScore }}</span>
+                        <span class="rater-score">评委打分</span>
+                        <div class="score-list">
+                            <template v-for="score in playerData.allScores">
+                                <div class="score">{{ score }}</div>
+                            </template>
+                        </div>
+                        <!--<span>当前总分:{{ totalScore }}</span>-->
                     </div>
                 </div>
             </div>
