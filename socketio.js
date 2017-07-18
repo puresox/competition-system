@@ -1,13 +1,11 @@
-const socketio = require('socket.io');
-
-module.exports = (server) => {
-  const io = socketio.listen(server);
-
+module.exports = (io) => {
   const host = io.of('/host');
   const screen = io.of('/screen');
   const rater = io.of('/rater');
 
   host.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+    });
     // 开始抽签
     socket.on('draw', () => {
       screen.emit('draw');
@@ -30,6 +28,8 @@ module.exports = (server) => {
   });
 
   screen.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+    });
     // 抽签完成
     socket.on('drawn', () => {
       rater.emit('drawn');
@@ -43,6 +43,8 @@ module.exports = (server) => {
   });
 
   rater.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+    });
     // 评分结束
     socket.on('endScore', (score) => {
       screen.emit('endScore', score);

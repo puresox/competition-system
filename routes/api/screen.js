@@ -5,12 +5,12 @@ const scoreModels = require('../../lib/mongo').Score;
 const checkLogin = require('../../middlewares/check').checkLogin;
 const checkScreen = require('../../middlewares/check').checkScreen;
 
-// GET /api/screen/status
+// GET /api/screen/status 获取状态
 router.get('/status', checkLogin, checkScreen, (req, res) => {
   const competitionId = req.session.user.competition._id;
 
   competitionModels
-    .findOne({ _id: competitionId })
+    .findById(competitionId)
     .exec()
     .then(({
       status = 0,
@@ -55,10 +55,15 @@ router.get('/status', checkLogin, checkScreen, (req, res) => {
       res.send({
         status: 'success',
         message: {
+          // 所有作品信息
           participants,
+          // 各个评委对参赛作品的评分
           scores,
+          // 比赛状态
           status,
+          // 正在进行的参赛作品
           participant,
+          // 参赛作品的评分状态
           score,
         },
       });
@@ -68,7 +73,7 @@ router.get('/status', checkLogin, checkScreen, (req, res) => {
     });
 });
 
-// POST /api/screen/draw
+// POST /api/screen/draw 抽签
 router.post('/draw', checkLogin, checkScreen, (req, res) => {
   const competitionId = req.session.user.competition._id;
   const participants = JSON.parse(req.fields.participants);
@@ -107,17 +112,16 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
   });
 });
 
-// POST /api/screen/score
-router.post('/score/:participantId', checkLogin, checkScreen, (req, res) => {
+// POST /api/screen/score 评分结束
+router.post('/score', checkLogin, checkScreen, (req, res) => {
   const competitionId = req.session.user.competition._id;
   const score = req.fields.score;
 
   competitionModels
-    .find({ _id: competitionId })
+    .findById(competitionId)
     .exec()
-    .then(competition => participantModels.find({ order: competition.participant, competition: competitionId }).exec())
-    .then(participantId => participantModels.update({
-      _id: participantId,
+    .then(competition => participantModels.update({
+      order: competition.participant,
       competition: competitionId,
     }, {
       $set: {

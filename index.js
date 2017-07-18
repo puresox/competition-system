@@ -8,12 +8,14 @@ const routes = require('./routes/routes');
 const pkg = require('./package');
 const winston = require('winston');
 const expressWinston = require('express-winston');
-const socketio = require('./socketio');
+const socket = require('./socketio');
 
 const app = express();
 const server = require('http').createServer(app);
 
-socketio(server);
+const io = require('socket.io').listen(server);
+
+socket(io);
 
 // 设置模板目录
 app.set('views', path.join(__dirname, 'views'));

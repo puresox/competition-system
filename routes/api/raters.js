@@ -6,13 +6,13 @@ const participantModels = require('../../lib/mongo').Participant;
 const checkLogin = require('../../middlewares/check').checkLogin;
 const checkRater = require('../../middlewares/check').checkRater;
 
-// GET /api/raters/status
+// GET /api/raters/status 获取状态
 router.get('/status', checkLogin, checkRater, (req, res) => {
   const competitionId = req.session.user.competition._id;
   const raterId = req.session.user.id;
 
   competitionModels
-    .findOne({ _id: competitionId })
+    .findById(competitionId)
     .exec()
     .then(({
       status = 0,
@@ -68,7 +68,7 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
           participants,
           // 评分项
           items,
-          // 所有参赛作品的评分
+          // 该评委对各个参赛作品的评分
           scores,
           // 比赛状态
           status,
@@ -86,15 +86,17 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
     });
 });
 
-// POST /api/raters/score/:participantId
-router.post('/score/:participantId', checkLogin, checkRater, (req, res) => {
+// POST /api/raters/score 评分
+router.post('/score', checkLogin, checkRater, (req, res) => {
   const competitionId = req.session.user.competition._id;
-  const participantId = req.params.participantId;
   const scores = JSON.parse(req.fields.scores);
   const raterId = req.session.user.id;
 
-  scoreModels
-    .create({ competition: competitionId, participant: participantId, rater: raterId, scores })
+  competitionModels
+    .findById(competitionId)
+    .exec()
+    .then(competition => participantModels.find({ order: competition.participant, competition: competitionId }).exec())
+    .then(({ _id: participantId }) => scoreModels.create({ competition: competitionId, participant: participantId, rater: raterId, scores }))
     .then(() => {
       res.send({ status: 'success', message: {} });
     })

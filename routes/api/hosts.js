@@ -4,12 +4,12 @@ const checkHost = require('../../middlewares/check').checkHost;
 const competitionModels = require('../../lib/mongo').Competition;
 const participantModels = require('../../lib/mongo').Participant;
 
-// GET /api/hosts/status
+// GET /api/hosts/status 获取状态
 router.get('/status', checkLogin, checkHost, (req, res) => {
   const competitionId = req.session.user.competition._id;
 
   competitionModels
-    .findOne({ _id: competitionId })
+    .findById(competitionId)
     .exec()
     .then(({
       status = 0,
@@ -30,9 +30,13 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
       res.send({
         status: 'success',
         message: {
+          // 所有作品信息
           participants,
+          // 比赛状态
           status,
+          // 正在进行的参赛作品
           participant,
+          // 参赛作品的评分状态
           score,
         },
       });
@@ -42,7 +46,7 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
     });
 });
 
-// POST /api/hosts/beginCompetition
+// POST /api/hosts/beginCompetition 开始比赛
 router.post('/beginCompetition', checkLogin, checkHost, (req, res) => {
   const competitionId = req.session.user.competition._id;
 
@@ -63,7 +67,7 @@ router.post('/beginCompetition', checkLogin, checkHost, (req, res) => {
     });
 });
 
-// POST /api/hosts/beginParticipant
+// POST /api/hosts/beginParticipant 参赛作品开始答辩
 router.post('/beginParticipant', checkLogin, checkHost, (req, res) => {
   const competitionId = req.session.user.competition._id;
 
@@ -83,12 +87,12 @@ router.post('/beginParticipant', checkLogin, checkHost, (req, res) => {
     });
 });
 
-// POST /api/hosts/beginScore
+// POST /api/hosts/beginScore 开始评分
 router.post('/beginScore', checkLogin, checkHost, (req, res) => {
   const competitionId = req.session.user.competition._id;
 
   competitionModels
-    .find({ _id: competitionId })
+    .findById(competitionId)
     .exec()
     .then(competition => participantModels.update({
       order: competition.participant,
