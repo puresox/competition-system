@@ -72,20 +72,37 @@ router.post('/beginCompetition', checkLogin, checkHost, (req, res) => {
 router.post('/beginParticipant', checkLogin, checkHost, (req, res) => {
   const competitionId = req.session.user.competition._id;
 
-  competitionModels
-    .findById(competitionId)
-    .exec()
-    .then((competition) => {
-      const newCompetition = competition;
-      newCompetition.participant += 1;
-      return newCompetition.save();
-    })
-    .then(() => {
-      res.send({ status: 'success', message: {} });
-    })
-    .catch((error) => {
-      res.send({ status: 'error', message: error });
-    });
+  Promise.all([
+    competitionModels
+      .findById(competitionId)
+      .exec(),
+    participantModels
+      .count({ competition: competitionId })
+      .exec(),
+  ]).then(([competition, participantsNum]) => {
+    if (competition.participant >= participantsNum) {
+      throw new Error('所有参赛作品都已经展示');
+    }
+
+    return Promise.all([
+      participantModels
+        .findOne({ competition: competitionId, order: competition.participant })
+        .exec(),
+      competition,
+    ]);
+  }).then(([participant, competition]) => {
+    if (participant.status !== 2) {
+      throw new Error('上一个参赛作品还未展示');
+    }
+
+    const newCompetition = competition;
+    newCompetition.participant += 1;
+    return newCompetition.save();
+  }).then(() => {
+    res.send({ status: 'success', message: {} });
+  }).catch((error) => {
+    res.send({ status: 'error', message: error });
+  });
 });
 
 // POST /api/hosts/beginScore 开始评分
