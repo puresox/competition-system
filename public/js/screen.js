@@ -290,6 +290,7 @@ socket.on('endScore', function () {
                         console.log('评分完毕')
                         socket.emit('endParticipant')
                         vue.score = 2
+                        vue.scores = []
                     },
                     error: function (err) {
 

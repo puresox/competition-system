@@ -155,6 +155,11 @@ const player = {
     }
 }
 
+const over = {
+    props: ['over'],
+    template: '#over'
+}
+
 // 路由
 const router = new VueRouter({
     routes: [
@@ -163,7 +168,9 @@ const router = new VueRouter({
         // 等待页,等待抽签完成
         { path: '/wait', component: wait },
         // 评分页,对各个项目进行评分
-        { path: '/player/:order', component: player }
+        { path: '/player/:order', component: player },
+        // 结束页
+        { path: '/over', component: over }
     ]
 })
 
@@ -336,7 +343,11 @@ socket.on('drawn', function () {
 socket.on('nextParticipant', function () {
     vue.status = 2
     vue.participant++
-    router.push('/player/' + vue.participant)
+    if (vue.participant > vue.participants.length) {
+        router.push('/over')
+    } else {
+        router.push('/player/' + vue.participant)
+    }
     window.location.reload()
 })
 // 监听开始打分
