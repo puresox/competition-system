@@ -250,7 +250,7 @@ var vue = new Vue({
 //     router.push('/player/' + vue.participant)
 // })
 // 监听开始抽签的命令
-socket.on('draw', function () {
+socket.on('autoDraw', function () {
     // todo:可能所有按钮都要加个弹窗
     // 改变vue中存储的status
     // todo:getRandom可能会不成功

@@ -36,7 +36,7 @@ const random = {
             if (!confirm('是否开始抽签?')) {
                 return
             }
-            socket.emit('draw')
+            socket.emit('autoDraw')
         },
         postOrder: function () {
             if (!confirm('是否提交该抽签结果')) {
@@ -201,6 +201,8 @@ var vue = new Vue({
             begin: false,
             // 打分
             score: true,
+            // 打分中
+            scoring: false,
             // 下一组
             next: false
         },
