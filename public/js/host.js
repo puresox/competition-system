@@ -204,7 +204,9 @@ var vue = new Vue({
             // 打分中
             scoring: false,
             // 下一组
-            next: false
+            next: false,
+            // 结束比赛
+            over: false
         },
         modal: {
             doing: false,
@@ -328,7 +330,7 @@ var vue = new Vue({
     }
 })
 // 监听抽签结束
-socket.on('drawn', function () {
+socket.on('autoDrawn', function () {
     $.ajax({
         url: '/api/hosts/status',
         type: 'get',

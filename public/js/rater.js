@@ -320,7 +320,7 @@ var vue = new Vue({
 // })
 
 // 监听抽签结束
-socket.on('drawn', function () {
+socket.on('autoDrawn', function () {
     $.ajax({
         url: '/api/raters/status',
         type: 'get',
