@@ -42,7 +42,26 @@ const random = {
             if (!confirm('是否提交该抽签结果')) {
                 return
             }
-            socket.emit('draw')
+            var result = []
+            for (let i = 0, len = this.players.length; i < len; i++) {
+                result[i] = {
+                    id: this.players[i]._id,
+                    order: this.players[i].order
+                }
+            }
+            $.ajax({
+                url: '/api/screen/draw',
+                type: 'post',
+                data: {
+                    participants: JSON.stringify(result)
+                },
+                success: function () {
+                    socket.emit('manuDrawn')
+                },
+                error: function () {
+
+                }
+            })
         },
         beginMatch: function () {
             if (!confirm('是否开始比赛?')) {
@@ -175,7 +194,7 @@ const matching = {
             if (!confirm('是否结束比赛?')) {
                 return
             }
-            router.push('/')
+            router.push('/over')
         }
     }
 }
@@ -376,5 +395,5 @@ socket.on('autoDrawn', function () {
 socket.on('endParticipant', function () {
     vue.btnStatus.next = true
     vue.btnStatus.score = false
-    self.btnStatus.scoring = false
+    vue.btnStatus.scoring = false
 })

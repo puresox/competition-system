@@ -259,6 +259,10 @@ socket.on('autoDraw', function () {
     // 切换到抽签页
     router.push('/random')
 })
+// 监听手动抽签完成
+socket.on('manuDrawn', function () {
+
+})
 // 监听开始比赛/下一个选手
 socket.on('nextParticipant', function () {
     vue.status = 2
