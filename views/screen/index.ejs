@@ -16,7 +16,8 @@
     <body>
         <div id="spa" class="container">
             <img src="../system-img/screen.jpg" alt="" class="img-bkg">
-            <router-view class="main" v-bind:players="players" v-bind:scoring="score" v-bind:allscore="scores" ref="test"></router-view>
+            <router-view class="main" v-bind:players="players" v-bind:scoring="score" v-bind:allscore="scores" v-bind:num="ratersNum"
+                ref="test"></router-view>
         </div>
         <template id="load">
             <div>
@@ -71,7 +72,7 @@
                     <div class="scores" v-if="scoring == 1">
                         <span class="rater-score">评委打分</span>
                         <div class="score-list">
-                            <template v-for="score in 7">
+                            <template v-for="score in num">
                                 <div class="score--unknown" v-if="!allscore[score - 1]">?</div>
                                 <div class="score" v-else>{{ allscore[score - 1] }}</div>
                             </template>

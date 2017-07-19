@@ -95,7 +95,8 @@ var vue = new Vue({
         status: -1,
         score: 0,
         // 当前项目的所有成绩
-        scores: []
+        scores: [],
+        ratersNum: 0
     },
     computed: {
     },
@@ -148,6 +149,8 @@ var vue = new Vue({
                         }
                     }
                     self.players = players
+                    // 切换到抽签页
+                    router.push('/random')
                     // 发socket通知host,rater,抽签完毕,可以开始比赛了
                     socket.emit('autoDrawn')
                 },
@@ -171,6 +174,7 @@ var vue = new Vue({
                 self.status = msg.message.status
                 self.participant = msg.message.participant
                 self.score = msg.message.score
+                self.ratersNum = msg.message.ratersNum
                 // 绑定获取到的数据到Vue实例的data上
                 // 两种情况
                 // 1.系统status=0时,未生成顺序,直接拉取players绑定到Vue上
@@ -256,12 +260,24 @@ socket.on('autoDraw', function () {
     // todo:getRandom可能会不成功
     vue.status = 1
     vue.getRandom()
-    // 切换到抽签页
-    router.push('/random')
 })
 // 监听手动抽签完成
 socket.on('manuDrawn', function () {
+    vue.status = 1
+    $.ajax({
+        url: '/api/screen/status',
+        type: 'get',
+        success: function (msg) {
+            vue.status = msg.message.status
+            vue.participant = msg.message.participant
+            vue.score = msg.message.score
+            vue.players = msg.message.participants
+        },
+        error: function (err) {
 
+        }
+    })
+    router.push('/random')
 })
 // 监听开始比赛/下一个选手
 socket.on('nextParticipant', function () {
