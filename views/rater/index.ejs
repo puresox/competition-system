@@ -80,6 +80,10 @@
                                 总分:<span>{{ getTotalScore }}</span>分
                             </div>
                             <div class="btn-container">
+                                <div class="checkbox">
+                                    <input type="checkbox" name="" value="" id="justall" v-model="checked">
+                                    <label for="justall">总成绩</label>
+                                </div>
                                 <div class="submit--disable" v-if="canSubmit == 1">
                                     已评分
                                 </div>
@@ -95,12 +99,30 @@
                             </div>
                         </div>
                         <div class="items">
-                            <template v-for="(item, index) in items">
-                                <div class="item" v-bind:data-index="index" v-on:click="select(index)">
-                                    <span>{{ item.name }}</span>
-                                    <span>{{ playerData.scores[index].score }}分</span>
+                            <div v-if="checked">
+                                <div class="item" v-on:click="selectAll">
+                                    <div class="box-text">
+                                        <span>总分</span>
+                                        <span>点击选择成绩</span>
+                                    </div>
+                                    <div class="box-explain">
+                                        <span>这里是解释是解释是解释</span>
+                                    </div>
                                 </div>
-                            </template>
+                            </div>
+                            <div v-else>
+                                <template v-for="(item, index) in items">
+                                    <div class="item" v-bind:data-index="index" v-on:click="select(index)">
+                                        <div class="box-text">
+                                            <span>{{ item.name }}</span>
+                                            <span>{{ playerData.scores[index].score }}</span>
+                                        </div>
+                                        <div class="box-explain">
+                                            <span>这里是解释是解释是解释</span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </div>

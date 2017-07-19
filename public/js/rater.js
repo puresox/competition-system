@@ -24,7 +24,8 @@ const player = {
             btns: {
                 message: true,
                 score: false
-            }
+            },
+            checked: false
         }
     },
     computed: {
@@ -120,6 +121,9 @@ const player = {
                 func.call(picker, 0, data)
             })
             this.itemIndex = index
+        },
+        selectAll: function () {
+
         },
         submit: function () {
             // todo:1.未填分数确认2.分数弹窗再次确认3.提交之后按钮的变化(只能提交一次)

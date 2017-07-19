@@ -215,7 +215,27 @@ a {
 
 .btn-container {
     display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
     align-items: flex-end;
+    font-weight: bold;
+    /*color: white;*/
+}
+
+.checkbox {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    margin-bottom: auto;
+    letter-spacing: .2em;
+    font-size: 25px;
+    color: rgb(114, 114, 114);
+}
+
+.checkbox input {
+    width: 25px;
+    height: 25px;
 }
 
 .items {
@@ -231,16 +251,52 @@ a {
 
 .item {
     display: flex;
+    flex-direction: column;
     width: 100%;
-    height: 3em;
+    /*height: 5em;*/
     cursor: pointer;
     margin-bottom: 1em;
     background-color: rgba(104, 126, 136, .6);
+    letter-spacing: .1em;
 }
 
-.item span {
+.box-text {
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: 2.5em;
+    box-sizing: border-box;
+    padding: 0 10%;
+}
+
+.box-text::after {
+    content: '';
+    position: absolute;
+    bottom: 0px;
+    width: 80%;
+    border: .5px solid rgba(74, 74, 74, .5);
+}
+
+.box-explain {
+    width: 100%;
+    height: 2.5em;
+    line-height: 2.5em;
+    text-align: start;
+    padding-left: 10%;
+    font-size: 14px;
+    color: rgb(126, 125, 125);
+    letter-spacing: .2em;
+    box-sizing: border-box;
+}
+
+.box-explain span {
+    margin-left: 2em;
+}
+
+.box-text span {
     flex: 1;
     line-height: 3em;
+    letter-spacing: .2em;
     color: rgb(246, 204, 61);
 }
 
@@ -251,6 +307,7 @@ a {
     color: white;
     font-size: 20px;
     line-height: 50px;
+    letter-spacing: .2em;
 }
 
 .submit--disable {
