@@ -264,6 +264,7 @@ socket.on('nextParticipant', function () {
     vue.status = 2
     vue.participant++
     vue.score = 0
+    vue.scores = []
     router.push('/player/' + vue.participant)
 })
 // 监听开始打分
@@ -290,7 +291,6 @@ socket.on('endScore', function () {
                         console.log('评分完毕')
                         socket.emit('endParticipant')
                         vue.score = 2
-                        vue.scores = []
                     },
                     error: function (err) {
 
