@@ -6,9 +6,18 @@ module.exports = (io) => {
   host.on('connection', (socket) => {
     socket.on('disconnect', () => {
     });
-    // 开始抽签
-    socket.on('draw', () => {
-      screen.emit('draw');
+    // 开始自动抽签
+    socket.on('autoDraw', () => {
+      screen.emit('autoDraw');
+    });
+    // 开始手动抽签
+    socket.on('manuDraw', () => {
+      screen.emit('manuDraw');
+    });
+    // 手动抽签完成
+    socket.on('manuDrawn', () => {
+      rater.emit('manuDrawn');
+      screen.emit('manuDrawn');
     });
     // 开始展示参赛作品
     socket.on('nextParticipant', () => {
@@ -30,10 +39,10 @@ module.exports = (io) => {
   screen.on('connection', (socket) => {
     socket.on('disconnect', () => {
     });
-    // 抽签完成
-    socket.on('drawn', () => {
-      rater.emit('drawn');
-      host.emit('drawn');
+    // 自动抽签完成
+    socket.on('autoDrawn', () => {
+      rater.emit('autoDrawn');
+      host.emit('autoDrawn');
     });
     // 该参赛作品评分结束
     socket.on('endParticipant', () => {
