@@ -38,15 +38,18 @@ const player = {
             return '/player/' + (order < this.players.length ? order + 1 : this.players.length)
         },
         canSubmit: function () {
-            if (this.order < this.index) {
+            let order = parseInt(this.order)
+            if (order < this.index) {
                 return 1
-            } else if (this.order == this.index && this.scoring == 1) {
+            } else if (order == this.index && this.scoring == 1 && this.hasscored != 1) {
                 return 2
-            } else if (this.order > this.index) {
+            } else if (order > this.index) {
                 return 3
-            } else if (this.order == this.index && this.scoring == 0) {
+            } else if (order == this.index && this.scoring == 0) {
                 return 4
-            } else if (this.order == this.index && this.hasscored == 1) {
+            } else if (order == this.index && this.hasscored == 1) {
+                return 1
+            } else if (order == this.index && this.scoring == 2) {
                 return 1
             }
         },
@@ -133,7 +136,7 @@ const player = {
                 success: function (msg) {
                     console.log('提交成绩成功')
                     socket.emit('endScore')
-                    self.hasScored = 1
+                    vue.isscore = 1
                 },
                 error: function (err) {
                     alert('提交成绩失败,请重新提交')
