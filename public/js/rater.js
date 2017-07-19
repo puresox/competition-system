@@ -123,6 +123,12 @@ const player = {
         },
         submit: function () {
             // todo:1.未填分数确认2.分数弹窗再次确认3.提交之后按钮的变化(只能提交一次)
+            for (let i = 0, len = this.pitems.length; i < len; i++) {
+                if (typeof (vue.players[vue.participant - 1].scores[i].score) != 'number') {
+                    alert('还有未填写成绩的项目')
+                    return
+                }
+            }
             if (!confirm('确定要提交成绩?')) {
                 return
             }
