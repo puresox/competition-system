@@ -282,6 +282,7 @@ socket.on('endScore', function () {
             vue.scores = msg.message.scores
             if (msg.message.scores.length == 2) {
                 $.ajax({
+                    // todo:断线重连情况没考虑
                     url: '/api/screen/score',
                     type: 'post',
                     success: function (msg) {

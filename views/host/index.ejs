@@ -57,7 +57,19 @@
                         </div>
                     </div>
                     <div class="random-option-manual" v-if="manual">
-                        手动抽签
+                        <div class="manual-hd">
+                            <span class="manual-back" @click.stop="backRandom"><i class="iconfont">&#xe600;</i>返回</span>
+                            <span class="manual-title">{{ swapPrompt }}</span>
+                            <span class="manual-submit" @click.stop="postOrder">确认<i class="iconfont">&#xe601;</i></span>
+                        </div>
+                        <div class="manual-body">
+                            <template v-for="(player, index) in players">
+                                <div class="order-item" @click="selectItem(index)">
+                                    <div class="order-index">{{ player.order }}号</div>
+                                    <div class="order-name">{{ player.name }}</div>
+                                </div>
+                            </template>
+                        </div>
                     </div>
                     <div class="begin-match" v-if="btns.begin">
                         <div class="btn-begin" v-on:click="beginMatch">开始比赛</div>
