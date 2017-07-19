@@ -2,6 +2,7 @@ const router = require('express').Router();
 const competitionModels = require('../../lib/mongo').Competition;
 const participantModels = require('../../lib/mongo').Participant;
 const scoreModels = require('../../lib/mongo').Score;
+const userModels = require('../../lib/mongo').User;
 const checkLogin = require('../../middlewares/check').checkLogin;
 const checkScreen = require('../../middlewares/check').checkScreen;
 
@@ -38,12 +39,22 @@ router.get('/status', checkLogin, checkScreen, (req, res) => {
           .populate('participant')
           .sort({ _id: 1 })
           .exec(),
+        userModels
+          .count({ role: 2, competition: competitionId })
+          .exec(),
         status,
         participant,
         score,
       ]);
     })
-    .then(([participants, scoresArray, status, participant, score]) => {
+    .then(([
+      participants,
+      scoresArray,
+      ratersNum,
+      status,
+      participant,
+      score,
+    ]) => {
       const scores = [];
       scoresArray.forEach((raterScore) => {
         let sum = 0;
@@ -61,6 +72,8 @@ router.get('/status', checkLogin, checkScreen, (req, res) => {
           participants,
           // 各个评委对参赛作品的评分
           scores,
+          // 评委数
+          ratersNum,
           // 比赛状态
           status,
           // 正在进行的参赛作品
@@ -117,22 +130,50 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
 // POST /api/screen/score 评分结束
 router.post('/score', checkLogin, checkScreen, (req, res) => {
   const competitionId = req.session.user.competition._id;
-  const score = req.fields.score;
 
   competitionModels
     .findById(competitionId)
     .exec()
-    .then(competition => participantModels.update({
-      order: competition.participant,
-      competition: competitionId,
-    }, {
-      $set: {
-        status: 2,
-        score,
-      },
-    }).exec())
-    .then(() => {
-      res.send({ status: 'success', message: {} });
+    .then(competition => participantModels.find({ competition: competitionId, order: competition.participant }).exec())
+    .then(([participant]) => Promise.all([
+      userModels
+        .count({ role: 2, competition: competitionId })
+        .exec(),
+      scoreModels
+        .find({ competition: competitionId, participant: participant._id })
+        .exec(),
+      participant,
+    ]))
+    .then(([ratersNum, scoresArray, participant]) => {
+      if (!scoresArray && ratersNum !== scoresArray.length) {
+        throw new Error('还有评委未打分');
+      }
+
+      const scores = [];
+      scoresArray.forEach((raterScore) => {
+        let sum = 0;
+        raterScore
+          .scores
+          .forEach((itemScore) => {
+            sum += itemScore.score;
+          });
+        scores.push(sum);
+      });
+      let score = 0;
+      scores.forEach((s) => {
+        score += s;
+      });
+      score /= scoresArray.length;
+
+      const newParticipant = participant;
+
+      newParticipant.status = 2;
+      newParticipant.score = score;
+
+      return newParticipant.save();
+    })
+    .then((newParticipant) => {
+      res.send({ status: 'success', message: newParticipant });
     })
     .catch((error) => {
       res.send({ status: 'error', message: error });

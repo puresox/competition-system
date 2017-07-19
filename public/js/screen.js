@@ -280,7 +280,7 @@ socket.on('endScore', function () {
             vue.score = msg.message.score
             // vue.players[vue.participant - 1].allScores = msg.message.scores
             vue.scores = msg.message.scores
-            if (msg.message.scores.length == 2) {
+            if (msg.message.scores.length == msg.message.ratersNum) {
                 $.ajax({
                     url: '/api/screen/score',
                     type: 'post',
