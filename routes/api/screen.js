@@ -42,15 +42,15 @@ router.get('/status', checkLogin, checkScreen, (req, res) => {
       ]);
     })
     .then(([participants, scoresArray, status, participant, score]) => {
-      const scores = scoresArray;
+      const scores = [];
       scoresArray.forEach((raterScore, i) => {
         let sum = 0;
         raterScore
           .scores
           .forEach((itemScore) => {
-            sum += itemScore;
+            sum += itemScore.score;
           });
-        scores[i].score = sum;
+        scores.push(sum);
       });
       res.send({
         status: 'success',
