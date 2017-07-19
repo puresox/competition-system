@@ -149,7 +149,7 @@ var vue = new Vue({
                     }
                     self.players = players
                     // 发socket通知host,rater,抽签完毕,可以开始比赛了
-                    socket.emit('drawn')
+                    socket.emit('autoDrawn')
                 },
                 error: function (err) {
                     console.log(err)
