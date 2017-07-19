@@ -399,6 +399,8 @@ router.post('/competitions/:competitionId/participants', checkLogin, checkAdmin,
     status: 0,
     // 抽签顺序
     order: 0,
+    // 分数
+    score: 0,
   }, (err) => {
     if (err) {
       // 注册失败，异步删除上传文件
