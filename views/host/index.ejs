@@ -14,9 +14,26 @@
     </head>
 
     <body>
+
         <div id="spa" class="container">
             <img src="../system-img/pad.jpg" alt="" class="img-bkg">
-            <router-view class="main" v-bind:players="players" v-bind:btns="btnStatus" v-bind:order="participant"></router-view>
+            <router-view class="main" v-bind:players="players" v-bind:btns="btnStatus" v-bind:order="participant" v-on:getmodal="showModel"></router-view>
+            <!--<div v-if="modalshow">
+                <transition name="modal">
+                    <div class="mask">
+                        <div class="modal-container">
+                            <span>{{ modal.modalContent }}</span>
+                            <div class="modal-btns" v-if="modal.query">
+                                <button type="" @click="" class="btn-query">确定</button>
+                                <button type="" @click="modal.prompt = false" class="btn-query">取消</button>
+                            </div>
+                            <div class="modal-btns" v-if="modal.prompt">
+                                <button type="" @click="modal.prompt = false" class="btn-sure">确定</button>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>-->
         </div>
         <template id="load">
             <div>
@@ -73,14 +90,16 @@
                         <div class="btn-score" v-if="btns.score" v-on:click="beginScoring">
                             开始打分
                         </div>
-                        <div class="btn-next" v-else v-on:click="nextParticipant">
+                        <div class="btn-next" v-if="btns.next" v-on:click="nextParticipant">
                             下一组
                         </div>
                     </div>
                 </div>
             </div>
         </template>
-        <script src="../js/host.js"></script>
+        <script src="../js/host.js">
+
+        </script>
     </body>
 
 </html>

@@ -23,9 +23,15 @@ const random = {
     methods: {
         getRandom: function () {
             // todo:可能会抽签失败
+            if (!confirm('是否开始抽签?')) {
+                return
+            }
             socket.emit('draw')
         },
         beginMatch: function () {
+            if (!confirm('是否开始比赛?')) {
+                return
+            }
             let self = this
             // 告诉后台开始比赛/下一个选手
             $.ajax({
@@ -41,7 +47,7 @@ const random = {
                     socket.emit('nextParticipant')
                 },
                 error: function (err) {
-                    console.log('开始比赛失败')
+                    alert('网络发生错误,请求失败,请再次点击"开始比赛"')
                 }
             })
         },
@@ -52,6 +58,13 @@ const random = {
         manualMode: function () {
             this.modeSelect = false
             this.manual = true
+        },
+        getModal: function () {
+            this.$emit('getmodal', {
+                type: 1,
+                method: 1,
+                content: '测试'
+            })
         }
     }
 }
@@ -77,32 +90,42 @@ const matching = {
                 url: '/api/hosts/beginScore',
                 type: 'post',
                 success: function (msg) {
+                    if (!confirm('是否开始评分?')) {
+                        return
+                    }
                     console.log(msg)
                     // 发送socket
                     socket.emit('beginScore')
-                    btns.score = false
+                    vue.btnStatus.score = false
                 },
                 error: function (err) {
-                    console.log(err)
+                    alert('网络发生错误,请再次点击"开始打分"')
                 }
             })
         },
         nextParticipant: function () {
             let self = this
             // 告诉后台开始比赛/下一个选手
+            // todo:等screen通知之后才出现下一个
             $.ajax({
                 url: '/api/hosts/beginParticipant',
                 type: 'post',
                 success: function (msg) {
+                    if (!confirm('是否进行下一组')) {
+                        return
+                    }
                     // 拉取状态
                     vue.status = 2
                     vue.participant++
                     vue.score = 0
+                    vue.btnStatus.score = true
+                    vue.btnStatus.next = false
                     console.log('下一个选手')
                     // 发送socket
                     socket.emit('nextParticipant')
                 },
                 error: function (err) {
+                    alert('网络发生错误,请再次点击')
                     console.log('下一个选手失败')
                 }
             })
@@ -137,15 +160,58 @@ var vue = new Vue({
         btnStatus: {
             random: true,
             begin: false,
-            // 打分/下一组
-            score: true
+            // 打分
+            score: true,
+            // 下一组
+            next: false
+        },
+        modal: {
+            doing: false,
+            query: false,
+            prompt: false,
+            modalContent: '',
+            methodIndex: 0
         }
     },
     computed: {
+        modalshow: function () {
+            if (this.doing || this.query || this.prompt) {
+                return true
+            } else {
+                return false
+            }
+        }
     },
     methods: {
         add: function (msg) {
             console.log(msg)
+        },
+        showModel: function (setting) {
+            switch (setting.type) {
+                case 1:
+                    this.showDoing(setting)
+                    break
+                case 2:
+                    this.showQuery(setting)
+                    break
+                case 3:
+                    this.showPrompt(setting)
+                    break
+            }
+        },
+        showDoing: function (data) {
+            this.modalContent = data.content
+            this.modal.doing = true
+        },
+        showQuery: function (data) {
+            this.modal.query = true
+            this.modal.methodIndex = data.method
+        },
+        showPrompt: function (data) {
+            this.modal.prompt = true
+        },
+        useChileMethod: function (index) {
+
         }
     },
     beforeCreate: function () {
@@ -173,8 +239,13 @@ var vue = new Vue({
                 }
                 if (self.score == 0) {
                     self.btnStatus.score = true
-                } else {
+                    self.btnStatus.next = false
+                } else if (self.score == 1) {
                     self.btnStatus.score = false
+                    self.btnStatus.next = false
+                } else if (self.score == 2) {
+                    self.btnStatus.score = false
+                    self.btnStatus.next = true
                 }
                 // 跳转到相应页面
                 switch (self.status) {
@@ -202,6 +273,8 @@ var vue = new Vue({
                 }
             },
             error: function () {
+                alert('从系统获取数据失败,点击确定重新加载')
+                window.location.reload()
                 console.log('error')
             }
         })
@@ -225,6 +298,15 @@ socket.on('drawn', function () {
             // todo:改变按钮状态这个,也要弄一个在created拉取状态的时候去赋值
             vue.btnStatus.begin = true
             vue.btnStatus.random = false
+        },
+        error: function (err) {
+            alert('获取抽签结果失败,点击确定按钮刷新页面')
+            window.location.reload()
         }
     })
+})
+// 监听评分结束
+socket.on('endParticipant', function () {
+    vue.btnStatus.next = true
+    vue.btnStatus.score = false
 })

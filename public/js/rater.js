@@ -11,7 +11,7 @@ const wait = {
 }
 // 选手信息组件
 const player = {
-    props: ['players', 'pitems', 'scoring', 'index', 'hasScored'],
+    props: ['players', 'pitems', 'scoring', 'index', 'hasscored'],
     template: '#player',
     data: function () {
         return {
@@ -46,7 +46,7 @@ const player = {
                 return 3
             } else if (this.order == this.index && this.scoring == 0) {
                 return 4
-            } else if (this.order == this.index && this.hasScored == 1) {
+            } else if (this.order == this.index && this.hasscored == 1) {
                 return 1
             }
         },
@@ -58,7 +58,7 @@ const player = {
             let totalScore = 0
             for (let i = 0, len = this.items.length; i < len; i++) {
                 if (typeof (this.players[this.$route.params.order - 1].scores[i].score) == 'number') {
-                    totalScore += this.players[this.index - 1].scores[i].score
+                    totalScore += this.players[this.$route.params.order - 1].scores[i].score
                 }
             }
             return totalScore
@@ -95,6 +95,8 @@ const player = {
         updateData: function () {
             this.playerData = this.players[this.$route.params.order - 1]
             this.order = this.$route.params.order
+            this.btns.message = true
+            this.btns.score = false
         },
         // todo:如果有未打分项,不给提交并提示
         select: function (index) {
@@ -118,6 +120,9 @@ const player = {
         },
         submit: function () {
             // todo:1.未填分数确认2.分数弹窗再次确认3.提交之后按钮的变化(只能提交一次)
+            if (!confirm('确定要提交成绩?')) {
+                return
+            }
             let self = this
             $.ajax({
                 url: '/api/raters/score/',
@@ -131,6 +136,7 @@ const player = {
                     self.hasScored = 1
                 },
                 error: function (err) {
+                    alert('提交成绩失败,请重新提交')
                     console.log('提交失败')
                 }
             })
@@ -142,6 +148,9 @@ const player = {
         toScore: function () {
             this.btns.score = true
             this.btns.message = false
+        },
+        test: function () {
+            console.log('成功触发子组件事件')
         }
     }
 }
@@ -274,6 +283,8 @@ var vue = new Vue({
                 }
             },
             error: function (err) {
+                alert('从系统获取数据失败,点击确定重新加载')
+                window.location.reload()
                 console.log(err)
             }
         })
@@ -313,6 +324,10 @@ socket.on('drawn', function () {
                 // 绑定获取到的数据到Vue实例的players上
                 vue.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
             }
+        },
+        error: function () {
+            alert('获取抽签结果失败,点击确定刷新页面')
+            window.location.reload()
         }
     })
 })

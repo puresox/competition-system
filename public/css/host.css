@@ -226,7 +226,7 @@ a {
     flex: 1;
 }
 
-.btn-score, .btn-next {
+.btn-score, .btn-next, .btn-score--disable {
     display: block;
     width: 200px;
     height: 40px;
@@ -236,4 +236,69 @@ a {
     margin: auto;
     background-color: #3B8451;
     font-size: 20px;
+}
+
+.btn-score--disable {
+    background-color: rgb(140, 140, 140);
+}
+
+.mask {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .3);
+}
+
+.modal-container {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    padding: 2em;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.modal-container span {
+    width: 100%;
+    height: 2em;
+    line-height: 2em;
+    text-align: center;
+    margin-top: 1.5em;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: .3em;
+}
+
+.modal-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100px;
+}
+
+.btn-sure {
+    width: 80%;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+}
+
+.modal-enter {
+    opacity: 0;
+}
+
+.modal-leave-active {
+    opacity: 0;
+}
+
+.modal-enter .modal-container, .modal-leave-active .modal-container {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
 }

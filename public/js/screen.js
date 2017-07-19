@@ -26,7 +26,7 @@ const random = {
 }
 
 const player = {
-    props: ['players', 'scoring'],
+    props: ['players', 'scoring', 'allscore'],
     template: '#player',
     data: function () {
         return {
@@ -39,13 +39,23 @@ const player = {
     computed: {
         totalScore: function () {
             let result = 0
-            for (let i = 0, len = this.playerData.allScores.length; i < len; i++) {
-                result += this.playerData.allScores[i]
+            for (let i = 0, len = this.allscore.length; i < len; i++) {
+                result += this.allscore[i]
             }
             return result
         },
         getLogo: function () {
             return '../competition/' + this.players[this.$route.params.order - 1].logo
+        }
+    },
+    // 监听路由的变化
+    watch: {
+        '$route': 'updateData'
+    },
+    methods: {
+        updateData: function () {
+            this.playerData = this.players[this.$route.params.order - 1]
+            this.order = this.$route.params.order
         }
     },
     created: function () {
@@ -83,7 +93,9 @@ var vue = new Vue({
         participant: 0,
         // 当前比赛状态
         status: -1,
-        score: 0
+        score: 0,
+        // 当前项目的所有成绩
+        scores: []
     },
     computed: {
     },
@@ -170,10 +182,12 @@ var vue = new Vue({
                         self.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
                     }
                 }
-                // 初始化时每个player加上allScore字段
-                for (let i = 0, len = self.players.length; i < len; i++) {
-                    self.players[i].allScores = []
-                }
+                // // 初始化时每个player加上allScore字段
+                // for (let i = 0, len = self.players.length; i < len; i++) {
+                //     self.players[i].allScores = []
+                // }
+                // self.players[self.participant - 1].allScores = msg.message.scores
+                self.scores = msg.message.scores
                 // 跳转到相应页面
                 switch (self.status) {
                     case -1:
@@ -264,15 +278,16 @@ socket.on('endScore', function () {
             vue.status = msg.message.status
             vue.participant = msg.message.participant
             vue.score = msg.message.score
-            vue.players[vue.participant - 1].allScores = msg.message.scores
-            if (msg.message.score.length == 2) {
-                console.log('评分结束')
+            // vue.players[vue.participant - 1].allScores = msg.message.scores
+            vue.scores = msg.message.scores
+            if (msg.message.scores.length == 2) {
                 $.ajax({
                     url: '/api/screen/score',
                     type: 'post',
                     success: function (msg) {
                         console.log('评分完毕')
                         socket.emit('endParticipant')
+                        vue.score = 2
                     },
                     error: function (err) {
 
