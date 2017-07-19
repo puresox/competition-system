@@ -337,6 +337,7 @@ socket.on('nextParticipant', function () {
     vue.status = 2
     vue.participant++
     router.push('/player/' + vue.participant)
+    window.location.reload()
 })
 // 监听开始打分
 socket.on('beginScore', function () {

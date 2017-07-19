@@ -263,6 +263,7 @@ socket.on('draw', function () {
 socket.on('nextParticipant', function () {
     vue.status = 2
     vue.participant++
+    vue.score = 0
     router.push('/player/' + vue.participant)
 })
 // 监听开始打分
@@ -282,6 +283,7 @@ socket.on('endScore', function () {
             vue.scores = msg.message.scores
             if (msg.message.scores.length == msg.message.ratersNum) {
                 $.ajax({
+                    // todo:断线重连情况没考虑
                     url: '/api/screen/score',
                     type: 'post',
                     success: function (msg) {

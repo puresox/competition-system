@@ -13,6 +13,16 @@ const random = {
             modeSelect: true,
             auto: false,
             manual: false,
+            swaping: false,
+            swapFrom: {
+                index: -1,
+                obj: {}
+            },
+            swapTo: {
+                index: -1,
+                obj: {}
+            },
+            swapPrompt: '选择要换位置参赛项目'
         }
     },
     computed: {
@@ -24,6 +34,12 @@ const random = {
         getRandom: function () {
             // todo:可能会抽签失败
             if (!confirm('是否开始抽签?')) {
+                return
+            }
+            socket.emit('draw')
+        },
+        postOrder: function () {
+            if (!confirm('是否提交该抽签结果')) {
                 return
             }
             socket.emit('draw')
@@ -52,12 +68,11 @@ const random = {
             })
         },
         autoMode: function () {
-            this.modeSelect = false
             this.auto = true
         },
         manualMode: function () {
-            this.modeSelect = false
             this.manual = true
+            this.btns.random = false
         },
         getModal: function () {
             this.$emit('getmodal', {
@@ -65,6 +80,29 @@ const random = {
                 method: 1,
                 content: '测试'
             })
+        },
+        backRandom: function () {
+            this.btns.random = true
+            this.manual = false
+        },
+        selectItem: function (index) {
+            // 未选中任何一个
+            if (!this.swaping) {
+                this.swaping = true
+                this.swapFrom.obj = this.players[index]
+                this.swapFrom.index = index
+                this.swapPrompt = '选择要换位置参赛项目'
+            } else {
+                // 已经选了一个
+                this.swaping = false
+                this.swapTo.obj = this.players[index]
+                this.swapTo.index = index
+                vue.players[this.swapTo.index].order = this.swapFrom.index + 1
+                vue.players[this.swapFrom.index].order = this.swapTo.index + 1
+                Vue.set(vue.players, this.swapTo.index, this.swapFrom.obj)
+                Vue.set(vue.players, this.swapFrom.index, this.swapTo.obj)
+                this.swapPrompt = '将选中项目移动至'
+            }
         }
     }
 }
@@ -104,6 +142,9 @@ const matching = {
             })
         },
         nextParticipant: function () {
+            if (!confirm('是否进行下一组')) {
+                return
+            }
             let self = this
             // 告诉后台开始比赛/下一个选手
             // todo:等screen通知之后才出现下一个
@@ -111,9 +152,7 @@ const matching = {
                 url: '/api/hosts/beginParticipant',
                 type: 'post',
                 success: function (msg) {
-                    if (!confirm('是否进行下一组')) {
-                        return
-                    }
+
                     // 拉取状态
                     vue.status = 2
                     vue.participant++
@@ -246,6 +285,12 @@ var vue = new Vue({
                 } else if (self.score == 2) {
                     self.btnStatus.score = false
                     self.btnStatus.next = true
+                }
+                // 还没开始抽签
+                if (self.status == 0) {
+                    for (let i = 0, len = data.message.participants.length; i < len; i++) {
+                        self.players[i].order = i + 1
+                    }
                 }
                 // 跳转到相应页面
                 switch (self.status) {
