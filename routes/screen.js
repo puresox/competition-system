@@ -7,4 +7,9 @@ router.get('/', checkLogin, checkScreen, (req, res) => {
   res.render('screen/index');
 });
 
+// GET /screen/ranking
+router.get('/', checkLogin, checkScreen, (req, res) => {
+  res.render('screen/ranking');
+});
+
 module.exports = router;
