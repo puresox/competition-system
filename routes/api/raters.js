@@ -56,7 +56,7 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
       participant,
       score,
     ]) => {
-      const theScore = scores.find(s => s.participant._id === participantId);
+      const theScore = scores.find(s => s.participant._id.toString === participantId.toString);
       let isscore = 0;
       if (theScore) {
         isscore = 1;
