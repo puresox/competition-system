@@ -20,6 +20,7 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
     }) => Promise.all([
       participantModels
         .find({ competition: competitionId })
+        .sort({ order: 1 })
         .exec(),
       status,
       participant,
@@ -36,9 +37,11 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
         scoreModels
           .find({ competition: competitionId, rater: raterId })
           .populate('participant')
+          .sort({ _id: 1 })
           .exec(),
         itemModels
           .find({ competition: competitionId })
+          .sort({ _id: 1 })
           .exec(),
         participantId,
         participants,

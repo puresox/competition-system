@@ -17,6 +17,7 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
     }) => Promise.all([
       participantModels
         .find({ competition: competitionId })
+        .sort({ order: 1 })
         .exec(),
       status,
       participant,

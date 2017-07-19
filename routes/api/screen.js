@@ -18,6 +18,7 @@ router.get('/status', checkLogin, checkScreen, (req, res) => {
     }) => Promise.all([
       participantModels
         .find({ competition: competitionId })
+        .sort({ order: 1 })
         .exec(),
       status,
       participant,
@@ -35,6 +36,7 @@ router.get('/status', checkLogin, checkScreen, (req, res) => {
         scoreModels
           .find({ competition: competitionId, participant: participantId })
           .populate('participant')
+          .sort({ _id: 1 })
           .exec(),
         status,
         participant,
@@ -43,7 +45,7 @@ router.get('/status', checkLogin, checkScreen, (req, res) => {
     })
     .then(([participants, scoresArray, status, participant, score]) => {
       const scores = [];
-      scoresArray.forEach((raterScore, i) => {
+      scoresArray.forEach((raterScore) => {
         let sum = 0;
         raterScore
           .scores
@@ -97,7 +99,7 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
             },
           })
             .exec()
-            .then(() => participantModels.find({ competition: competitionId }).exec())
+            .then(() => participantModels.find({ competition: competitionId }).sort({ order: 1 }).exec())
             .then((orderedParticipants) => {
               res.send({ status: 'success', message: orderedParticipants });
             })

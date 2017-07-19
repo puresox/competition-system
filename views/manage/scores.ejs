@@ -21,19 +21,22 @@
         <table class="competition">
             <thead>
                 <tr>
-                    <th>主持人账号</th>
-                    <th>操作</th>
+                    <th>评委</th>
+                    <th>参赛作品</th>
+                    <th>分数</th>
                 </tr>
             </thead>
             <tbody>
                 <% scores.forEach((score, i)=>{ %>
                     <tr>
                         <td class="score-name">
-                            <%= score.name %>
+                            <%= score.rater.name %>
                         </td>
-                        <td>
-                            <a href="#" data-id="<%= score._id %>" data-index="<%= i %>" class="change">修改</a>
-                            <a href="">删除</a>
+                        <td class="score-name">
+                            <%= score.participant.name %>
+                        </td>
+                        <td class="score-name">
+                            <%= score.score %>
                         </td>
                     </tr>
                     <% }) %>

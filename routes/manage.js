@@ -19,6 +19,7 @@ router.get('/', checkLogin, checkAdmin, (req, res) => {
 router.get('/competitions', checkLogin, checkAdmin, (req, res, next) => {
   competitionModels
     .find({})
+    .sort({ _id: 1 })
     .exec()
     .then((competitions) => {
       res.render('manage/index', { competitions });
@@ -34,6 +35,7 @@ router.get('/competitions/:competitionId/hosts', checkLogin, checkAdmin, (req, r
     role: 1,
     competition: competitionId,
   }, '_id name competition')
+    .sort({ _id: 1 })
     .exec()
     .then((hosts) => {
       res.render('manage/hosts', { hosts, competitionId });
@@ -49,6 +51,7 @@ router.get('/competitions/:competitionId/raters', checkLogin, checkAdmin, (req, 
     role: 2,
     competition: competitionId,
   }, '_id name competition')
+    .sort({ _id: 1 })
     .exec()
     .then((raters) => {
       res.render('manage/raters', { raters, competitionId });
@@ -64,6 +67,7 @@ router.get('/competitions/:competitionId/screen', checkLogin, checkAdmin, (req, 
     role: 3,
     competition: competitionId,
   }, '_id name competition')
+    .sort({ _id: 1 })
     .exec()
     .then((screen) => {
       res.render('manage/screen', { screen, competitionId });
@@ -77,6 +81,7 @@ router.get('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, r
 
   itemModels
     .find({ competition: competitionId })
+    .sort({ _id: 1 })
     .exec()
     .then((items) => {
       res.render('manage/items', { items, competitionId });
@@ -90,6 +95,7 @@ router.get('/competitions/:competitionId/participants', checkLogin, checkAdmin, 
 
   participantModels
     .find({ competition: competitionId })
+    .sort({ _id: 1 })
     .exec()
     .then((participants) => {
       res.render('manage/participants', { participants, competitionId });
@@ -104,8 +110,20 @@ router.get('/competitions/:competitionId/scores', checkLogin, checkAdmin, (req, 
   scoreModels
     .find({ competition: competitionId })
     .populate('rater', '_id name competition')
+    .populate('participant')
+    .sort({ _id: 1 })
     .exec()
-    .then((scores) => {
+    .then((scoresArray) => {
+      const scores = scoresArray;
+      scoresArray.forEach((raterScore, i) => {
+        let sum = 0;
+        raterScore
+          .scores
+          .forEach((itemScore) => {
+            sum += itemScore.score;
+          });
+        scores[i].score = sum;
+      });
       res.render('manage/scores', { scores, competitionId });
     })
     .catch(next);
