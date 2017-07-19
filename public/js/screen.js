@@ -303,3 +303,7 @@ socket.on('endScore', function () {
         }
     })
 })
+// 结束比赛
+socket.on('end', function () {
+    router.push('/over')
+})

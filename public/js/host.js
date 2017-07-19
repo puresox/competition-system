@@ -135,6 +135,7 @@ const matching = {
                     // 发送socket
                     socket.emit('beginScore')
                     vue.btnStatus.score = false
+                    vue.btnStatus.scoring = true
                 },
                 error: function (err) {
                     alert('网络发生错误,请再次点击"开始打分"')
@@ -158,6 +159,7 @@ const matching = {
                     vue.participant++
                     vue.score = 0
                     vue.btnStatus.score = true
+                    vue.btnStatus.scoring = false
                     vue.btnStatus.next = false
                     console.log('下一个选手')
                     // 发送socket
@@ -168,8 +170,19 @@ const matching = {
                     console.log('下一个选手失败')
                 }
             })
+        },
+        overMatch: function () {
+            if (!confirm('是否结束比赛?')) {
+                return
+            }
+            router.push('/')
         }
     }
+}
+
+const over = {
+    props: ['over'],
+    template: '#over'
 }
 
 var router = new VueRouter({
@@ -179,7 +192,9 @@ var router = new VueRouter({
         // 控制抽签页面
         { path: '/random', component: random },
         // 控制评分页
-        { path: '/matching', component: matching }
+        { path: '/matching', component: matching },
+        // 结束页面
+        { path: '/over', component: over }
     ]
 })
 
@@ -282,12 +297,15 @@ var vue = new Vue({
                 }
                 if (self.score == 0) {
                     self.btnStatus.score = true
+                    self.btnStatus.scoring = false
                     self.btnStatus.next = false
                 } else if (self.score == 1) {
                     self.btnStatus.score = false
+                    self.btnStatus.scoring = true
                     self.btnStatus.next = false
                 } else if (self.score == 2) {
                     self.btnStatus.score = false
+                    self.btnStatus.scoring = false
                     self.btnStatus.next = true
                 }
                 // 还没开始抽签
@@ -358,4 +376,5 @@ socket.on('autoDrawn', function () {
 socket.on('endParticipant', function () {
     vue.btnStatus.next = true
     vue.btnStatus.score = false
+    self.btnStatus.scoring = false
 })
