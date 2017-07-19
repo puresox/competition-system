@@ -343,7 +343,7 @@ socket.on('autoDrawn', function () {
 socket.on('nextParticipant', function () {
     vue.status = 2
     vue.participant++
-    if (vue.participant > vue.participants.length) {
+    if (vue.participant > vue.players.length) {
         router.push('/over')
     } else {
         router.push('/player/' + vue.participant)
@@ -353,4 +353,8 @@ socket.on('nextParticipant', function () {
 // 监听开始打分
 socket.on('beginScore', function () {
     vue.score = 1
+})
+// 结束比赛
+socket.on('end', function () {
+    router.push('/over')
 })
