@@ -263,6 +263,7 @@ socket.on('draw', function () {
 socket.on('nextParticipant', function () {
     vue.status = 2
     vue.participant++
+    vue.score = 0
     router.push('/player/' + vue.participant)
 })
 // 监听开始打分

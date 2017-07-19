@@ -142,6 +142,9 @@ const matching = {
             })
         },
         nextParticipant: function () {
+            if (!confirm('是否进行下一组')) {
+                return
+            }
             let self = this
             // 告诉后台开始比赛/下一个选手
             // todo:等screen通知之后才出现下一个
@@ -149,9 +152,7 @@ const matching = {
                 url: '/api/hosts/beginParticipant',
                 type: 'post',
                 success: function (msg) {
-                    if (!confirm('是否进行下一组')) {
-                        return
-                    }
+
                     // 拉取状态
                     vue.status = 2
                     vue.participant++
