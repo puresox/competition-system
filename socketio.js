@@ -2,10 +2,10 @@ module.exports = (io) => {
   const host = io.of('/host');
   const screen = io.of('/screen');
   const rater = io.of('/rater');
+  const ranking = io.of('/ranking');
 
   host.on('connection', (socket) => {
-    socket.on('disconnect', () => {
-    });
+    socket.on('disconnect', () => {});
     // 开始自动抽签
     socket.on('autoDraw', () => {
       screen.emit('autoDraw');
@@ -37,8 +37,7 @@ module.exports = (io) => {
   });
 
   screen.on('connection', (socket) => {
-    socket.on('disconnect', () => {
-    });
+    socket.on('disconnect', () => {});
     // 自动抽签完成
     socket.on('autoDrawn', () => {
       rater.emit('autoDrawn');
@@ -49,11 +48,14 @@ module.exports = (io) => {
       host.emit('endParticipant');
       rater.emit('endParticipant');
     });
+    // 排名更新
+    socket.on('updateRank', () => {
+      ranking.emit('updateRank');
+    });
   });
 
   rater.on('connection', (socket) => {
-    socket.on('disconnect', () => {
-    });
+    socket.on('disconnect', () => {});
     // 评分结束
     socket.on('endScore', (score) => {
       screen.emit('endScore', score);
