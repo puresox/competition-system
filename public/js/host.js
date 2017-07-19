@@ -49,6 +49,7 @@ const random = {
                     order: this.players[i].order
                 }
             }
+            let self = this
             $.ajax({
                 url: '/api/screen/draw',
                 type: 'post',
@@ -57,6 +58,9 @@ const random = {
                 },
                 success: function () {
                     socket.emit('manuDrawn')
+                    vue.btnStatus.begin = true
+                    vue.btnStatus.random = false
+                    self.manual = false
                 },
                 error: function () {
 
@@ -105,14 +109,15 @@ const random = {
             this.manual = false
         },
         selectItem: function (index) {
-            // 未选中任何一个
+            // 选中了一个
             if (!this.swaping) {
                 this.swaping = true
                 this.swapFrom.obj = this.players[index]
                 this.swapFrom.index = index
-                this.swapPrompt = '选择要换位置参赛项目'
+
+                this.swapPrompt = '将选中项目移动至'
             } else {
-                // 已经选了一个
+                // 再选另一个
                 this.swaping = false
                 this.swapTo.obj = this.players[index]
                 this.swapTo.index = index
@@ -120,7 +125,7 @@ const random = {
                 vue.players[this.swapFrom.index].order = this.swapTo.index + 1
                 Vue.set(vue.players, this.swapTo.index, this.swapFrom.obj)
                 Vue.set(vue.players, this.swapFrom.index, this.swapTo.obj)
-                this.swapPrompt = '将选中项目移动至'
+                this.swapPrompt = '选择要换位置参赛项目'
             }
         }
     }
