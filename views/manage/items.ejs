@@ -9,11 +9,13 @@
     </div>
     <form id="form" class="form" method="post">
         <input type="text" name="name" value="" placeholder="评分项">
+        <input type="text" name="note" value="" placeholder="备注">
         <input type="text" name="value" value="" placeholder="最高分" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')">
         <input type="submit" name="" value="添加评分项">
     </form>
     <div id="form2" class="form" data-action="">
         <input id="changename" type="text" name="name" value="" placeholder="评分项">
+        <input id="changenote" type="text" name="note" value="" placeholder="备注">
         <input id="changevalue" type="text" name="value" value="" placeholder="最高分" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')">
         <button id="putchange">提交修改</button>
     </div>
@@ -23,6 +25,7 @@
                 <tr>
                     <th>评分项</th>
                     <th>最高分</th>
+                    <th>备注</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -34,6 +37,9 @@
                         </td>
                         <td class="item-value">
                             <%= item.value %>
+                        </td>
+                        <td class="item-note">
+                            <%= item.note%>
                         </td>
                         <td>
                             <a href="#" data-id="<%= item._id %>" data-index="<%= i %>" class="change">修改</a>
@@ -64,8 +70,10 @@
             var index = this.getAttribute('data-index')
             var itemName = document.getElementsByClassName('item-name')[index].innerText
             var itemValue = document.getElementsByClassName('item-value')[index].innerText
+            var itemNote = document.getElementsByClassName('item-note')[index].innerText
             document.getElementById('changename').value = itemName
             document.getElementById('changevalue').value = itemValue
+            document.getElementById('changenote').value = itemNote
             document.getElementById('form2').setAttribute('data-id', this.getAttribute('data-id'))
         })
     }
