@@ -1,24 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <title></title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
-    <script>
-        $(function () {
-            const countDown = io.connect('/countDown');
-            countDown.on('countDown', function (time) {
-                $('#messages').text(time);
-            });
-        });
-    </script>
-</head>
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="../css/style.css" rel="stylesheet">
+        <script src="../js/vue.js"></script>
+        <script src="../js/jquery-3.2.0.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <style>
 
-<body>
-    <p id="messages">05:00</p>
-</body>
+        </style>
+    </head>
+
+    <body>
+        <p id="messages">05:00</p>
+        <div id="app">
+
+        </div>
+        <script>
+            $(function () {
+                const countDown = io.connect('/countDown');
+                countDown.on('countDown', function (time) {
+                    $('#messages').text(time);
+                });
+            });
+
+            var vue = new Vue({
+                el: '#app',
+                data: {
+                    time: '05:00'
+                }
+            })
+        </script>
+    </body>
 
 </html>

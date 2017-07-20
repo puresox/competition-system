@@ -195,6 +195,9 @@ const matching = {
                 }
             })
         },
+        beginTiming: function () {
+            socket.emit('countDown')
+        },
         overMatch: function () {
             if (!confirm('是否结束比赛?')) {
                 return

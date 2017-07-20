@@ -249,9 +249,16 @@ var vue = new Vue({
         btnStatus: {
             submit: false
         },
-        rank: []
+        rank: [],
+        showMenu: false
     },
     computed: {
+        isMenu: function () {
+            return {
+                'menu-hide': !this.showMenu,
+                'menu-show': this.showMenu
+            }
+        }
     },
     methods: {
         selectScore: function (score, index, checked) {
@@ -260,6 +267,9 @@ var vue = new Vue({
             } else { //多个小成绩
                 this.players[this.participant - 1].scores[index].score = score
             }
+        },
+        callMenu: function () {
+            this.showMenu = !this.showMenu
         }
     },
     beforeCreate: function () {
