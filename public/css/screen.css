@@ -100,6 +100,7 @@ a {
     box-sizing: border-box;
     border-radius: 5px;
     overflow: hidden;
+    transition: all 1s;
 }
 
 .random-index {
@@ -254,4 +255,9 @@ a {
     color: red;
     font-size: 50px;
     font-weight: bolder;
+}
+
+.player-order-enter {
+    opacity: 0;
+    transform: translateY(-50px);
 }

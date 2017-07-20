@@ -11,7 +11,7 @@ const ready = {
 }
 
 const random = {
-    props: ['players'],
+    props: ['players', 'randomed'],
     template: '#random',
     data: function () {
         return {
@@ -96,7 +96,8 @@ var vue = new Vue({
         score: 0,
         // 当前项目的所有成绩
         scores: [],
-        ratersNum: 0
+        ratersNum: 0,
+        randomReady: false
     },
     computed: {
     },
@@ -120,6 +121,9 @@ var vue = new Vue({
                 defaultOrders.splice(index, 1)
             }
             console.log(result)
+            // 切换到抽签页
+            router.push('/random')
+            // todo:如果这个ajax卡住怎么办
             $.ajax({
                 url: '/api/screen/draw',
                 type: 'post',
@@ -127,6 +131,7 @@ var vue = new Vue({
                     participants: JSON.stringify(result)
                 },
                 success: function (msg) {
+                    vue.randomReady = true
                     // todo:
                     // 1.判断成功
                     // 2.只有收到错误返回才能再次点击
@@ -149,8 +154,6 @@ var vue = new Vue({
                         }
                     }
                     self.players = players
-                    // 切换到抽签页
-                    router.push('/random')
                     // 发socket通知host,rater,抽签完毕,可以开始比赛了
                     socket.emit('autoDrawn')
                 },
@@ -185,6 +188,9 @@ var vue = new Vue({
                     for (let i = 0, len = msg.message.participants.length; i < len; i++) {
                         self.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
                     }
+                }
+                if (self.status > 0) {
+                    vue.randomReady = true
                 }
                 // // 初始化时每个player加上allScore字段
                 // for (let i = 0, len = self.players.length; i < len; i++) {
@@ -272,6 +278,7 @@ socket.on('manuDrawn', function () {
             vue.participant = msg.message.participant
             vue.score = msg.message.score
             vue.players = msg.message.participants
+            vue.randomReady = true
         },
         error: function (err) {
 

@@ -17,7 +17,7 @@
         <div id="spa" class="container">
             <img src="../system-img/screen.jpg" alt="" class="img-bkg">
             <router-view class="main" v-bind:players="players" v-bind:scoring="score" v-bind:allscore="scores" v-bind:num="ratersNum"
-                ref="test"></router-view>
+                ref="test" v-bind:randomed="randomReady"></router-view>
         </div>
         <template id="load">
             <div>
@@ -39,10 +39,12 @@
                     </div>
                     <div class="order-list">
                         <template v-for="(player, index) in players">
-                            <div class="random-item">
-                                <div class="random-index">{{ player.order }}号</div>
-                                <div class="random-name">{{ player.name }}</div>
-                            </div>
+                            <transition name="player-order">
+                                <div class="random-item" v-if="randomed">
+                                    <div class="random-index">{{ player.order }}号</div>
+                                    <div class="random-name">{{ player.name }}</div>
+                                </div>
+                            </transition>
                         </template>
                         <!--<template v-for="(man, index) in men">
                             <div class="random-item">

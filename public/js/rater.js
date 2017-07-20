@@ -101,6 +101,7 @@ const player = {
             this.order = this.$route.params.order
             this.btns.message = true
             this.btns.score = false
+            this.checked = false
         },
         // todo:如果有未打分项,不给提交并提示
         select: function (index) {
@@ -195,8 +196,10 @@ var vue = new Vue({
         routes: [],
         // 参赛项目
         players: [],
-        // 评分项
+        // 评分项(除了总分)
         items: [],
+        // 总分
+        finalItem: {},
         // 分数
         scores: [],
         // 当前进行到的项目的序号
@@ -261,11 +264,21 @@ var vue = new Vue({
                 // 初始化每个player的scores
                 for (let i = 0, len = self.players.length; i < len; i++) {
                     self.players[i].scores = []
-                    for (let i2 = 0, len2 = self.items.length; i2 < len2; i2++) {
-                        self.players[i].scores[i2] = {
-                            item: self.items[i2]._id,
-                            score: '点击选择成绩'
-                        }
+                    for (let i2 = 0, len2 = self.items.length; i2 < len2;) {
+                        // if (self.items[i2].name != '总分') {
+                        //     self.players[i].scores[i2] = {
+                        //         item: self.items[i2]._id,
+                        //         score: '点击选择成绩'
+                        //     }
+                        //     i2++
+                        // } else {
+                        //     self.players[i].allScore = {
+                        //         item: self.items[i2]._id,
+                        //         score: '点击选择总成绩'
+                        //     }
+                        //     self.items.splice(i2, 1)
+                        // }
+                        i2++
                     }
                 }
                 let scores = msg.message.scores
