@@ -28,8 +28,8 @@
         </template>-->
         <div id="spa" class="container">
             <img src="../system-img/pad.jpg" alt="" class="img-bkg">
-            <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:scoring="score" v-bind:index="participant"
-                v-bind:hasscored="isscore" v-on:select="selectScore" ref="child"></router-view>
+            <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:titem="totalItem" v-bind:scoring="score"
+                v-bind:index="participant" v-bind:hasscored="isscore" v-on:select="selectScore" ref="child"></router-view>
         </div>
         <template id="load">
             <div>
@@ -102,8 +102,8 @@
                             <div v-if="checked">
                                 <div class="item" v-on:click="selectAll">
                                     <div class="box-text">
-                                        <span>总分</span>
-                                        <span>点击选择成绩</span>
+                                        <span>{{ totalItem[0].name }}</span>
+                                        <span>{{ playerData.totalScore.score }}</span>
                                     </div>
                                     <div class="box-explain">
                                         <span>这里是解释是解释是解释</span>

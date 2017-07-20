@@ -26,7 +26,7 @@ const random = {
 }
 
 const player = {
-    props: ['players', 'scoring', 'allscore'],
+    props: ['players', 'scoring', 'allscore', 'num'],
     template: '#player',
     data: function () {
         return {
