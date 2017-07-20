@@ -37,6 +37,7 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
         scoreModels
           .find({ competition: competitionId, rater: raterId })
           .populate('participant')
+          .populate('scores.item')
           .sort({ _id: 1 })
           .exec(),
         itemModels
