@@ -48,6 +48,10 @@ module.exports = (io) => {
           clearInterval(intervalID);
         }
       }
+      socket.on('endCountDown', () => {
+        clearInterval(intervalID);
+        countDown.emit('countDown', '05:00');
+      });
     });
   });
 
