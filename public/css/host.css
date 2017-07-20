@@ -373,6 +373,13 @@ a {
     border-radius: 5px;
 }
 
+.over {
+    font-size: 40px;
+    color: black;
+    font-weight: bolder;
+    letter-spacing: .1em;
+}
+
 .modal-enter {
     opacity: 0;
 }

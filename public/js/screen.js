@@ -65,7 +65,7 @@ const player = {
 }
 
 const over = {
-    props: ['over'],
+    props: ['over', 'ranks'],
     template: '#over'
 }
 
@@ -97,7 +97,8 @@ var vue = new Vue({
         // 当前项目的所有成绩
         scores: [],
         ratersNum: 0,
-        randomReady: false
+        randomReady: false,
+        rank: []
     },
     computed: {
     },
@@ -189,14 +190,41 @@ var vue = new Vue({
                         self.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
                     }
                 }
+                // 生成排名
+                this.rank = msg.message.participants
+                for (let i = 0, len = this.rank.length; i < len; i++) {
+                    if (!this.rank[i].score) {
+                        this.rank[i].score = 0
+                    }
+                }
+                this.rank.sort(function (a, b) {
+                    if (a.score > b.score) {
+                        return -1
+                    }
+                    if (a.score < b.score) {
+                        return 1
+                    }
+                    return 0
+                })
+                // 这个只是为了抽签动画
                 if (self.status > 0) {
                     vue.randomReady = true
                 }
-                // // 初始化时每个player加上allScore字段
-                // for (let i = 0, len = self.players.length; i < len; i++) {
-                //     self.players[i].allScores = []
-                // }
-                // self.players[self.participant - 1].allScores = msg.message.scores
+                if (msg.message.scores.length == msg.message.ratersNum && msg.message.score == 1) {
+                    $.ajax({
+                        // todo:断线重连情况没考虑
+                        url: '/api/screen/score',
+                        type: 'post',
+                        success: function (msg) {
+                            console.log('评分完毕')
+                            socket.emit('endParticipant')
+                            vue.score = 2
+                        },
+                        error: function (err) {
+
+                        }
+                    })
+                }
                 self.scores = msg.message.scores
                 // 跳转到相应页面
                 switch (self.status) {
@@ -332,5 +360,35 @@ socket.on('endScore', function () {
 })
 // 结束比赛
 socket.on('end', function () {
-    router.push('/over')
+    $.ajax({
+        url: '/api/screen/status',
+        type: 'get',
+        success: function (msg) {
+            vue.rank = msg.message.participants
+            // 有的没有成绩,置零处理
+            for (let i = 0, len = vue.rank.length; i < len; i++) {
+                if (!vue.rank[i].score) {
+                    vue.rank[i].score = 0
+                }
+            }
+            vue.rank.sort(function (a, b) {
+                if (a.score > b.score) {
+                    return -1
+                }
+                if (a.score < b.score) {
+                    return 1
+                }
+                return 0
+            })
+            for (let i = 0, len = vue.rank.length; i < len; i++) {
+                if (vue.rank[i].score == 0) {
+                    vue.rank[i].score = '-'
+                }
+            }
+            router.push('/over')
+        },
+        error: function (err) {
+
+        }
+    })
 })

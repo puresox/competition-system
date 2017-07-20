@@ -17,7 +17,7 @@
         <div id="spa" class="container">
             <img src="../system-img/screen.jpg" alt="" class="img-bkg">
             <router-view class="main" v-bind:players="players" v-bind:scoring="score" v-bind:allscore="scores" v-bind:num="ratersNum"
-                ref="test" v-bind:randomed="randomReady"></router-view>
+                ref="test" v-bind:randomed="randomReady" v-bind:ranks="rank"></router-view>
         </div>
         <template id="load">
             <div>
@@ -87,7 +87,16 @@
             </div>
         </template>
         <template id="over">
-            <h1>比赛结束</h1>
+            <div>
+                <div class="match-result">
+                    <template v-for="(rankItem, index) in ranks">
+                        <div class="rank-item">
+                            <div class="rank-index">第{{ index + 1 }}名</div>
+                            <div class="rank-name">{{ rankItem.name }}<span>{{rankItem.score}}分</span></div>
+                        </div>
+                    </template>
+                </div>
+            </div>
         </template>
         <script src="../js/screen.js"></script>
     </body>

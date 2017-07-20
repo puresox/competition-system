@@ -199,6 +199,7 @@ const matching = {
             if (!confirm('是否结束比赛?')) {
                 return
             }
+            socket.emit('end')
             router.push('/over')
         }
     }
@@ -398,7 +399,13 @@ socket.on('autoDrawn', function () {
 })
 // 监听评分结束
 socket.on('endParticipant', function () {
-    vue.btnStatus.next = true
     vue.btnStatus.score = false
     vue.btnStatus.scoring = false
+    if (vue.participant + 1 > vue.players.length) {
+        vue.btnStatus.next = false
+        vue.btnStatus.over = true
+    } else {
+        vue.btnStatus.next = true
+        vue.btnStatus.over = false
+    }
 })
