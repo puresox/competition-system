@@ -59,7 +59,7 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
       participant,
       score,
     ]) => {
-      const theScore = scores.find(s => s.participant._id.toString === participantId.toString);
+      const theScore = scores.find(s => s.participant._id.toString() === participantId.toString());
       let isscore = 0;
       if (theScore) {
         isscore = 1;
@@ -99,7 +99,16 @@ router.post('/score', checkLogin, checkRater, (req, res) => {
     .findById(competitionId)
     .exec()
     .then(competition => participantModels.findOne({ order: competition.participant, competition: competitionId }).exec())
-    .then(({ _id: participantId }) => scoreModels.create({ competition: competitionId, participant: participantId, rater: raterId, scores }))
+    .then(({ _id: participantId }) => Promise.all([
+      scoreModels.find({ competition: competitionId, participant: participantId, rater: raterId }),
+      participantId,
+    ]))
+    .then(([scoreArray, participantId]) => {
+      if (scoreArray && scoreArray.length > 0) {
+        return res.send({ status: 'error', message: '您已评过分' });
+      }
+      return scoreModels.create({ competition: competitionId, participant: participantId, rater: raterId, scores });
+    })
     .then(() => {
       res.send({ status: 'success', message: {} });
     })

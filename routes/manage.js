@@ -147,23 +147,32 @@ router.post('/competitions', checkLogin, checkAdmin, (req, res) => {
     return res.redirect('back');
   }
 
-  competitionModels.create({
-    name,
+  competitionModels
+    .create({
+      name,
     // 比赛简介
-    introduction,
+      introduction,
     // 比赛状态 0 比赛未开始;1 抽签;2 比赛开始;3 比赛结束
-    status: 0,
+      status: 0,
     // 正在进行的参赛作品抽签序号
-    participant: 0,
-  }, (err) => {
-    if (err) {
+      participant: 0,
+    })
+    .then(competition => itemModels.create({
+      // 评分项名称
+      name: '总分',
+      // 分值
+      value: 100,
+      // 所属比赛Id
+      competition: competition._id,
+    }))
+    .then(() => {
+      req.flash('success', '新建成功');
+      res.redirect('/manage/competitions');
+    })
+    .catch((err) => {
       req.flash('err', err);
-      return res.redirect('back');
-    }
-    // 写入 flash
-    req.flash('success', '新建成功');
-    res.redirect('/manage/competitions');
-  });
+      res.redirect('back');
+    });
 });
 
 // POST /manage/competitions/:competitionId/hosts
