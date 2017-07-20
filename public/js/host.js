@@ -51,7 +51,7 @@ const random = {
             }
             let self = this
             $.ajax({
-                url: '/api/screen/draw',
+                url: '/api/hosts/draw',
                 type: 'post',
                 data: {
                     participants: JSON.stringify(result)

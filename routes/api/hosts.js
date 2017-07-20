@@ -47,6 +47,45 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
     });
 });
 
+// POST /api/hosts/draw 手动抽签
+router.post('/draw', checkLogin, checkHost, (req, res) => {
+  const competitionId = req.session.user.competition._id;
+  const participants = JSON.parse(req.fields.participants);
+
+  participants.forEach((participant, i) => {
+    participantModels.update({
+      _id: participant.id,
+    }, {
+      $set: {
+        order: participant.order,
+      },
+    })
+      .exec()
+      .then(() => {
+        if (i === participants.length - 1) {
+          return competitionModels.update({
+            _id: competitionId,
+          }, {
+            $set: {
+              status: 1,
+            },
+          })
+            .exec()
+            .then(() => participantModels.find({ competition: competitionId }).sort({ order: 1 }).exec())
+            .then((orderedParticipants) => {
+              res.send({ status: 'success', message: orderedParticipants });
+            })
+            .catch((error) => {
+              res.send({ status: 'error', message: error });
+            });
+        }
+      })
+      .catch((err) => {
+        res.send({ status: 'error', message: err });
+      });
+  });
+});
+
 // POST /api/hosts/beginCompetition 开始比赛
 router.post('/beginCompetition', checkLogin, checkHost, (req, res) => {
   const competitionId = req.session.user.competition._id;

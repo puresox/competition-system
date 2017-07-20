@@ -88,7 +88,7 @@ router.get('/status', checkLogin, checkScreen, (req, res) => {
     });
 });
 
-// POST /api/screen/draw 抽签
+// POST /api/screen/draw 自动抽签
 router.post('/draw', checkLogin, checkScreen, (req, res) => {
   const competitionId = req.session.user.competition._id;
   const participants = JSON.parse(req.fields.participants);
