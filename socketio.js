@@ -1,8 +1,11 @@
+const moment = require('moment');
+
 module.exports = (io) => {
   const host = io.of('/host');
   const screen = io.of('/screen');
   const rater = io.of('/rater');
   const ranking = io.of('/ranking');
+  const countDown = io.of('/countDown');
 
   host.on('connection', (socket) => {
     socket.on('disconnect', () => {});
@@ -33,6 +36,18 @@ module.exports = (io) => {
     socket.on('end', () => {
       screen.emit('end');
       rater.emit('end');
+    });
+    // 倒计时
+    socket.on('countDown', () => {
+      const minutes = moment('05:00', 'mm:ss');
+      const intervalID = setInterval(animate, 1000);
+      function animate() {
+        minutes.subtract(1, 'seconds');
+        countDown.emit('countDown', minutes.format('mm:ss'));
+        if (minutes.format('mm:ss') === '00:00') {
+          clearInterval(intervalID);
+        }
+      }
     });
   });
 

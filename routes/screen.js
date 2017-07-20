@@ -8,8 +8,13 @@ router.get('/', checkLogin, checkScreen, (req, res) => {
 });
 
 // GET /screen/ranking
-router.get('/', checkLogin, checkScreen, (req, res) => {
+router.get('/ranking', checkLogin, checkScreen, (req, res) => {
   res.render('screen/ranking');
+});
+
+// GET /screen/countDown
+router.get('/countDown', checkLogin, checkScreen, (req, res) => {
+  res.render('screen/countDown');
 });
 
 module.exports = router;
