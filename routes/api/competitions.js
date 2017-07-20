@@ -178,6 +178,7 @@ router.put('/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) =
   const competitionId = req.params.competitionId;
   const itemId = req.params.itemId;
   const name = req.fields.name;
+  const note = req.fields.note;
   const value = req.fields.value;
 
   // 校验参数
@@ -198,6 +199,7 @@ router.put('/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) =
   }, {
     $set: {
       name,
+      note,
       value,
     },
   }, (error) => {

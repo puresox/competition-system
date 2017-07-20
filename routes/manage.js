@@ -314,6 +314,7 @@ router.post('/competitions/:competitionId/screen', checkLogin, checkAdmin, (req,
 router.post('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
   const name = req.fields.name;
+  const note = req.fields.note;
   const value = req.fields.value;
 
   // 校验参数
@@ -335,6 +336,8 @@ router.post('/competitions/:competitionId/items', checkLogin, checkAdmin, (req, 
   itemModels.create({
     // 评分项名称
     name,
+    // 备注
+    note,
     // 分值
     value,
     // 所属比赛Id

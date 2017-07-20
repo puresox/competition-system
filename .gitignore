@@ -59,9 +59,6 @@ typings/
 #Eslint
 .eslintrc.json
 
-#db
-/db
-
 #config
 /config/default.js
 
