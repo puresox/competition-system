@@ -101,6 +101,9 @@ const player = {
             // 将选择结果传递回父组件
             self.$emit('select', selectedVal[0], self.itemIndex, self.checked)
         })
+        document.getElementsByClassName('picker-mask')[0].addEventListener('click', function () {
+            self.picker.hide()
+        })
     },
     // 监听路由的变化
     watch: {
@@ -450,6 +453,8 @@ socket.on('nextParticipant', function () {
 // 监听开始打分
 socket.on('beginScore', function () {
     vue.score = 1
+    vue.btnStatus.message = false
+    vue.btnStatus.score = true
 })
 // 结束比赛
 socket.on('end', function () {

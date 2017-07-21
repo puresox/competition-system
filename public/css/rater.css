@@ -119,7 +119,7 @@ a {
     background-color: rgb(61, 153, 207);
 }
 
-.player-nav span {
+.nav-span {
     display: block;
     width: 50%;
     height: 40px;
@@ -130,6 +130,12 @@ a {
     border-radius: 2px;
     font-size: 18px;
     letter-spacing: .2em;
+    box-shadow: 0 2px 2px #696969;
+}
+
+.nav-selected {
+    box-shadow: 0 1px 1px #696969;
+    background-color: rgb(40, 118, 163);
 }
 
 .pre, .next {
@@ -215,8 +221,7 @@ a {
 }
 
 .wrapper-msg span {
-    margin-top: .5em;
-    font-size: 50px;
+    font-size: 40px;
     color: white;
     letter-spacing: .2em;
 }
@@ -347,7 +352,7 @@ a {
     margin-left: 2em;
 }
 
-.box-text span {
+.box-text .item-msg {
     flex: 1;
     line-height: 3em;
     letter-spacing: .2em;
@@ -382,4 +387,26 @@ a {
 
 .menu-enter, .menu-leave-to {
     transform: translateY(150px);
+}
+
+
+/*改变picker组件*/
+
+.picker .picker-panel .wheel-wrapper .wheel .wheel-scroll .wheel-item {
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.picker .picker-panel .picker-choose .picker-title {
+    font-size: 30px !important;
+}
+
+.picker .picker-panel .picker-choose .cancel {
+    font-size: 28px;
+    top: 0;
+}
+
+.picker .picker-panel .picker-choose .confirm {
+    font-size: 28px;
+    top: 0;
 }

@@ -60,8 +60,8 @@
                 </router-link>
                 <div class="main-players">
                     <div class="player-nav">
-                        <span @click="toMessage">查看资料</span>
-                        <span @click="toScore">打分</span>
+                        <span @click="toMessage" class="nav-span" v-bind:class="{ 'nav-selected' : btns.message }"><i class="iconfont">&#xe61e;</i>查看资料</span>
+                        <span @click="toScore" class="nav-span" v-bind:class="{ 'nav-selected' : btns.score }"><i class="iconfont">&#xe604;</i>打分</span>
                     </div>
                     <div class="player-msg-hd">
                         <span>{{ order }}号选手</span>
@@ -122,8 +122,8 @@
                                 <template v-for="(item, index) in items">
                                     <div class="item" v-bind:data-index="index" v-on:click="select(index)">
                                         <div class="box-text">
-                                            <span>{{ item.name }}</span>
-                                            <span>{{ playerData.scores[index].score }}</span>
+                                            <span class="item-msg">{{ item.name }}</span>
+                                            <span class="item-msg">{{ playerData.scores[index].score }}<span v-if="typeof(playerData.scores[index].score) == 'number'">(点击修改)</span></span>
                                         </div>
                                         <div class="box-explain">
                                             <span>这里是解释是解释是解释</span>
