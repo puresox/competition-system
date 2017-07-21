@@ -106,7 +106,7 @@ router.post('/score', checkLogin, checkRater, (req, res) => {
     ]))
     .then(([scoreArray, participantId]) => {
       if (scoreArray && scoreArray.length > 0) {
-        return res.send({ status: 'error', message: '您已评过分' });
+        throw new Error('您已评过分');
       }
       return scoreModels.create({ competition: competitionId, participant: participantId, rater: raterId, scores });
     })
@@ -114,7 +114,7 @@ router.post('/score', checkLogin, checkRater, (req, res) => {
       res.send({ status: 'success', message: {} });
     })
     .catch((error) => {
-      res.send({ status: 'error', message: error });
+      res.send({ status: 'error', message: (error.message) ? error.message : error });
     });
 });
 

@@ -140,7 +140,7 @@ router.post('/beginParticipant', checkLogin, checkHost, (req, res) => {
   }).then(() => {
     res.send({ status: 'success', message: {} });
   }).catch((error) => {
-    res.send({ status: 'error', message: error });
+    res.send({ status: 'error', message: (error.message) ? error.message : error });
   });
 });
 
@@ -165,6 +165,40 @@ router.post('/beginScore', checkLogin, checkHost, (req, res) => {
     .catch((error) => {
       res.send({ status: 'error', message: error });
     });
+});
+
+// POST /api/hosts/endCompetition 结束比赛
+router.post('/endCompetition', checkLogin, checkHost, (req, res) => {
+  const competitionId = req.session.user.competition._id;
+  Promise.all([
+    participantModels
+      .count({ competition: competitionId })
+      .exec(),
+    competitionModels
+      .findById(competitionId)
+      .exec(),
+  ]).then(([participantsNum, competition]) => {
+    if (participantsNum !== competition.participant) {
+      throw new Error('比赛还未结束');
+    }
+    return Promise.all([
+      participantModels
+        .findOne({ competition: competitionId, order: competition.participant })
+        .exec(),
+      competition,
+    ]);
+  }).then(([participant, competition]) => {
+    if (participant.status !== 2) {
+      throw new Error('比赛还未结束');
+    }
+    const newCompetition = competition;
+    newCompetition.status = 3;
+    return newCompetition.save();
+  }).then(() => {
+    res.send({ status: 'success', message: {} });
+  }).catch((error) => {
+    res.send({ status: 'error', message: (error.message) ? error.message : error });
+  });
 });
 
 module.exports = router;
