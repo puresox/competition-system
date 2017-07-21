@@ -176,7 +176,7 @@ router.post('/score', checkLogin, checkScreen, (req, res) => {
       res.send({ status: 'success', message: newParticipant });
     })
     .catch((error) => {
-      res.send({ status: 'error', message: error });
+      res.send({ status: 'error', message: (error.message) ? error.message : error });
     });
 });
 
