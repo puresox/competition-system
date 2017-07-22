@@ -136,7 +136,7 @@ const matching = {
     template: '#matching',
     data: function () {
         return {
-
+            timing: true
         }
     },
     computed: {
@@ -196,7 +196,12 @@ const matching = {
             })
         },
         beginTiming: function () {
+            this.timing = false
             socket.emit('countDown')
+        },
+        stopTiming: function () {
+            this.timing = true
+            socket.emit('endCountDown')
         },
         overMatch: function () {
             if (!confirm('是否结束比赛?')) {
