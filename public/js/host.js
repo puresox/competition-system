@@ -202,8 +202,18 @@ const matching = {
             if (!confirm('是否结束比赛?')) {
                 return
             }
-            socket.emit('end')
-            router.push('/over')
+            $.ajax({
+                url: '/api/hosts/endCompetition',
+                type: 'post',
+                success: function () {
+                    socket.emit('end')
+                    router.push('/over')
+                },
+                error: function () {
+                    alert('结束比赛失败,请点击重试')
+                }
+            })
+
         }
     }
 }
@@ -319,6 +329,12 @@ var vue = new Vue({
                 self.status = data.message.status
                 self.participant = data.message.participant
                 self.score = data.message.score
+                // 还没开始抽签
+                if (self.status == 0) {
+                    for (let i = 0, len = data.message.participants.length; i < len; i++) {
+                        self.players[i].order = i + 1
+                    }
+                }
                 // 绑定获取到的数据到Vue实例的data上
                 for (let i = 0, len = data.message.participants.length; i < len; i++) {
                     self.players[data.message.participants[i].order - 1] = data.message.participants[i]
@@ -336,12 +352,7 @@ var vue = new Vue({
                     self.btnStatus.scoring = false
                     self.btnStatus.next = true
                 }
-                // 还没开始抽签
-                if (self.status == 0) {
-                    for (let i = 0, len = data.message.participants.length; i < len; i++) {
-                        self.players[i].order = i + 1
-                    }
-                }
+
                 // 跳转到相应页面
                 switch (self.status) {
                     case -1:
