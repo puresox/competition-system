@@ -59,7 +59,7 @@ module.exports = (io) => {
     socket.on('disconnect', () => {});
     // 自动抽签完成
     socket.on('autoDrawn', () => {
-      rater.emit('autoDrawn');
+      // rater.emit('autoDrawn');
       host.emit('autoDrawn');
     });
     // 该参赛作品评分结束

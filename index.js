@@ -9,9 +9,10 @@ const pkg = require('./package');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const socket = require('./socketio');
+const http = require('http');
 
 const app = express();
-const server = require('http').createServer(app);
+const server = http.createServer(app);
 
 const io = require('socket.io').listen(server);
 
@@ -79,11 +80,6 @@ app.use(expressWinston.errorLogger({
       .File({ filename: 'logs/error.log' }),
   ],
 }));
-
-// error page
-app.use((err, req, res, next) => {
-  res.render('error', { error: err });
-});
 
 if (module.parent) {
   module.exports = app;

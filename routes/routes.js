@@ -42,13 +42,4 @@ module.exports = (app) => {
   app.use('/api/raters', apiRaters);
   // api/screen
   app.use('/api/screen', apiScreen);
-
-  // 404 page
-  app.use((req, res) => {
-    if (!res.headersSent) {
-      res
-        .status(404)
-        .render('error');
-    }
-  });
 };
