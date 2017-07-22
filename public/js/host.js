@@ -330,6 +330,7 @@ var vue = new Vue({
                 self.participant = data.message.participant
                 self.score = data.message.score
                 // 还没开始抽签
+                self.players = data.message.participants
                 if (self.status == 0) {
                     for (let i = 0, len = data.message.participants.length; i < len; i++) {
                         self.players[i].order = i + 1
