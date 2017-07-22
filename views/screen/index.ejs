@@ -71,7 +71,7 @@
                             {{ playerData.introduction }}
                         </div>
                     </div>
-                    <div class="scores" v-if="scoring == 1">
+                    <div class="scores" v-if="scoring == 1 || scoring == 2">
                         <span class="rater-score">评委打分</span>
                         <div class="score-list">
                             <template v-for="score in num">
@@ -79,9 +79,9 @@
                                 <div class="score" v-else>{{ allscore[score - 1] }}</div>
                             </template>
                         </div>
-                    </div>
-                    <div class="result" v-if="scoring == 2">
-                        <p>总分:<span>{{ totalScore }}</span>分</p>
+                        <div class="result" v-if="scoring == 2">
+                            <p>总分:<span>{{ totalScore }}</span>分</p>
+                        </div>
                     </div>
                 </div>
             </div>

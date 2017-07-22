@@ -110,8 +110,8 @@
                             <div v-if="checked">
                                 <div class="item" v-on:click="selectAll">
                                     <div class="box-text">
-                                        <span>{{ totalItem[0].name }}</span>
-                                        <span>{{ playerData.totalScore.score }}</span>
+                                        <span class="item-msg">{{ totalItem[0].name }}</span>
+                                        <span class="item-msg">{{ playerData.totalScore.score }}<span v-if="showPromptTo">(点击修改)</span></span>
                                     </div>
                                     <div class="box-explain">
                                         <span>这里是解释是解释是解释</span>
@@ -123,7 +123,7 @@
                                     <div class="item" v-bind:data-index="index" v-on:click="select(index)">
                                         <div class="box-text">
                                             <span class="item-msg">{{ item.name }}</span>
-                                            <span class="item-msg">{{ playerData.scores[index].score }}<span v-if="typeof(playerData.scores[index].score) == 'number'">(点击修改)</span></span>
+                                            <span class="item-msg">{{ playerData.scores[index].score }}<span v-if="showPrompt(index)">(点击修改)</span></span>
                                         </div>
                                         <div class="box-explain">
                                             <span>这里是解释是解释是解释</span>

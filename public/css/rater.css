@@ -403,10 +403,12 @@ a {
 
 .picker .picker-panel .picker-choose .cancel {
     font-size: 28px;
-    top: 0;
+    top: 0 !important;
+    /*padding-top: 0;*/
 }
 
 .picker .picker-panel .picker-choose .confirm {
     font-size: 28px;
-    top: 0;
+    top: 0 !important;
+    /*padding-top: 0;*/
 }

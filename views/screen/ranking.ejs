@@ -10,16 +10,92 @@
         <script src="../js/vue.js"></script>
         <script src="../js/jquery-3.2.0.min.js"></script>
         <style>
+            #app {
+                position: relative;
+                width: 100%;
+                height: 100%;
+            }
 
+            .img-bkg {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                width: 100%;
+                height: 100%;
+            }
         </style>
     </head>
 
     <body>
-        <div>
-
+        <div id="app">
+            <img src="../system-img/screen.jpg" alt="" class="img-bkg">
+            <div class="container">
+                <div class="head">
+                    <span>实时排名</span>
+                </div>
+                <div class="body">
+                    <template v-for="(rankItem, index) in rank">
+                        <div class="rank-item">
+                            <div class="rank-index" v-if="typeof(rankItem.score == 'number')">第{{ index + 1 }}名</div>
+                            <div class="rank-index" v-else>-</div>
+                            <div class="rank-name">{{ rankItem.name }}<span>{{rankItem.score}}分</span></div>
+                        </div>
+                    </template>
+                </div>
+            </div>
         </div>
         <script>
+            const ranking = io.connect('/ranking');
 
+            var vue = new Vue({
+                el: '#app',
+                data: {
+                    players: [],
+                    rank: [],
+                    minute: '',
+                    second: ''
+                },
+                created: function () {
+                    let self = this
+                    $.ajax({
+                        url: '/api/screen/status',
+                        type: 'get',
+                        success: function (msg) {
+                            self.rank = self.players = msg.message.participants
+                            // 生成排名
+                            this.rank = msg.message.participants
+                            // 还没分的给个0
+                            for (let i = 0, len = this.rank.length; i < len; i++) {
+                                if (!this.rank[i].score) {
+                                    this.rank[i].score = 0
+                                }
+                            }
+                            // 对rank进行排序
+                            this.rank.sort(function (a, b) {
+                                if (a.score > b.score) {
+                                    return -1
+                                }
+                                if (a.score < b.score) {
+                                    return 1
+                                }
+                                return 0
+                            })
+                            for (let i = 0, len = vue.rank.length; i < len; i++) {
+                                if (self.rank[i].score == 0) {
+                                    self.rank[i].score = '-'
+                                }
+                            }
+                        },
+                        error: function (err) {
+
+                        }
+                    })
+                }
+            })
+
+            ranking.on('updateRank', function () {
+
+            });
         </script>
     </body>
 

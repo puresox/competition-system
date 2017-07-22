@@ -76,6 +76,13 @@ const player = {
                 }
             }
             return totalScore
+        },
+        showPromptTo: function () {
+            if (typeof (this.playerData.totalScore.score) == 'number' && parseInt(this.$route.params.order) == this.index) {
+                return true
+            } else {
+                return false
+            }
         }
     },
     created: function () {
@@ -119,6 +126,9 @@ const player = {
         },
         // todo:如果有未打分项,不给提交并提示
         select: function (index) {
+            if (parseInt(this.$route.params.order) != this.index) {
+                return
+            }
             // 按照该项的最高分重新填充筛选器
             let data = []
             for (let i = 0, len = this.items[index].value; i < len; i++) {
@@ -138,6 +148,9 @@ const player = {
             this.itemIndex = index
         },
         selectAll: function () {
+            if (parseInt(this.$route.params.order) != this.index) {
+                return
+            }
             let data = []
             for (let i = 0, len = this.totalItem[0].value; i < len; i++) {
                 data[i] = {
@@ -199,6 +212,13 @@ const player = {
         },
         test: function () {
             console.log('成功触发子组件事件')
+        },
+        showPrompt: function (index) {
+            if (typeof (this.playerData.scores[index].score) == 'number' && parseInt(this.$route.params.order) == this.index) {
+                return true
+            } else {
+                return false
+            }
         }
     }
 }
@@ -339,13 +359,13 @@ var vue = new Vue({
                 for (let i = 0, len = self.players.length; i < len; i++) {
                     self.players[i].totalScore = {
                         item: self.totalItem[0]._id,
-                        score: '点击选择总成绩'
+                        score: (i + 1) < msg.message.participant ? '评分已结束' : '点击选择总成绩'
                     }
                     self.players[i].scores = []
                     for (let i2 = 0, len2 = self.items.length; i2 < len2; i2++) {
                         self.players[i].scores[i2] = {
                             item: self.items[i2]._id,
-                            score: '点击选择成绩'
+                            score: (i + 1) < msg.message.participant ? '评分已结束' : '点击选择成绩'
                         }
                     }
                 }
@@ -453,8 +473,8 @@ socket.on('nextParticipant', function () {
 // 监听开始打分
 socket.on('beginScore', function () {
     vue.score = 1
-    vue.btnStatus.message = false
-    vue.btnStatus.score = true
+    vue.$refs.child.btns.message = false
+    vue.$refs.child.btns.score = true
 })
 // 结束比赛
 socket.on('end', function () {

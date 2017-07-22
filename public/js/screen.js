@@ -218,6 +218,7 @@ var vue = new Vue({
                         success: function (msg) {
                             console.log('评分完毕')
                             socket.emit('endParticipant')
+                            socket.emit('updateRank')
                             vue.score = 2
                         },
                         error: function (err) {

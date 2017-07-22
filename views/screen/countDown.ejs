@@ -23,6 +23,7 @@
             $(function () {
                 const countDown = io.connect('/countDown');
                 countDown.on('countDown', function (time) {
+                    time.split(':')
                     $('#messages').text(time);
                 });
             });
@@ -30,7 +31,8 @@
             var vue = new Vue({
                 el: '#app',
                 data: {
-                    time: '05:00'
+                    minute: '',
+                    second: ''
                 }
             })
         </script>
