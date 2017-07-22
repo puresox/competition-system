@@ -358,6 +358,10 @@ var vue = new Vue({
                     self.btnStatus.scoring = false
                     self.btnStatus.next = true
                 }
+                // 结束比赛按钮
+                if (vue.participant + 1 > vue.players.length) {
+                    vue.btnStatus.over = true
+                }
 
                 // 跳转到相应页面
                 switch (self.status) {
@@ -381,7 +385,7 @@ var vue = new Vue({
                         break
                     case 3:
                         // 比赛结束
-                        router.push('/matching')
+                        router.push('/over')
                 }
             },
             error: function () {

@@ -10,29 +10,101 @@
         <script src="../js/jquery-3.2.0.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <style>
+            #app {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                width: 100%;
+                height: 100%;
+            }
 
+            .img-bkg {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                width: 100%;
+                height: 100%;
+            }
+
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                position: relative;
+                width: 80%;
+                /*height: 80%;*/
+                /*background-color: rgba(104, 126, 136, .6);*/
+            }
+
+            .head {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 3em;
+                font-size: 40px;
+            }
+
+            .head span {
+                width: 5em;
+                height: 1.5em;
+                line-height: 1.5em;
+                text-align: center;
+                letter-spacing: .1em;
+                font-weight: bold;
+                background-color: rgb(61, 153, 207);
+                color: white;
+            }
+
+            .body {
+                display: flex;
+                justify-content: space-between;
+                max-width: 350px;
+                min-width: 270px;
+            }
+
+            .time {
+                padding: 10px;
+                color: #d94c4c;
+                font-size: 70px;
+                background-color: white;
+                margin-bottom: 20px;
+                font-weight: bold;
+                font-family: Arial;
+                border-radius: 5px;
+                box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            }
         </style>
     </head>
 
     <body>
-        <p id="messages">05:00</p>
         <div id="app">
-
+            <img src="../system-img/screen.jpg" alt="" class="img-bkg">
+            <div class="container">
+                <div class="head">
+                    <span>倒计时</span>
+                </div>
+                <div class="body">
+                    <strong class="time">{{ minute }}</strong>
+                    <strong class="time">:</strong>
+                    <strong class="time">{{ second }}</strong>
+                </div>
+            </div>
         </div>
         <script>
-            $(function () {
-                const countDown = io.connect('/countDown');
-                countDown.on('countDown', function (time) {
-                    time.split(':')
-                    $('#messages').text(time);
-                });
+            const countDown = io.connect('/countDown');
+            countDown.on('countDown', function (time) {
+                var times = time.split(':')
+                vue.minute = times[0]
+                vue.second = times[1]
             });
 
             var vue = new Vue({
                 el: '#app',
                 data: {
-                    minute: '',
-                    second: ''
+                    minute: '00',
+                    second: '00'
                 }
             })
         </script>

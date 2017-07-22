@@ -403,6 +403,7 @@ var vue = new Vue({
                         break
                     case 3:
                         // 比赛结束
+                        router.push('/over')
                         break
                     default:
                 }
@@ -439,22 +440,24 @@ var vue = new Vue({
 
 // 监听抽签结束
 socket.on('autoDrawn', function () {
-    $.ajax({
-        url: '/api/raters/status',
-        type: 'get',
-        success: function (msg) {
-            vue.status = msg.message.status
-            vue.participant = msg.message.participant
-            for (let i = 0, len = msg.message.participants.length; i < len; i++) {
-                // 绑定获取到的数据到Vue实例的players上
-                vue.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
+    setTimeout(function () {
+        $.ajax({
+            url: '/api/raters/status',
+            type: 'get',
+            success: function (msg) {
+                vue.status = msg.message.status
+                vue.participant = msg.message.participant
+                for (let i = 0, len = msg.message.participants.length; i < len; i++) {
+                    // 绑定获取到的数据到Vue实例的players上
+                    vue.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
+                }
+            },
+            error: function () {
+                alert('获取抽签结果失败,点击确定刷新页面')
+                window.location.reload()
             }
-        },
-        error: function () {
-            alert('获取抽签结果失败,点击确定刷新页面')
-            window.location.reload()
-        }
-    })
+        })
+    }, Math.round(0 + Math.random() * 1500));
 })
 // todo:可能要做的.等待分两种1.等待抽签结束2.等待主持人开始比赛
 // 监听开始比赛/下一个选手

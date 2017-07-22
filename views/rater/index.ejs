@@ -30,9 +30,9 @@
             <img src="../system-img/pad.jpg" alt="" class="img-bkg">
             <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:titem="totalItem" v-bind:scoring="score"
                 v-bind:index="participant" v-bind:hasscored="isscore" v-on:select="selectScore" ref="child"></router-view>
-            <!--<div v-bind:class="isMenu" @click="callMenu">菜单</div>-->
+            <div v-bind:class="isMenu" @click="callMenu">菜单</div>
             <transition name="menu">
-                <div class="menu-body" v-if="showMenu">
+                <div class="menu-body" v-bind:class="{ 'menu-body-show': showMenu}">
                     <div class="menu-item">
                         <a href="/signout">退出</a>
                     </div>
@@ -129,7 +129,7 @@
                                             <span class="item-msg">{{ playerData.scores[index].score }}<span v-if="showPrompt(index)">(点击修改)</span></span>
                                         </div>
                                         <div class="box-explain">
-                                            <span>{{ item.note }}(最高分{{ playerData.scores[index].value }})</span>
+                                            <span>{{ item.note }}(最高分{{ item.value }})</span>
                                         </div>
                                     </div>
                                 </template>

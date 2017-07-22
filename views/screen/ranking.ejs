@@ -11,6 +11,9 @@
         <script src="../js/jquery-3.2.0.min.js"></script>
         <style>
             #app {
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 position: relative;
                 width: 100%;
                 height: 100%;
@@ -22,6 +25,92 @@
                 left: 0px;
                 width: 100%;
                 height: 100%;
+            }
+
+            .container {
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                width: 95%;
+                max-height: 95%;
+                overflow: auto;
+                /*height: 90%;*/
+                background-color: rgba(104, 126, 136, .6);
+            }
+
+            .head {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 3em;
+                font-size: 26px;
+            }
+
+            .head span {
+                width: 6em;
+                height: 1.5em;
+                line-height: 1.5em;
+                text-align: center;
+                letter-spacing: .1em;
+                font-weight: bold;
+                background-color: rgb(61, 153, 207);
+                color: white;
+            }
+
+            .body {
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                flex: 1;
+                padding: 1em;
+                font-size: 20px;
+                overflow: auto;
+            }
+
+            .rank-item {
+                display: flex;
+                /*height: 50px;
+                line-height: 50px;*/
+                text-align: start;
+                font-size: 20px;
+                margin-bottom: 1em;
+                font-weight: bold;
+                padding: .2em;
+                box-sizing: border-box;
+                border-radius: 5px;
+                overflow: hidden;
+            }
+
+            .rank-index {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 80px;
+                min-height: 50px;
+                background-color: rgb(246, 204, 61);
+                color: black;
+                font-weight: bold;
+            }
+
+            .rank-name {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                flex: 1;
+                min-height: 50px;
+                background-color: rgb(38, 111, 153);
+                color: white;
+                letter-spacing: .2em;
+                font-weight: bold;
+                padding-left: 1em;
+            }
+
+            .rank-name span {
+                color: red;
+                letter-spacing: .2em;
+                font-weight: bold;
+                margin-left: .3em;
             }
         </style>
     </head>
@@ -36,8 +125,8 @@
                 <div class="body">
                     <template v-for="(rankItem, index) in rank">
                         <div class="rank-item">
-                            <div class="rank-index" v-if="typeof(rankItem.score == 'number')">第{{ index + 1 }}名</div>
-                            <div class="rank-index" v-else>-</div>
+                            <div class="rank-index" v-if="rankItem.scored == 1">第{{ index + 1 }}名</div>
+                            <div class="rank-index" v-else>---</div>
                             <div class="rank-name">{{ rankItem.name }}<span>{{rankItem.score}}分</span></div>
                         </div>
                     </template>
@@ -68,6 +157,9 @@
                             for (let i = 0, len = this.rank.length; i < len; i++) {
                                 if (!this.rank[i].score) {
                                     this.rank[i].score = 0
+                                    this.rank[i].scored = 0
+                                } else {
+                                    this.rank[i].scored = 1
                                 }
                             }
                             // 对rank进行排序
@@ -82,7 +174,7 @@
                             })
                             for (let i = 0, len = vue.rank.length; i < len; i++) {
                                 if (self.rank[i].score == 0) {
-                                    self.rank[i].score = '-'
+                                    self.rank[i].score = '尚未评'
                                 }
                             }
                         },
@@ -94,7 +186,42 @@
             })
 
             ranking.on('updateRank', function () {
+                $.ajax({
+                    url: '/api/screen/status',
+                    type: 'get',
+                    success: function (msg) {
+                        vue.rank = vue.players = msg.message.participants
+                        // 生成排名
+                        vue.rank = msg.message.participants
+                        // 还没分的给个0
+                        for (let i = 0, len = vue.rank.length; i < len; i++) {
+                            if (!vue.rank[i].score) {
+                                vue.rank[i].score = 0
+                                vue.rank[i].scored = 0
+                            } else {
+                                vue.rank[i].scored = 1
+                            }
+                        }
+                        // 对rank进行排序
+                        vue.rank.sort(function (a, b) {
+                            if (a.score > b.score) {
+                                return -1
+                            }
+                            if (a.score < b.score) {
+                                return 1
+                            }
+                            return 0
+                        })
+                        for (let i = 0, len = vue.rank.length; i < len; i++) {
+                            if (vue.rank[i].score == 0) {
+                                vue.rank[i].score = '-'
+                            }
+                        }
+                    },
+                    error: function (err) {
 
+                    }
+                })
             });
         </script>
     </body>

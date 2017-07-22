@@ -251,6 +251,7 @@ var vue = new Vue({
                         break
                     case 3:
                         // 比赛结束
+                        router.push('/over')
                         break
                     default:
                 }
@@ -346,6 +347,7 @@ socket.on('endScore', function () {
                     success: function (msg) {
                         console.log('评分完毕')
                         socket.emit('endParticipant')
+                        socket.emit('updateRank')
                         vue.score = 2
                     },
                     error: function (err) {
@@ -361,6 +363,7 @@ socket.on('endScore', function () {
 })
 // 结束比赛
 socket.on('end', function () {
+    console.log('???')
     $.ajax({
         url: '/api/screen/status',
         type: 'get',
