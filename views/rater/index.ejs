@@ -117,7 +117,7 @@
                                         <span class="item-msg">{{ playerData.totalScore.score }}<span v-if="showPromptTo">(点击修改)</span></span>
                                     </div>
                                     <div class="box-explain">
-                                        <span>{{ totalItem[0].note }}</span>
+                                        <span>{{ totalItem[0].note }}(最高分{{ totalItem[0].value }})</span>
                                     </div>
                                 </div>
                             </div>
@@ -129,7 +129,7 @@
                                             <span class="item-msg">{{ playerData.scores[index].score }}<span v-if="showPrompt(index)">(点击修改)</span></span>
                                         </div>
                                         <div class="box-explain">
-                                            <span>{{ item.note }}</span>
+                                            <span>{{ item.note }}(最高分{{ playerData.scores[index].value }})</span>
                                         </div>
                                     </div>
                                 </template>
