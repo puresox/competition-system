@@ -52,12 +52,12 @@ router.post('/draw', checkLogin, checkHost, (req, res) => {
   const competitionId = req.session.user.competition._id;
   const participants = JSON.parse(req.fields.participants);
 
-  participants.forEach((participant, i) => {
+  const setOrder = (participants, i) => {
     participantModels.update({
-      _id: participant.id,
+      _id: participants[i].id,
     }, {
       $set: {
-        order: participant.order,
+        order: participants[i].order,
       },
     })
       .exec()
@@ -72,18 +72,17 @@ router.post('/draw', checkLogin, checkHost, (req, res) => {
           })
             .exec()
             .then(() => participantModels.find({ competition: competitionId }).sort({ order: 1 }).exec())
-            .then((orderedParticipants) => {
-              res.send({ status: 'success', message: orderedParticipants });
-            })
-            .catch((error) => {
-              res.send({ status: 'error', message: error });
-            });
+            .then(orderedParticipants => res.send({ status: 'success', message: orderedParticipants }))
+            .catch(error => res.send({ status: 'error', message: error }));
         }
+
+        setOrder(participants, i + 1);
       })
       .catch((err) => {
         res.send({ status: 'error', message: err });
       });
-  });
+  };
+  setOrder(participants, 0);
 });
 
 // POST /api/hosts/beginCompetition 开始比赛

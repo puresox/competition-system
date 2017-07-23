@@ -93,12 +93,12 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
   const competitionId = req.session.user.competition._id;
   const participants = JSON.parse(req.fields.participants);
 
-  participants.forEach((participant, i) => {
+  const setOrder = (participants, i) => {
     participantModels.update({
-      _id: participant.id,
+      _id: participants[i].id,
     }, {
       $set: {
-        order: participant.order,
+        order: participants[i].order,
       },
     })
       .exec()
@@ -113,18 +113,17 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
           })
             .exec()
             .then(() => participantModels.find({ competition: competitionId }).sort({ order: 1 }).exec())
-            .then((orderedParticipants) => {
-              res.send({ status: 'success', message: orderedParticipants });
-            })
-            .catch((error) => {
-              res.send({ status: 'error', message: error });
-            });
+            .then(orderedParticipants => res.send({ status: 'success', message: orderedParticipants }))
+            .catch(error => res.send({ status: 'error', message: error }));
         }
+
+        setOrder(participants, i + 1);
       })
       .catch((err) => {
         res.send({ status: 'error', message: err });
       });
-  });
+  };
+  setOrder(participants, 0);
 });
 
 // POST /api/screen/score 评分结束
@@ -168,7 +167,7 @@ router.post('/score', checkLogin, checkScreen, (req, res) => {
       const newParticipant = participant;
 
       newParticipant.status = 2;
-      newParticipant.score = score;
+      newParticipant.score = score.toFixed(2);
 
       return newParticipant.save();
     })
@@ -176,7 +175,12 @@ router.post('/score', checkLogin, checkScreen, (req, res) => {
       res.send({ status: 'success', message: newParticipant });
     })
     .catch((error) => {
-      res.send({ status: 'error', message: (error.message) ? error.message : error });
+      res.send({
+        status: 'error',
+        message: (error.message)
+          ? error.message
+          : error,
+      });
     });
 });
 
