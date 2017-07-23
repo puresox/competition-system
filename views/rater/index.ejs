@@ -28,13 +28,43 @@
         </template>-->
         <div id="spa" class="container">
             <img src="../system-img/pad.jpg" alt="" class="img-bkg">
+            <div class="hide" v-bind:class="{ 'players-panel':panels.players }">
+                <div class="players-list">
+                    <template v-for="(player, index) in players">
+                        <div class="list-item" @click="jumpToPlayer(index+1)">
+                            <div class="item-index">{{ index + 1 }}号</div>
+                            <div class="item-name">{{ player.name }}</div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <div class="hide" v-bind:class="{ 'instruction-panel':panels.instruction }">
+                这里是大赛说明
+            </div>
             <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:titem="totalItem" v-bind:scoring="score"
-                v-bind:index="participant" v-bind:hasscored="isscore" v-on:select="selectScore" ref="child"></router-view>
-            <div v-bind:class="isMenu" @click="callMenu">菜单</div>
+                v-bind:index="participant" v-bind:hasscored="isscore" v-on:select="selectScore" ref="child" v-if="panels.score"></router-view>
+            <div class="menu-mask" v-bind:class="{ 'menu-mask-show' : showMenuMask }" @click="callMenu"></div>
+            <div v-bind:class="isMenu" @click="callMenu">
+                <i class="iconfont">&#xe607;</i>
+                <span>菜单</span>
+            </div>
             <transition name="menu">
                 <div class="menu-body" v-bind:class="{ 'menu-body-show': showMenu}">
-                    <div class="menu-item">
-                        <a href="/signout">退出</a>
+                    <div class="menu-item" @click="showPlayersPanel">
+                        <i class="iconfont">&#xe622;</i>
+                        <span>选手列表</span>
+                    </div>
+                    <div class="menu-item" @click="showIntructionPanel">
+                        <i class="iconfont">&#xe66b;</i>
+                        <span>大赛说明</span>
+                    </div>
+                    <div class="menu-item" @click="showScorePanel">
+                        <i class="iconfont">&#xe604;</i>
+                        <span>评委打分</span>
+                    </div>
+                    <div class="menu-item" @click="reload">
+                        <i class="iconfont">&#xe619;</i>
+                        <span>刷新页面</span>
                     </div>
                 </div>
             </transition>

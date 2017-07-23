@@ -273,7 +273,13 @@ var vue = new Vue({
             submit: false
         },
         rank: [],
-        showMenu: false
+        showMenu: false,
+        showMenuMask: false,
+        panels: {
+            score: true,
+            players: false,
+            instruction: false
+        }
     },
     computed: {
         isMenu: function () {
@@ -293,6 +299,45 @@ var vue = new Vue({
         },
         callMenu: function () {
             this.showMenu = !this.showMenu
+            this.showMenuMask = !this.showMenuMask
+        },
+        reload: function () {
+            window.location.reload()
+        },
+        showPlayersPanel: function () {
+            this.panels = {
+                score: false,
+                players: true,
+                instruction: false
+            }
+            this.showMenu = false
+            this.showMenuMask = !this.showMenuMask
+        },
+        showIntructionPanel: function () {
+            this.panels = {
+                score: false,
+                players: false,
+                instruction: true
+            }
+            this.showMenu = false
+            this.showMenuMask = !this.showMenuMask
+        },
+        showScorePanel: function () {
+            this.panels = {
+                score: true,
+                players: false,
+                instruction: false
+            }
+            this.showMenu = false
+            this.showMenuMask = !this.showMenuMask
+        },
+        jumpToPlayer: function (index) {
+            this.panels = {
+                score: true,
+                players: false,
+                instruction: false
+            }
+            router.push('/player/' + index)
         }
     },
     beforeCreate: function () {
@@ -478,6 +523,11 @@ socket.on('beginScore', function () {
     vue.score = 1
     vue.$refs.child.btns.message = false
     vue.$refs.child.btns.score = true
+    vue.panels = {
+        score: true,
+        players: false,
+        instruction: false
+    }
 })
 // 结束比赛
 socket.on('end', function () {
