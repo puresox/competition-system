@@ -44,7 +44,7 @@
             <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:titem="totalItem" v-bind:scoring="score"
                 v-bind:index="participant" v-bind:hasscored="isscore" v-on:select="selectScore" ref="child" v-if="panels.score"></router-view>
             <div class="menu-mask" v-bind:class="{ 'menu-mask-show' : showMenuMask }" @click="callMenu"></div>
-            <div v-bind:class="isMenu" @click="callMenu">
+            <div v-bind:class="isMenu" @click="callMenu" v-if="status == 2">
                 <i class="iconfont">&#xe607;</i>
                 <span>菜单</span>
             </div>

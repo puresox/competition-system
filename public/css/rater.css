@@ -509,7 +509,7 @@ a {
 .submit {
     width: 200px;
     height: 50px;
-    background-color: rebeccapurple;
+    background-color: rgb(246, 204, 61);
     color: white;
     font-size: 20px;
     line-height: 50px;

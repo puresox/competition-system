@@ -206,6 +206,11 @@ var vue = new Vue({
                     }
                     return 0
                 })
+                for (let i = 0, len = vue.rank.length; i < len; i++) {
+                    if (this.rank[i].score == 0) {
+                        this.rank[i].score = '未评分'
+                    }
+                }
                 // 这个只是为了抽签动画
                 if (self.status > 0) {
                     vue.randomReady = true
@@ -375,18 +380,18 @@ socket.on('end', function () {
                     vue.rank[i].score = 0
                 }
             }
-            vue.rank.sort(function (a, b) {
-                if (a.score > b.score) {
-                    return -1
-                }
-                if (a.score < b.score) {
-                    return 1
-                }
-                return 0
-            })
+            // vue.rank.sort(function (a, b) {
+            //     if (a.score > b.score) {
+            //         return -1
+            //     }
+            //     if (a.score < b.score) {
+            //         return 1
+            //     }
+            //     return 0
+            // })
             for (let i = 0, len = vue.rank.length; i < len; i++) {
                 if (vue.rank[i].score == 0) {
-                    vue.rank[i].score = '-'
+                    vue.rank[i].score = '未评分'
                 }
             }
             router.push('/over')

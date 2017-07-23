@@ -33,7 +33,7 @@ const random = {
     methods: {
         getRandom: function () {
             // todo:可能会抽签失败
-            if (!confirm('是否开始抽签?')) {
+            if (!confirm('是否开始自动抽签?')) {
                 return
             }
             socket.emit('autoDraw')
@@ -146,15 +146,15 @@ const matching = {
     },
     methods: {
         beginScoring: function () {
+            if (!confirm('是否开始评分?')) {
+                return
+            }
             // todo:开始打分成功之后按钮的变化
             let self = this
             $.ajax({
                 url: '/api/hosts/beginScore',
                 type: 'post',
                 success: function (msg) {
-                    if (!confirm('是否开始评分?')) {
-                        return
-                    }
                     console.log(msg)
                     // 发送socket
                     socket.emit('beginScore')

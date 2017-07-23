@@ -371,22 +371,27 @@ var vue = new Vue({
                         };
                     }
                 }
-                // 生成排名
-                this.rank = msg.message.participants;
-                for (let i = 0, len = this.rank.length; i < len; i++) {
-                    if (!this.rank[i].score) {
-                        this.rank[i].score = 0;
-                    }
-                }
-                this.rank.sort((a, b) => {
-                    if (a.score > b.score) {
-                        return -1;
-                    }
-                    if (a.score < b.score) {
-                        return 1;
-                    }
-                    return 0;
-                });
+                // // 生成排名
+                // this.rank = msg.message.participants;
+                // for (let i = 0, len = this.rank.length; i < len; i++) {
+                //     if (!this.rank[i].score) {
+                //         this.rank[i].score = 0;
+                //     }
+                // }
+                // this.rank.sort((a, b) => {
+                //     if (a.score > b.score) {
+                //         return -1;
+                //     }
+                //     if (a.score < b.score) {
+                //         return 1;
+                //     }
+                //     return 0;
+                // })
+                // for (let i = 0, len = vue.rank.length; i < len; i++) {
+                //     if (this.rank[i].score == 0) {
+                //         this.rank[i].score = '未评分'
+                //     }
+                // }
                 // 获取评分项
                 self.items = msg.message.items;
                 // 把总分这个选项给抠出来
