@@ -160,6 +160,8 @@ router.post('/competitions', checkLogin, checkAdmin, (req, res) => {
     .then(competition => itemModels.create({
       // 评分项名称
       name: '总分',
+      // 备注
+      note: '总分',
       // 分值
       value: 100,
       // 所属比赛Id
