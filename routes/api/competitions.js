@@ -8,6 +8,7 @@ const competitionModels = require('../../lib/mongo').Competition;
 const userModels = require('../../lib/mongo').User;
 const itemModels = require('../../lib/mongo').Item;
 const participantModels = require('../../lib/mongo').Participant;
+const scoreModels = require('../../lib/mongo').Score;
 
 // PUT /api/competitions/:competitionId
 router.put('/:competitionId', checkLogin, checkAdmin, (req, res) => {
@@ -281,11 +282,12 @@ router.put('/:competitionId/participants/:participantId', checkLogin, checkAdmin
   });
 });
 
-// DELETE /api/competitions
+// DELETE /api/competitions/:competitionId
 router.delete('/:competitionId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId;
 
-  Promise.all([
+  Promise
+  .all([
     userModels
       .remove({ competition: competitionId })
       .exec(),
@@ -293,30 +295,29 @@ router.delete('/:competitionId', checkLogin, checkAdmin, (req, res) => {
       .remove({ competition: competitionId })
       .exec(),
   ])
-    .then(() => participantModels.find({ competition: competitionId }).exec())
-    .then((participants) => {
-      participants.forEach((participant, i) => {
-        fs.unlink(`public/competition/${participant.logo}`);
-        fs.unlink(`public/competition/${participant.report}`);
+  .then(() => participantModels.find({ competition: competitionId }).exec()).then((participants) => {
+    participants.forEach((participant, i) => {
+      fs.unlink(`public/competition/${participant.logo}`);
+      fs.unlink(`public/competition/${participant.report}`);
 
-        if (i === participants.length - 1) {
-          return participantModels
-            .remove({ _id: participant._id, competition: competitionId })
-            .exec();
-        }
-
-        participantModels
+      if (i === participants.length - 1) {
+        return participantModels
           .remove({ _id: participant._id, competition: competitionId })
           .exec();
-      });
-    })
-    .then(() => competitionModels.remove({ _id: competitionId }).exec())
-    .then(() => {
-      res.send({ status: 'success', message: '/manage/competitions' });
-    })
-    .catch((error) => {
-      res.send({ status: 'error', message: error });
+      }
+
+      participantModels
+        .remove({ _id: participant._id, competition: competitionId })
+        .exec();
     });
+  })
+  .then(() => competitionModels.remove({ _id: competitionId }).exec())
+  .then(() => {
+    res.send({ status: 'success', message: '/manage/competitions' });
+  })
+  .catch((error) => {
+    res.send({ status: 'error', message: error });
+  });
 });
 
 // DELETE /api/competitions/:competitionId/hosts/:hostId
@@ -416,6 +417,37 @@ router.delete('/:competitionId/participants/:participantId', checkLogin, checkAd
         }
       });
     }
+  });
+});
+
+// PATCH /api/competitions/:competitionId 重新开始比赛
+router.patch('/:competitionId', checkLogin, checkAdmin, (req, res) => {
+  const competitionId = req.params.competitionId;
+
+  async function resetCompetition() {
+    await scoreModels
+      .remove({ competition: competitionId })
+      .exec();
+    await participantModels.update({
+      competition: competitionId,
+    }, {
+      $set: {
+        status: 0,
+        order: 0,
+        score: 0,
+      },
+    }).exec();
+    await competitionModels
+      .update({ _id: competitionId }, { $set: { status: 0, participant: 0 } })
+      .exec();
+    return true;
+  }
+  resetCompetition()
+  .then(() => {
+    res.send({ status: 'success', message: '/manage/competitions' });
+  })
+  .catch((error) => {
+    res.send({ status: 'error', message: error });
   });
 });
 

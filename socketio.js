@@ -6,9 +6,23 @@ module.exports = (io) => {
   const rater = io.of('/rater');
   const ranking = io.of('/ranking');
   const countDown = io.of('/countDown');
+  const management = io.of('/management');
+
+  const onlineCount = {
+    host: 0,
+    screen: 0,
+    rater: 0,
+    ranking: 0,
+    countDown: 0,
+  };
 
   host.on('connection', (socket) => {
-    socket.on('disconnect', () => {});
+    onlineCount.host += 1;
+    socket.on('disconnect', () => {
+      onlineCount.host -= 1;
+      management.emit('updateCount', onlineCount);
+    });
+    management.emit('updateCount', onlineCount);
     // 开始自动抽签
     socket.on('autoDraw', () => {
       screen.emit('autoDraw');
@@ -56,7 +70,12 @@ module.exports = (io) => {
   });
 
   screen.on('connection', (socket) => {
-    socket.on('disconnect', () => {});
+    onlineCount.screen += 1;
+    socket.on('disconnect', () => {
+      onlineCount.screen -= 1;
+      management.emit('updateCount', onlineCount);
+    });
+    management.emit('updateCount', onlineCount);
     // 自动抽签完成
     socket.on('autoDrawn', () => {
       // rater.emit('autoDrawn');
@@ -74,11 +93,34 @@ module.exports = (io) => {
   });
 
   rater.on('connection', (socket) => {
-    socket.on('disconnect', () => {});
+    onlineCount.rater += 1;
+    socket.on('disconnect', () => {
+      onlineCount.rater -= 1;
+      management.emit('updateCount', onlineCount);
+    });
+    management.emit('updateCount', onlineCount);
     // 评分结束
     socket.on('endScore', (score) => {
       screen.emit('endScore', score);
       host.emit('endScore', score);
     });
+  });
+
+  ranking.on('connection', (socket) => {
+    onlineCount.ranking += 1;
+    socket.on('disconnect', () => {
+      onlineCount.ranking -= 1;
+      management.emit('updateCount', onlineCount);
+    });
+    management.emit('updateCount', onlineCount);
+  });
+
+  countDown.on('connection', (socket) => {
+    onlineCount.countDown += 1;
+    socket.on('disconnect', () => {
+      onlineCount.countDown -= 1;
+      management.emit('updateCount', onlineCount);
+    });
+    management.emit('updateCount', onlineCount);
   });
 };
