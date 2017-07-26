@@ -559,3 +559,53 @@ a {
     top: 0 !important;
     /*padding-top: 0;*/
 }
+
+
+/*confirm组件*/
+
+.confirm-container {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(104, 126, 136, .3);
+}
+
+.confirm-active {
+    display: flex;
+}
+
+.confirm-content {
+    width: 600px;
+    padding: 2em;
+    box-sizing: border-box;
+    background-color: #FFFEFA;
+    box-shadow: 2px 2px 4px #4C4C4C;
+}
+
+.confirm-text {
+    width: 100%;
+    text-align: start;
+    font-size: 30px;
+    letter-spacing: .1em;
+}
+
+.confirm-btns {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1.5em;
+    font-size: 30px;
+}
+
+.confirm-btns button {
+    width: 8em;
+    height: 2em;
+    border: none;
+    letter-spacing: .1em;
+    font-size: 30px;
+}

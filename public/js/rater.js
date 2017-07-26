@@ -168,6 +168,13 @@ const player = {
             this.itemIndex = 0;
         },
         submit() {
+            // vue.confirmShow({
+            //     text: '试试看',
+            //     btns: true,
+            //     callback: function () {
+            //         console.log('test ok')
+            //     }
+            // })
             // todo:1.未填分数确认2.分数弹窗再次确认3.提交之后按钮的变化(只能提交一次)
             for (let i = 0, len = this.pitems.length; i < len && !this.checked; i++) {
                 if (typeof (vue.players[vue.participant - 1].scores[i].score) !== 'number') {
@@ -277,7 +284,13 @@ var vue = new Vue({
             score: true,
             players: false,
             instruction: false
-        }
+        },
+        confirmText: '假装有内容假装有内容假装有内容假装有内容假装有内容假装有内容假装有内容',
+        confirmActive: false,
+        confirmCallback: function () {
+            console.log('test')
+        },
+        ifBtns: true
     },
     computed: {
         isMenu() {
@@ -337,6 +350,19 @@ var vue = new Vue({
             }
             router.push('/player/' + index)
         },
+        confirmShow: function (setting) {
+            this.confirmActive = true
+            this.confirmText = setting.text
+            this.ifBtns = setting.btns
+            this.confirmCallback = setting.callback
+        },
+        confirmSure: function () {
+            this.confirmActive = false
+            this.confirmCallback()
+        },
+        confirmCancel: function () {
+            this.confirmActive = false
+        }
     },
     beforeCreate: function () {
         router.push('/');

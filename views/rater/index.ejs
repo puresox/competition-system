@@ -4,7 +4,7 @@
     <head>
         <title></title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
         <link href="../css/style.css" rel="stylesheet">
         <link rel="stylesheet" type="" href="../css/rater.css">
         <script src="../js/vue.js"></script>
@@ -68,6 +68,20 @@
                     </div>
                 </div>
             </transition>
+            <div class="confirm-container" :class="{ 'confirm-active' : confirmActive }">
+                <div class="confirm-content">
+                    <div class="confirm-text">
+                        {{ confirmText }}
+                    </div>
+                    <div class="confirm-btns" v-if="ifBtns">
+                        <button type="" @click="confirmSure">确定</button>
+                        <button type="" @click="confirmCancel">取消</button>
+                    </div>
+                    <div class="confirm-btns" v-else>
+                        <button @click="confirmCancel">确定</button>
+                    </div>
+                </div>
+            </div>
             <div class="user-name">
                 <%= user.name %>
             </div>
