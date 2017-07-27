@@ -4,7 +4,6 @@ module.exports = (io) => {
   const host = io.of('/host');
   const screen = io.of('/screen');
   const rater = io.of('/rater');
-  const ranking = io.of('/ranking');
   const countDown = io.of('/countDown');
   const management = io.of('/management');
 
@@ -12,7 +11,6 @@ module.exports = (io) => {
     host: 0,
     screen: 0,
     rater: 0,
-    ranking: 0,
     countDown: 0,
   };
 
@@ -67,6 +65,14 @@ module.exports = (io) => {
         countDown.emit('countDown', '05:00');
       });
     });
+    // 显示排名
+    socket.on('showRanking', () => {
+      screen.emit('showRanking');
+    });
+    // 隐藏排名
+    socket.on('hideRanking', () => {
+      screen.emit('hideRanking');
+    });
   });
 
   screen.on('connection', (socket) => {
@@ -86,10 +92,6 @@ module.exports = (io) => {
       host.emit('endParticipant');
       rater.emit('endParticipant');
     });
-    // 排名更新
-    socket.on('updateRank', () => {
-      ranking.emit('updateRank');
-    });
   });
 
   rater.on('connection', (socket) => {
@@ -104,15 +106,6 @@ module.exports = (io) => {
       screen.emit('endScore', score);
       host.emit('endScore', score);
     });
-  });
-
-  ranking.on('connection', (socket) => {
-    onlineCount.ranking += 1;
-    socket.on('disconnect', () => {
-      onlineCount.ranking -= 1;
-      management.emit('updateCount', onlineCount);
-    });
-    management.emit('updateCount', onlineCount);
   });
 
   countDown.on('connection', (socket) => {
