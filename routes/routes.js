@@ -6,6 +6,7 @@ const manage = require('./manage');
 const rater = require('./rater');
 const host = require('./host');
 const screen = require('./screen');
+const pdf = require('./pdf');
 const apiCompetitions = require('./api/competitions');
 const apiHosts = require('./api/hosts');
 const apiRaters = require('./api/raters');
@@ -33,6 +34,8 @@ module.exports = (app) => {
   app.use('/rater', rater);
   // 主持人
   app.use('/host', host);
+  // pdf
+  app.use('/pdf', pdf);
 
   // api/competition
   app.use('/api/competitions', apiCompetitions);
