@@ -5,17 +5,9 @@ const participantModels = require('../lib/mongo').Participant;
 
 const router = express.Router();
 
-// GET /pdf/:participantId
-router.get('/:participantId', checkLogin, checkRater, (req, res, next) => {
-  const participantId = req.params.participantId;
-
-  participantModels
-    .findById(participantId)
-    .exec()
-    .then((participant) => {
-      res.render('pdf/viewer', { pdf: participant.report });
-    })
-    .catch(next);
+// GET /pdf
+router.get('/', checkLogin, checkRater, (req, res, next) => {
+  res.render('pdf/viewer')
 });
 
 module.exports = router;

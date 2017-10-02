@@ -7,4 +7,8 @@ router.get('/', checkLogin, checkRater, (req, res) => {
   res.render('rater/index');
 });
 
+router.get('/pdf', checkLogin, checkRater, (req, res) => {
+  res.render('pdf/viewer');
+});
+
 module.exports = router;

@@ -33,60 +33,95 @@ const random = {
     methods: {
         getRandom: function () {
             // todo:可能会抽签失败
-            if (!confirm('是否开始自动抽签?')) {
-                return
-            }
-            socket.emit('autoDraw')
+            // if (!confirm('是否开始自动抽签?')) {
+            //     return
+            // }
+            var lay = layer.open({
+                content: '是否开始自动抽签?',
+                style: 'font-size: 30px',
+                btn: ['确定', '取消'],
+                yes: function () {
+                    socket.emit('autoDraw')
+                    layer.close(lay)
+                },
+                no: function () {
+                }
+            })
         },
         postOrder: function () {
-            if (!confirm('是否提交该抽签结果')) {
-                return
-            }
-            var result = []
-            for (let i = 0, len = this.players.length; i < len; i++) {
-                result[i] = {
-                    id: this.players[i]._id,
-                    order: this.players[i].order
-                }
-            }
+            // if (!confirm('是否提交该抽签结果')) {
+            //     return
+            // }
             let self = this
-            $.ajax({
-                url: '/api/hosts/draw',
-                type: 'post',
-                data: {
-                    participants: JSON.stringify(result)
-                },
-                success: function () {
-                    socket.emit('manuDrawn')
-                    vue.btnStatus.begin = true
-                    vue.btnStatus.random = false
-                    self.manual = false
-                },
-                error: function () {
+            var lay = layer.open({
+                content: '是否提交该抽签结果?',
+                style: 'font-size: 30px',
+                btn: ['确定', '取消'],
+                yes: function () {
+                    var result = []
+                    for (let i = 0, len = this.players.length; i < len; i++) {
+                        result[i] = {
+                            id: this.players[i]._id,
+                            order: this.players[i].order
+                        }
+                    }
+                    $.ajax({
+                        url: '/api/hosts/draw',
+                        type: 'post',
+                        data: {
+                            participants: JSON.stringify(result)
+                        },
+                        success: function () {
+                            socket.emit('manuDrawn')
+                            vue.btnStatus.begin = true
+                            vue.btnStatus.random = false
+                            self.manual = false
+                        },
+                        error: function () {
 
+                        }
+                    })
+                    layer.close(lay)
+                },
+                no: function () {
                 }
             })
         },
         beginMatch: function () {
-            if (!confirm('是否开始比赛?')) {
-                return
-            }
+            // if (!confirm('是否开始比赛?')) {
+            //     return
+            // }
             let self = this
-            // 告诉后台开始比赛/下一个选手
-            $.ajax({
-                url: '/api/hosts/beginCompetition',
-                type: 'post',
-                success: function (msg) {
-                    vue.status = 2
-                    vue.participant++
-                    vue.score = 0
-                    console.log('比赛开始')
-                    router.push('/matching')
-                    // 发送socket
-                    socket.emit('nextParticipant')
+            var lay = layer.open({
+                content: '是否开始比赛?',
+                style: 'font-size: 30px',
+                btn: ['确定', '取消'],
+                yes: function () {
+                    // 告诉后台开始比赛/下一个选手
+                    $.ajax({
+                        url: '/api/hosts/beginCompetition',
+                        type: 'post',
+                        success: function (msg) {
+                            vue.status = 2
+                            vue.participant++
+                            vue.score = 0
+                            console.log('比赛开始')
+                            router.push('/matching')
+                            // 发送socket
+                            socket.emit('nextParticipant')
+                        },
+                        error: function (err) {
+                            // alert('网络发生错误,请求失败,请再次点击"开始比赛"')
+                            var lay2 = layer.open({
+                                content: '网络发生错误,请求失败,请再次点击"开始比赛"',
+                                style: 'font-size: 30px',
+                                btn: '确定'
+                            })
+                        }
+                    })
+                    layer.close(lay)
                 },
-                error: function (err) {
-                    alert('网络发生错误,请求失败,请再次点击"开始比赛"')
+                no: function () {
                 }
             })
         },
@@ -146,52 +181,77 @@ const matching = {
     },
     methods: {
         beginScoring: function () {
-            if (!confirm('是否开始评分?')) {
-                return
-            }
-            // todo:开始打分成功之后按钮的变化
+            // if (!confirm('是否开始评分?')) {
+            //     return
+            // }
             let self = this
-            $.ajax({
-                url: '/api/hosts/beginScore',
-                type: 'post',
-                success: function (msg) {
-                    console.log(msg)
-                    // 发送socket
-                    socket.emit('beginScore')
-                    vue.btnStatus.score = false
-                    vue.btnStatus.scoring = true
+            var lay = layer.open({
+                content: '是否开始评分?',
+                style: 'font-size: 30px',
+                btn: ['确定', '取消'],
+                yes: function () {
+                    // todo:开始打分成功之后按钮的变化
+                    $.ajax({
+                        url: '/api/hosts/beginScore',
+                        type: 'post',
+                        success: function (msg) {
+                            console.log(msg)
+                            // 发送socket
+                            socket.emit('beginScore')
+                            vue.btnStatus.score = false
+                            vue.btnStatus.scoring = true
+                        },
+                        error: function (err) {
+                            // alert('网络发生错误,请再次点击"开始打分"')
+                            var lay2 = layer.open({
+                                content: '网络发生错误,请再次点击"开始打分"',
+                                style: 'font-size: 30px',
+                                btn: '确定'
+                            })
+                        }
+                    })
+                    layer.close(lay)
                 },
-                error: function (err) {
-                    alert('网络发生错误,请再次点击"开始打分"')
+                no: function () {
                 }
             })
         },
         nextParticipant: function () {
-            if (!confirm('是否进行下一组')) {
-                return
-            }
+            // if (!confirm('是否进行下一组')) {
+            //     return
+            // }
             let self = this
-            // 告诉后台开始比赛/下一个选手
-            // todo:等screen通知之后才出现下一个
-            $.ajax({
-                url: '/api/hosts/beginParticipant',
-                type: 'post',
-                success: function (msg) {
+            var lay = layer.open({
+                content: '是否进行下一组?',
+                style: 'font-size: 30px',
+                btn: ['确定', '取消'],
+                yes: function () {
+                    // 告诉后台开始比赛/下一个选手
+                    // todo:等screen通知之后才出现下一个
+                    $.ajax({
+                        url: '/api/hosts/beginParticipant',
+                        type: 'post',
+                        success: function (msg) {
 
-                    // 拉取状态
-                    vue.status = 2
-                    vue.participant++
-                    vue.score = 0
-                    vue.btnStatus.score = true
-                    vue.btnStatus.scoring = false
-                    vue.btnStatus.next = false
-                    console.log('下一个选手')
-                    // 发送socket
-                    socket.emit('nextParticipant')
+                            // 拉取状态
+                            vue.status = 2
+                            vue.participant++
+                            vue.score = 0
+                            vue.btnStatus.score = true
+                            vue.btnStatus.scoring = false
+                            vue.btnStatus.next = false
+                            console.log('下一个选手')
+                            // 发送socket
+                            socket.emit('nextParticipant')
+                        },
+                        error: function (err) {
+                            alert('网络发生错误,请再次点击')
+                            console.log('下一个选手失败')
+                        }
+                    })
+                    layer.close(lay)
                 },
-                error: function (err) {
-                    alert('网络发生错误,请再次点击')
-                    console.log('下一个选手失败')
+                no: function () {
                 }
             })
         },
@@ -204,21 +264,30 @@ const matching = {
             socket.emit('endCountDown')
         },
         overMatch: function () {
-            if (!confirm('是否结束比赛?')) {
-                return
-            }
-            $.ajax({
-                url: '/api/hosts/endCompetition',
-                type: 'post',
-                success: function () {
-                    socket.emit('end')
-                    router.push('/over')
+            // if (!confirm('是否结束比赛?')) {
+            //     return
+            // }
+            var lay = layer.open({
+                content: '是否结束比赛?',
+                style: 'font-size: 30px',
+                btn: ['确定', '取消'],
+                yes: function () {
+                    $.ajax({
+                        url: '/api/hosts/endCompetition',
+                        type: 'post',
+                        success: function () {
+                            socket.emit('end')
+                            router.push('/over')
+                        },
+                        error: function () {
+                            alert('结束比赛失败,请点击重试')
+                        }
+                    })
+                    layer.close(lay)
                 },
-                error: function () {
-                    alert('结束比赛失败,请点击重试')
+                no: function () {
                 }
             })
-
         }
     }
 }

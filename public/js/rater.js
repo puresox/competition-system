@@ -1,3 +1,6 @@
+// pdf路径举例
+// ../../pdf/test.pdf
+
 const socket = io('/rater');
 // 加载组件
 const load = {
@@ -50,6 +53,8 @@ const player = {
                 return 2;
             } else if (order > this.index) {
                 return 3;
+            } else if (false) {
+
             } else if (order == this.index && this.scoring == 0) {
                 return 4;
             } else if (order == this.index && this.hasscored == 1) {
@@ -186,9 +191,9 @@ const player = {
                 alert('总成绩不能为空');
                 return;
             }
-            if (!confirm('提交后将无法更改成绩，确定要提交成绩?')) {
-                return;
-            }
+            // if (!confirm('提交后将无法更改成绩，确定要提交成绩?')) {
+            //     return;
+            // }
             const self = this;
             const result = this.checked ? self.playerData.totalScore : self.playerData.scores;
             $.ajax({

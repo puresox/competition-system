@@ -11,6 +11,7 @@
         <script src="../js/vue-router.js"></script>
         <script src="../js/picker.min.js"></script>
         <script src="../js/jquery-3.2.0.min.js"></script>
+        <script src="../js/layer.js"></script>
         <script src="/socket.io/socket.io.js"></script>
     </head>
 
@@ -39,7 +40,7 @@
                 </div>
             </div>
             <div class="hide" v-bind:class="{ 'instruction-panel':panels.instruction }">
-                这里是大赛说明
+                <iframe src="/pdf?file=../../pdf/test.pdf" class="wrap-pdf"></iframe>
             </div>
             <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:titem="totalItem" v-bind:scoring="score"
                 v-bind:index="participant" v-bind:hasscored="isscore" v-on:select="selectScore" ref="child" v-if="panels.score"></router-view>
@@ -49,14 +50,14 @@
                 <span>菜单</span>
             </div>
             <transition name="menu">
-                <div class="menu-body" v-bind:class="{ 'menu-body-show': showMenu}">
+                <div class="menu-body" v-bind:class="{ 'menu-body-show': showMenu}" v-if="status == 2">
                     <div class="menu-item" @click="showPlayersPanel">
                         <i class="iconfont">&#xe622;</i>
                         <span>选手列表</span>
                     </div>
                     <div class="menu-item" @click="showIntructionPanel">
                         <i class="iconfont">&#xe66b;</i>
-                        <span>大赛说明</span>
+                        <span>查看文档</span>
                     </div>
                     <div class="menu-item" @click="showScorePanel">
                         <i class="iconfont">&#xe604;</i>
@@ -104,6 +105,7 @@
             <div>
                 <router-link v-bind:to="prePlayer" class="pre">
                     <i class="iconfont">&#xe600;</i>
+                    <span class="text-pre">前一项目</span>
                 </router-link>
                 <div class="main-players">
                     <div class="player-nav">
@@ -183,6 +185,7 @@
                 </div>
                 <router-link v-bind:to="nextPlayer" class="next">
                     <i class="iconfont">&#xe601;</i>
+                    <span class="text-next">下一项目</span>
                 </router-link>
             </div>
         </template>
