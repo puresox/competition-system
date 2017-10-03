@@ -61,7 +61,7 @@
                                     <td>
                                         <a href="#" data-id="<%= competition._id %>" data-index="<%= i %>" class="change">修改</a>
                                         <a href="/manage/competitions/<%= competition._id %>/hosts">查看</a>
-                                        <a href="/api/competitions/<%= competition._id%>">重新开始</a>
+                                        <a href="#" data-id="<%= competition._id%>" id="reset">重新开始</a>
                                         <a href="#">删除</a>
                                     </td>
                                 </tr>
@@ -72,6 +72,17 @@
             </div>
         </div>
         <script>
+            document.getElementById('reset').addEventListener('click',function(){
+                var id = $(this).attr('data-id')
+                $.ajax({
+                    url:'/api/competitions/:competitionId',
+                    type:'patch',
+                    success(){
+                        window.location.reload()
+                    }
+                })
+            })
+
             document.getElementById('add').addEventListener('click', function () {
                 document.getElementById('form').classList.toggle('form-active')
             })
