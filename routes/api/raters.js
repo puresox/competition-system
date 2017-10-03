@@ -10,14 +10,13 @@ const checkRater = require('../../middlewares/check').checkRater;
 router.get('/status', checkLogin, checkRater, (req, res) => {
   const competitionId = req.session.user.competition._id;
   const raterId = req.session.user.id;
-
   async function getStatus() {
     const competition = await competitionModels
       .findById(competitionId)
       .exec();
     const participants = await participantModels
-      .find({ competition: competitionId })
-      .sort({ order: 1 })
+      .find({competition: competitionId})
+      .sort({order: 1})
       .exec();
     const participantScore = participants.find(p => p.order === competition.participant);
     let score = 0;
@@ -27,14 +26,14 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
       participantId = participantScore._id;
     }
     const scores = await scoreModels
-      .find({ competition: competitionId, rater: raterId })
+      .find({competition: competitionId, rater: raterId})
       .populate('participant')
       .populate('scores.item')
-      .sort({ _id: 1 })
+      .sort({_id: 1})
       .exec();
     const items = await itemModels
-      .find({ competition: competitionId })
-      .sort({ _id: 1 })
+      .find({competition: competitionId})
+      .sort({_id: 1})
       .exec();
     return [
       scores,
@@ -43,7 +42,7 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
       participants,
       competition.status,
       competition.participant,
-      score,
+      score
     ];
   }
 
@@ -54,7 +53,7 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
     participants,
     status,
     participant,
-    score,
+    score
   ]) => {
     const theScore = scores.find(s => s.participant._id.toString() === participantId.toString());
     let isscore = 0;
@@ -77,11 +76,11 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
         // 参赛作品的评分状态
         score,
         // 该评委对参赛作品是否评分
-        isscore,
-      },
+        isscore
+      }
     });
   }).catch((error) => {
-    res.send({ status: 'error', message: error });
+    res.send({status: 'error', message: error});
   });
 });
 
@@ -94,26 +93,26 @@ router.post('/score', checkLogin, checkRater, (req, res) => {
   competitionModels
     .findById(competitionId)
     .exec()
-    .then(competition => participantModels.findOne({ order: competition.participant, competition: competitionId }).exec())
-    .then(({ _id: participantId }) => Promise.all([
-      scoreModels.find({ competition: competitionId, participant: participantId, rater: raterId }),
-      participantId,
+    .then(competition => participantModels.findOne({order: competition.participant, competition: competitionId}).exec())
+    .then(({_id: participantId}) => Promise.all([
+      scoreModels.find({competition: competitionId, participant: participantId, rater: raterId}),
+      participantId
     ]))
     .then(([scoreArray, participantId]) => {
       if (scoreArray && scoreArray.length > 0) {
         throw new Error('您已评过分');
       }
-      return scoreModels.create({ competition: competitionId, participant: participantId, rater: raterId, scores });
+      return scoreModels.create({competition: competitionId, participant: participantId, rater: raterId, scores});
     })
     .then(() => {
-      res.send({ status: 'success', message: {} });
+      res.send({status: 'success', message: {}});
     })
     .catch((error) => {
       res.send({
         status: 'error',
         message: (error.message)
           ? error.message
-          : error,
+          : error
       });
     });
 });
