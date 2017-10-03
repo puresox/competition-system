@@ -75,7 +75,7 @@
             document.getElementById('reset').addEventListener('click',function(){
                 var id = $(this).attr('data-id')
                 $.ajax({
-                    url:'/api/competitions/:competitionId',
+                    url:'/api/competitions/'+id,
                     type:'patch',
                     success(){
                         window.location.reload()
