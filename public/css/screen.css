@@ -177,7 +177,7 @@ a {
 
 .player-name span {
     margin-left: 10px;
-    color: black;
+    color: white;
     font-size: 20px;
     font-weight: bold;
 }
@@ -188,6 +188,7 @@ a {
     text-align: start;
     font-weight: 600;
     letter-spacing: .2em;
+    color: white;
 }
 
 .scores {
