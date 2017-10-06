@@ -6,6 +6,7 @@ module.exports = (io) => {
   const rater = io.of('/rater')
   const countDown = io.of('/countDown')
   const management = io.of('/management')
+  const ranking = io.of('/ranking')
 
   const onlineCount = {
     host: 0,
@@ -98,6 +99,7 @@ module.exports = (io) => {
     // 该参赛作品评分结束
     socket.on('endParticipant', () => {
       host.emit('endParticipant')
+      ranking.emit('updateRanking')
     })
   })
 
