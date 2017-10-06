@@ -176,7 +176,7 @@ a {
 
 .main-waiting span {
     font-size: 30px;
-    color: black;
+    color: white;
     font-weight: bold;
     letter-spacing: 1em;
 }
@@ -215,6 +215,10 @@ a {
     font-size: 20px;
     text-align: start;
     box-sizing: border-box;
+}
+
+.switch-sort {
+    position: absolute;
 }
 
 .players-list {
@@ -448,7 +452,7 @@ a {
     margin-bottom: auto;
     letter-spacing: .2em;
     font-size: 25px;
-    color: rgb(114, 114, 114);
+    color: white;
 }
 
 .checkbox input {
@@ -492,7 +496,7 @@ a {
     position: absolute;
     bottom: 0px;
     width: 80%;
-    border: .5px solid rgba(74, 74, 74, .5);
+    border: .5px solid white;
 }
 
 .box-explain {
@@ -502,7 +506,7 @@ a {
     text-align: start;
     padding-left: 10%;
     font-size: 14px;
-    color: rgb(126, 125, 125);
+    color: white;
     letter-spacing: .2em;
     box-sizing: border-box;
 }
@@ -539,7 +543,7 @@ a {
 
 .over {
     font-size: 40px;
-    color: black;
+    color: white;
     font-weight: bolder;
     letter-spacing: .1em;
 }

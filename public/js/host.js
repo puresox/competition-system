@@ -59,10 +59,10 @@ const random = {
                 btn: ['确定', '取消'],
                 yes: function () {
                     var result = []
-                    for (let i = 0, len = this.players.length; i < len; i++) {
+                    for (let i = 0, len = self.players.length; i < len; i++) {
                         result[i] = {
-                            id: this.players[i]._id,
-                            order: this.players[i].order
+                            id: self.players[i]._id,
+                            order: self.players[i].order
                         }
                     }
                     $.ajax({

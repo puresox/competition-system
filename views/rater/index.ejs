@@ -30,6 +30,10 @@
         <div id="spa" class="container">
             <img src="../system-img/pad.jpg" alt="" class="img-bkg">
             <div class="hide" v-bind:class="{ 'players-panel':panels.players }">
+                <div class="switch-sort">
+                    <div class="">按顺序</div>
+                    <div class="">按排名</div>
+                </div>
                 <div class="players-list">
                     <template v-for="(player, index) in players">
                         <div class="list-item" @click="jumpToPlayer(index+1)">
@@ -40,7 +44,7 @@
                 </div>
             </div>
             <div class="hide" v-bind:class="{ 'instruction-panel':panels.instruction }">
-                <iframe src="/pdf?file=../../pdf/test.pdf" class="wrap-pdf"></iframe>
+                <iframe :src="pdf" class="wrap-pdf"></iframe>
             </div>
             <router-view class="main" v-bind:players="players" v-bind:pitems="items" v-bind:titem="totalItem" v-bind:scoring="score"
                 v-bind:index="participant" v-bind:hasscored="isscore" v-on:select="selectScore" ref="child" v-if="panels.score"></router-view>
@@ -172,7 +176,7 @@
                                     <div class="item" v-bind:data-index="index" v-on:click="select(index)">
                                         <div class="box-text">
                                             <span class="item-msg">{{ item.name }}</span>
-                                            <span class="item-msg">{{ playerData.scores[index].score }}<span v-if="showPrompt(index)">(点击修改)</span></span>
+                                            <span class="item-msg"><i class="iconfont">&#xe604;</i>{{ playerData.scores[index].score }}<span v-if="showPrompt(index)">(点击修改)</span></span>
                                         </div>
                                         <div class="box-explain">
                                             <span>{{ item.note }}(最高分{{ item.value }})</span>

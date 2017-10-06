@@ -33,8 +33,6 @@ const player = {
             checked: false,
         };
     },
-    watch: {
-    },
     computed: {
         // todo:后期可能要加个改变样式
         prePlayer() {
@@ -183,12 +181,34 @@ const player = {
             // todo:1.未填分数确认2.分数弹窗再次确认3.提交之后按钮的变化(只能提交一次)
             for (let i = 0, len = this.pitems.length; i < len && !this.checked; i++) {
                 if (typeof (vue.players[vue.participant - 1].scores[i].score) !== 'number') {
-                    alert('还有未填写成绩的项目');
+                    // alert('还有未填写成绩的项目');
+                    var la1 = layer.open({
+                        content: '还有未填写成绩的选项',
+                        btn: '确定',
+                        style: 'font-size:30px;',
+                        yes: function () {
+                            layer.close(la1)
+                        },
+                        no: function () {
+                            layer.close(la1)
+                        }
+                    })
                     return;
                 }
             }
             if (this.checked && typeof (vue.players[vue.participant - 1].totalScore.score) !== 'number') {
-                alert('总成绩不能为空');
+                // alert('总成绩不能为空');
+                var la2 = layer.open({
+                    content: '总成绩不能为空',
+                    btn: '确定',
+                    style: 'font-size:30px;',
+                    yes: function () {
+                        layer.close(la2)
+                    },
+                    no: function () {
+                        layer.close(la2)
+                    }
+                })
                 return;
             }
             // if (!confirm('提交后将无法更改成绩，确定要提交成绩?')) {
@@ -196,22 +216,33 @@ const player = {
             // }
             const self = this;
             const result = this.checked ? self.playerData.totalScore : self.playerData.scores;
-            $.ajax({
-                url: '/api/raters/score/',
-                type: 'post',
-                data: {
-                    scores: JSON.stringify(result),
+            var la3 = layer.open({
+                content: '提交后将无法更改成绩,确定要提交成绩?',
+                btn: ['确定', '取消'],
+                style: 'font-size: 30px',
+                yes: function () {
+                    $.ajax({
+                        url: '/api/raters/score/',
+                        type: 'post',
+                        data: {
+                            scores: JSON.stringify(result),
+                        },
+                        success(msg) {
+                            console.log('提交成绩成功');
+                            socket.emit('endScore');
+                            vue.isscore = 1;
+                        },
+                        error(err) {
+                            alert('提交成绩失败,请重新提交');
+                            console.log('提交失败');
+                        },
+                    });
+                    layer.close(la3)
                 },
-                success(msg) {
-                    console.log('提交成绩成功');
-                    socket.emit('endScore');
-                    vue.isscore = 1;
-                },
-                error(err) {
-                    alert('提交成绩失败,请重新提交');
-                    console.log('提交失败');
-                },
-            });
+                no: function () {
+                    layer.close(la3)
+                }
+            })
         },
         toMessage() {
             this.btns.message = true;
@@ -282,6 +313,7 @@ var vue = new Vue({
         btnStatus: {
             submit: false
         },
+        pdf: '',
         rank: [],
         showMenu: false,
         showMenuMask: false,
@@ -297,15 +329,30 @@ var vue = new Vue({
         },
         ifBtns: true
     },
+    watch: {
+        $route: 'updatePdf'
+    },
     computed: {
         isMenu() {
             return {
                 'menu-hide': !this.showMenu,
                 'menu-show': this.showMenu,
             };
-        }
+        },
+        getPdf() {
+            // parseInt(this.$route.params.order)
+            // if (this.players[0]) {
+            return '/pdf?file=../../competition/' + this.players[0].report
+            // } else {
+            //     return ''
+            // }
+        },
     },
     methods: {
+        updatePdf: function () {
+            var order = parseInt(this.$route.params.order)
+            this.pdf = '/pdf?file=../../competition/' + this.players[order - 1].report
+        },
         selectScore: function (score, index, checked) {
             if (checked) { // 总成绩
                 this.players[this.participant - 1].totalScore.score = score
