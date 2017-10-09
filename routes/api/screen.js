@@ -18,8 +18,8 @@ router.get('/status', checkLogin, (req, res) => {
       participant = 0
     }) => Promise.all([
       participantModels
-        .find({ competition: competitionId })
-        .sort({ order: 1 })
+        .find({competition: competitionId})
+        .sort({order: 1})
         .exec(),
       status,
       participant
@@ -35,12 +35,12 @@ router.get('/status', checkLogin, (req, res) => {
       return Promise.all([
         participants,
         scoreModels
-          .find({ competition: competitionId, participant: participantId })
+          .find({competition: competitionId, participant: participantId})
           .populate('participant')
-          .sort({ _id: 1 })
+          .sort({_id: 1})
           .exec(),
         userModels
-          .count({ role: 2, competition: competitionId })
+          .count({role: 2, competition: competitionId})
           .exec(),
         status,
         participant,
@@ -84,7 +84,7 @@ router.get('/status', checkLogin, (req, res) => {
       })
     })
     .catch((error) => {
-      res.send({ status: 'error', message: error })
+      res.send({status: 'error', message: error})
     })
 })
 
@@ -112,15 +112,15 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
             }
           })
             .exec()
-            .then(() => participantModels.find({ competition: competitionId }).sort({ order: 1 }).exec())
-            .then(orderedParticipants => res.send({ status: 'success', message: orderedParticipants }))
-            .catch(error => res.send({ status: 'error', message: error }))
+            .then(() => participantModels.find({competition: competitionId}).sort({order: 1}).exec())
+            .then(orderedParticipants => res.send({status: 'success', message: orderedParticipants}))
+            .catch(error => res.send({status: 'error', message: error}))
         }
 
         setOrder(participants, i + 1)
       })
       .catch((err) => {
-        res.send({ status: 'error', message: err })
+        res.send({status: 'error', message: err})
       })
   }
   setOrder(participants, 0)
@@ -133,13 +133,13 @@ router.post('/score', checkLogin, checkScreen, (req, res) => {
   competitionModels
     .findById(competitionId)
     .exec()
-    .then(competition => participantModels.find({ competition: competitionId, order: competition.participant }).exec())
+    .then(competition => participantModels.find({competition: competitionId, order: competition.participant}).exec())
     .then(([participant]) => Promise.all([
       userModels
-        .count({ role: 2, competition: competitionId })
+        .count({role: 2, competition: competitionId})
         .exec(),
       scoreModels
-        .find({ competition: competitionId, participant: participant._id })
+        .find({competition: competitionId, participant: participant._id})
         .exec(),
       participant
     ]))
@@ -172,7 +172,7 @@ router.post('/score', checkLogin, checkScreen, (req, res) => {
       return newParticipant.save()
     })
     .then((newParticipant) => {
-      res.send({ status: 'success', message: newParticipant })
+      res.send({status: 'success', message: newParticipant})
     })
     .catch((error) => {
       res.send({
