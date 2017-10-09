@@ -37,6 +37,7 @@ router.get('/status', checkLogin, (req, res) => {
         scoreModels
           .find({competition: competitionId, participant: participantId})
           .populate('participant')
+          .populate('rater')
           .sort({_id: 1})
           .exec(),
         userModels
@@ -63,7 +64,11 @@ router.get('/status', checkLogin, (req, res) => {
           .forEach((itemScore) => {
             sum += itemScore.score
           })
-        scores.push(sum)
+        const raterSort = raterScore
+          .rater
+          .name
+          .substring(1)
+        scores[raterSort] = sum
       })
       res.send({
         status: 'success',
@@ -98,8 +103,8 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
       _id: participants[i].id
     }, {
       $set: {
-        order: participants[i].order
-      }
+          order: participants[i].order
+        }
     })
       .exec()
       .then(() => {
@@ -108,8 +113,8 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
             _id: competitionId
           }, {
             $set: {
-              status: 1
-            }
+                status: 1
+              }
           })
             .exec()
             .then(() => participantModels.find({competition: competitionId}).sort({order: 1}).exec())

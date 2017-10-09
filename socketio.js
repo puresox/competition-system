@@ -26,6 +26,10 @@ module.exports = (io) => {
     socket.on('autoDraw', () => {
       screen.emit('autoDraw')
     })
+    // 显示一个
+    socket.on('showOneDrawResult', () => {
+      screen.emit('showOneDrawResult')
+    })
     // 开始手动抽签
     socket.on('manuDraw', () => {
       screen.emit('manuDraw')
@@ -55,8 +59,8 @@ module.exports = (io) => {
       rater.emit('end')
     })
     // 倒计时
-    socket.on('countDown', () => {
-      const minutes = moment('05:00', 'mm:ss')
+    socket.on('countDown', (minute) => {
+      const minutes = moment(`0${minute}:00`, 'mm:ss')
       const intervalID = setInterval(animate, 1000)
       function animate () {
         minutes.subtract(1, 'seconds')
