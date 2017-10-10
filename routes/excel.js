@@ -1,6 +1,7 @@
 const router = require('express').Router()
 var nodeExcel = require('excel-export')
 const participantModels = require('../lib/mongo').Participant
+const scoreModels = require('../lib/mongo').Score
 
 // GET /excel/order 获取抽签顺序
 router.get('/order', function (req, res) {
@@ -19,11 +20,12 @@ router.get('/order', function (req, res) {
             type: 'number'
           }, {
             caption: '参赛小组',
-            type: 'string'
+            type: 'string',
+            width: 30
           }
-        ],
-        rows: []
+        ]
       }
+      conf.rows = []
       for (var participant of participants) {
         let oneParticipant = []
         oneParticipant.push(participant.order, participant.name)
@@ -40,54 +42,92 @@ router.get('/order', function (req, res) {
 
 // GET /excel/reward 获奖名单
 router.get('/reward', function (req, res) {
-  const testexample = [
-    {
-      caption: '用户状态',
-      type: 'string'
-    }, {
-      caption: '部门',
-      type: 'string'
-    }, {
-      caption: '姓名',
-      type: 'string'
-    }, {
-      caption: '邮箱',
-      type: 'string'
-    }, {
-      caption: '有效期',
-      type: 'string'
-    }, {
-      caption: '身份',
-      type: 'string'
-    }
-  ]
+  const competitionId = req.query.competitionId
 
-  var conf = {}
-  conf.name = 'mysheet'
-  conf.cols = []
-  for (var i = 0; i < testexample.length; i++) {
-    var col = {}
-    col.caption = testexample[i].caption
-    col.type = testexample[i].type
-    conf
-      .cols
-      .push(col)
-  }
-  conf.rows = [
-    [
-      'q',
-      'q',
-      'q',
-      'q',
-      'q',
-      'q'
-    ]
-  ]
-  var result = nodeExcel.execute(conf)
-
-  res.setHeader('Content-Type', 'application/vnd.openxmlformats')
-  res.setHeader('Content-Disposition', 'attachment; filename=test.xlsx')
-  res.end(result, 'binary')
+  participantModels
+    .find({competition: competitionId})
+    .sort({order: 1})
+    .exec()
+    .then((participants) => {
+      const promises = participants.map((participant) => {
+        return scoreModels
+          .find({competition: competitionId, participant: participant.id})
+          .populate('participant')
+          .populate('rater')
+          .sort({_id: 1})
+          .exec()
+      })
+      promises.unshift(participants)
+      return Promise.all(promises)
+    })
+    .then((results) => {
+      const participants = results.shift()
+      let conf = {
+        name: 'order',
+        cols: [
+          {
+            caption: '上场顺序',
+            type: 'number'
+          }, {
+            caption: '参赛小组',
+            type: 'string',
+            width: 30
+          }, {
+            caption: '一号评委',
+            type: 'number'
+          }, {
+            caption: '二号评委',
+            type: 'number'
+          }, {
+            caption: '三号评委',
+            type: 'number'
+          }, {
+            caption: '四号评委',
+            type: 'number'
+          }, {
+            caption: '五号评委',
+            type: 'number'
+          }, {
+            caption: '六号评委',
+            type: 'number'
+          }, {
+            caption: '七号评委',
+            type: 'number'
+          }, {
+            caption: '最终分数',
+            type: 'number'
+          }
+        ]
+      }
+      conf.rows = []
+      for (var participant of participants) {
+        let oneParticipant = []
+        oneParticipant.push(participant.order, participant.name)
+        const scoresArray = results.shift()
+        scoresArray.forEach((raterScore) => {
+          let sum = 0
+          raterScore
+            .scores
+            .forEach((itemScore) => {
+              sum += itemScore.score
+            })
+          const raterName = raterScore
+            .rater
+            .name
+            .split('')
+          const raterSort = raterName.pop()
+          oneParticipant[raterSort + 2] = sum
+        })
+        oneParticipant[9] = participant.score
+        conf
+          .rows
+          .push(oneParticipant)
+      }
+      const result = nodeExcel.execute(conf)
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats')
+      res.setHeader('Content-Disposition', 'attachment; filename=test.xlsx')
+      res.end(result, 'binary')
+    })
 })
 
 module.exports = router

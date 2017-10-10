@@ -18,12 +18,19 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
       .find({competition: competitionId})
       .sort({order: 1})
       .exec()
-    const participantScore = participants.find(p => p.order === competition.participant)
+    /* const participantScore = participants.find(p => p.order === competition.participant) */
+    let participantScore
+    for (let participant of participants) {
+      if (participant.order === competition.participant) {
+        participantScore = participant
+        break
+      }
+    }
     let score = 0
     let participantId = '000000000000000000000000'
     if (participantScore) {
       score = participantScore.status
-      participantId = participantScore._id
+      participantId = participantScore.id
     }
     const scores = await scoreModels
       .find({competition: competitionId, rater: raterId})

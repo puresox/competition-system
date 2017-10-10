@@ -23,7 +23,14 @@ router.get('/status', checkLogin, checkHost, (req, res) => {
       participant
     ]))
     .then(([participants, status, participant]) => {
-      const participantScore = participants.find(p => p.order === participant)
+      /* const participantScore = participants.find(p => p.order === participant) */
+      let participantScore
+      for (let participant of participants) {
+        if (participant.order === participant) {
+          participantScore = participant
+          break
+        }
+      }
       let score = 0
       if (participantScore) {
         score = participantScore.status

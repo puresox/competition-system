@@ -25,12 +25,19 @@ router.get('/status', checkLogin, (req, res) => {
       participant
     ]))
     .then(([participants, status, participant]) => {
-      const participantScore = participants.find(p => p.order === participant)
+      /* const participantScore = participants.find(p => p.order === participant) */
+      let participantScore
+      for (let participant of participants) {
+        if (participant.order === participant) {
+          participantScore = participant
+          break
+        }
+      }
       let score = 0
       let participantId = '000000000000000000000000'
       if (participantScore) {
         score = participantScore.status
-        participantId = participantScore._id
+        participantId = participantScore.id
       }
       return Promise.all([
         participants,
