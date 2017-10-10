@@ -104,8 +104,8 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
       _id: participants[i].id
     }, {
       $set: {
-          order: participants[i].order
-        }
+        order: participants[i].order
+      }
     })
       .exec()
       .then(() => {
@@ -114,8 +114,8 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
             _id: competitionId
           }, {
             $set: {
-                status: 1
-              }
+              status: 1
+            }
           })
             .exec()
             .then(() => participantModels.find({competition: competitionId}).sort({order: 1}).exec())
