@@ -68,7 +68,7 @@ router.get('/status', checkLogin, (req, res) => {
           .rater
           .name
           .split('')
-        const raterSort = raterName.shift()
+        const raterSort = raterName.pop()
         scores[raterSort] = sum
       })
       res.send({
