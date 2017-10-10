@@ -8,6 +8,8 @@ module.exports = (io) => {
   const management = io.of('/management')
   const ranking = io.of('/ranking')
 
+  let countDownFlag
+
   const onlineCount = {
     host: 0,
     screen: 0,
@@ -71,7 +73,7 @@ module.exports = (io) => {
       }
       socket.on('endCountDown', () => {
         clearInterval(intervalID)
-        countDown.emit('countDown', '05:00')
+        countDown.emit('countDown', '00:00')
       })
     })
     // 显示排名

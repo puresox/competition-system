@@ -64,10 +64,11 @@ router.get('/status', checkLogin, (req, res) => {
           .forEach((itemScore) => {
             sum += itemScore.score
           })
-        const raterSort = raterScore
+        const raterName = raterScore
           .rater
           .name
-          .substring(1)
+          .split('')
+        const raterSort = raterName.shift()
         scores[raterSort] = sum
       })
       res.send({
