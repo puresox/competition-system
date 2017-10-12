@@ -20,9 +20,9 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
       .exec()
     /* const participantScore = participants.find(p => p.order === competition.participant) */
     let participantScore
-    for (let participant of participants) {
-      if (participant.order === competition.participant) {
-        participantScore = participant
+    for (let p of participants) {
+      if (p.order === competition.participant) {
+        participantScore = p
         break
       }
     }
@@ -64,9 +64,9 @@ router.get('/status', checkLogin, checkRater, (req, res) => {
   ]) => {
     /* const theScore = scores.find(s => s.participant._id.toString() === participantId.toString()) */
     let theScore
-    for (let score of scores) {
-      if (score.participant._id.toString() === participantId.toString()) {
-        theScore = score
+    for (let s of scores) {
+      if (s.participant._id.toString() === participantId.toString()) {
+        theScore = s
         break
       }
     }
