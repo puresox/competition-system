@@ -8,8 +8,8 @@ router.get('/order', function (req, res) {
   const competitionId = req.query.competitionId
 
   participantModels
-    .find({competition: competitionId})
-    .sort({order: 1})
+    .find({ competition: competitionId })
+    .sort({ order: 1 })
     .exec()
     .then(participants => {
       let conf = {
@@ -45,16 +45,16 @@ router.get('/score', function (req, res) {
   const competitionId = req.query.competitionId
 
   participantModels
-    .find({competition: competitionId})
-    .sort({order: 1})
+    .find({ competition: competitionId })
+    .sort({ order: 1 })
     .exec()
     .then((participants) => {
       const promises = participants.map((participant) => {
         return scoreModels
-          .find({competition: competitionId, participant: participant.id})
+          .find({ competition: competitionId, participant: participant.id })
           .populate('participant')
           .populate('rater')
-          .sort({_id: 1})
+          .sort({ _id: 1 })
           .exec()
       })
       promises.unshift(participants)
@@ -116,7 +116,7 @@ router.get('/score', function (req, res) {
             .name
             .split('')
           const raterSort = raterName.pop()
-          oneParticipant[raterSort + 2] = sum
+          oneParticipant[parseInt(raterSort) + 2] = sum
         })
         oneParticipant[9] = participant.score
         conf
