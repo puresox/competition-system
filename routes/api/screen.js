@@ -27,9 +27,9 @@ router.get('/status', checkLogin, (req, res) => {
     .then(([participants, status, participant]) => {
       /* const participantScore = participants.find(p => p.order === participant) */
       let participantScore
-      for (let participant of participants) {
-        if (participant.order === participant) {
-          participantScore = participant
+      for (let p of participants) {
+        if (p.order === participant) {
+          participantScore = p
           break
         }
       }
@@ -111,8 +111,8 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
       _id: participants[i].id
     }, {
       $set: {
-        order: participants[i].order
-      }
+          order: participants[i].order
+        }
     })
       .exec()
       .then(() => {
@@ -121,8 +121,8 @@ router.post('/draw', checkLogin, checkScreen, (req, res) => {
             _id: competitionId
           }, {
             $set: {
-              status: 1
-            }
+                status: 1
+              }
           })
             .exec()
             .then(() => participantModels.find({competition: competitionId}).sort({order: 1}).exec())
