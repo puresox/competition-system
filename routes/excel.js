@@ -40,8 +40,8 @@ router.get('/order', function (req, res) {
     })
 })
 
-// GET /excel/reward 获奖名单
-router.get('/reward', function (req, res) {
+// GET /excel/score 成绩表
+router.get('/score', function (req, res) {
   const competitionId = req.query.competitionId
 
   participantModels
