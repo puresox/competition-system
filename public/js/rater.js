@@ -233,7 +233,18 @@ const player = {
                             vue.isscore = 1;
                         },
                         error(err) {
-                            alert('提交成绩失败,请重新提交');
+                            // alert('提交成绩失败,请重新提交');
+                            var la3 = layer.open({
+                                content: '提交成绩失败,请重新提交',
+                                btn: '确定',
+                                style: 'font-size:30px;',
+                                yes: function () {
+                                    layer.close(la3)
+                                },
+                                no: function () {
+                                    layer.close(la3)
+                                }
+                            })
                             console.log('提交失败');
                         },
                     });
@@ -327,7 +338,8 @@ var vue = new Vue({
         confirmCallback: function () {
             console.log('test')
         },
-        ifBtns: true
+        ifBtns: true,
+        sortMode: true
     },
     watch: {
         $route: 'updatePdf'
@@ -351,7 +363,12 @@ var vue = new Vue({
     methods: {
         updatePdf: function () {
             var order = parseInt(this.$route.params.order)
+            console.log(this.players)
             this.pdf = '/pdf?file=../../competition/' + this.players[order - 1].report
+        },
+        switchSort: function () {
+            this.sortMode = !this.sortMode
+            // console.log('ok')
         },
         selectScore: function (score, index, checked) {
             if (checked) { // 总成绩
@@ -432,6 +449,7 @@ var vue = new Vue({
                 self.participant = msg.message.participant;
                 self.score = msg.message.score;
                 self.isscore = msg.message.isscore;
+                // self.isscore = 0;
                 // 绑定获取到的数据到Vue实例的data上
                 // 两种情况
                 // 1.系统status=0时,未生成顺序,直接拉取players绑定到Vue上
@@ -449,14 +467,14 @@ var vue = new Vue({
                         };
                     }
                 }
-                // // 生成排名
-                // this.rank = msg.message.participants;
-                // for (let i = 0, len = this.rank.length; i < len; i++) {
-                //     if (!this.rank[i].score) {
-                //         this.rank[i].score = 0;
-                //     }
-                // }
-                // this.rank.sort((a, b) => {
+                // 生成排名
+                // self.rank = msg.message.participants;
+                // // for (let i = 0, len = this.rank.length; i < len; i++) {
+                // //     if (!this.rank[i].score) {
+                // //         this.rank[i].score = 0;
+                // //     }
+                // // }
+                // self.rank.sort((a, b) => {
                 //     if (a.score > b.score) {
                 //         return -1;
                 //     }
@@ -466,8 +484,8 @@ var vue = new Vue({
                 //     return 0;
                 // })
                 // for (let i = 0, len = vue.rank.length; i < len; i++) {
-                //     if (this.rank[i].score == 0) {
-                //         this.rank[i].score = '未评分'
+                //     if (self.rank[i].score == 0) {
+                //         self.rank[i].score = '未评分'
                 //     }
                 // }
                 // 获取评分项
@@ -483,17 +501,21 @@ var vue = new Vue({
                 }
                 // 初始化每个player的scores
                 for (let i = 0, len = self.players.length; i < len; i++) {
+                    // if (self.players[i].totalScore) {
                     self.players[i].totalScore = {
                         item: self.totalItem[0]._id,
                         score: (i + 1) < msg.message.participant ? '评分已结束' : '点击选择总成绩',
                     };
+                    // }
                     self.players[i].scores = [];
+                    // if (self.players[i].scores) {
                     for (let i2 = 0, len2 = self.items.length; i2 < len2; i2++) {
                         self.players[i].scores[i2] = {
                             item: self.items[i2]._id,
                             score: (i + 1) < msg.message.participant ? '评分已结束' : '点击选择成绩',
                         };
                     }
+                    // }
                 }
 
                 const scores = msg.message.scores;
@@ -533,6 +555,35 @@ var vue = new Vue({
                         break;
                     default:
                 }
+                $.ajax({
+                    url: '/api/screen/status',
+                    type: 'get',
+                    success: function (res) {
+                        self.rank = res.message.participants;
+                        // for (let i = 0, len = this.rank.length; i < len; i++) {
+                        //     if (!this.rank[i].score) {
+                        //         this.rank[i].score = 0;
+                        //     }
+                        // }
+                        self.rank.sort((a, b) => {
+                            if (a.score > b.score) {
+                                return -1;
+                            }
+                            if (a.score < b.score) {
+                                return 1;
+                            }
+                            return 0;
+                        })
+                        for (let i = 0, len = vue.rank.length; i < len; i++) {
+                            if (self.rank[i].score == 0) {
+                                self.rank[i].score = '未评分'
+                            }
+                        }
+                    },
+                    error: function (err) {
+
+                    }
+                })
             },
             error(err) {
                 // alert('从系统获取数据失败,点击确定重新加载')
@@ -540,6 +591,7 @@ var vue = new Vue({
                 // console.log(err)
             },
         });
+
     }
 })
 // // 监听抽签结束
@@ -592,6 +644,11 @@ socket.on('nextParticipant', () => {
 });
 // 监听开始打分
 socket.on('beginScore', function () {
+    vue.panels = {
+        score: true,
+        players: false,
+        instruction: false
+    }
     vue.score = 1
     vue.$refs.child.btns.message = false
     vue.$refs.child.btns.score = true
@@ -600,6 +657,7 @@ socket.on('beginScore', function () {
         players: false,
         instruction: false
     }
+    // router.push(`/player/${vue.participant}`);
 })
 // 结束比赛
 socket.on('end', () => {

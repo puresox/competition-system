@@ -125,6 +125,20 @@ const random = {
                 }
             })
         },
+        showNextOne: function () {
+            var lay = layer.open({
+                content: '是否显示下一个?',
+                style: 'font-size: 30px',
+                btn: ['确定', '取消'],
+                yes: function () {
+                    socket.emit('showOneDrawResult')
+                    layer.close(lay)
+                },
+                no: function () {
+                    layer.close(lay)
+                }
+            })
+        },
         autoMode: function () {
             this.auto = true
         },
@@ -257,7 +271,20 @@ const matching = {
         },
         beginTiming: function () {
             this.timing = false
-            socket.emit('countDown')
+            var lay = layer.open({
+                content: '选择时间?',
+                style: 'font-size: 30px',
+                btn: ['8分钟', '七分钟'],
+                yes: function () {
+                    layer.close(lay)
+                    socket.emit('countDown', 8)
+                },
+                no: function () {
+                    layer.close(lay)
+                    socket.emit('countDown', 7)
+                }
+            })
+
         },
         stopTiming: function () {
             this.timing = true
@@ -288,8 +315,19 @@ const matching = {
                 no: function () {
                 }
             })
+        },
+        showAward() {
+
+        },
+        showRank() {
+            console.log('显示排名')
+            socket.emit('showRanking')
+        },
+        hideRank() {
+            console.log('隐藏排名')
+            socket.emit('hideRanking')
         }
-    }
+    },
 }
 
 const over = {
@@ -455,6 +493,10 @@ var vue = new Vue({
                     case 3:
                         // 比赛结束
                         router.push('/over')
+                    case 4:
+                    // 获奖情况
+                    default:
+                        router.push('/')
                 }
             },
             error: function () {

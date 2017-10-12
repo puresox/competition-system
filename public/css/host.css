@@ -199,7 +199,7 @@ a {
 
 .begin-match {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     width: 100%;
     height: 100%;
@@ -307,14 +307,20 @@ a {
 
 .wrapper-btn {
     display: flex;
+    flex-direction: column;
     flex: 1;
 }
 
-.btn-score, .btn-next, .btn-score--disable {
+.wrap-btn-row {
+    display: flex;
+    flex: 1;
+}
+
+.btn-score, .btn-next, .btn-score--disable, .btn-rank {
     display: block;
     width: 200px;
-    height: 40px;
-    line-height: 40px;
+    height: 50px;
+    line-height: 50px;
     text-align: center;
     color: white;
     margin: auto 1em;

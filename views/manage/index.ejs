@@ -61,8 +61,10 @@
                                     <td>
                                         <a href="#" data-id="<%= competition._id %>" data-index="<%= i %>" class="change">修改</a>
                                         <a href="/manage/competitions/<%= competition._id %>/hosts">查看</a>
-                                        <a href="#" data-id="<%= competition._id%>" id="reset">重新开始</a>
-                                        <a href="#">删除</a>
+                                        <a href="#" data-id="<%= competition._id%>" data-name="<%= competition.name %>" class="reset">重新开始</a>
+                                        <a href="#" data-id="<%= competition._id%>" data-name="<%= competition.name %>" class="delete">删除</a>
+                                        <a href="/excel/order?competitionId=<%= competition._id %>" data-id="<%= competition._id%>" data-name="<%= competition.name %>">顺序表</a>
+                                        <a href="/excel/score?competitionId=<%= competition._id %>" data-id="<%= competition._id%>" data-name="<%= competition.name %>">成绩表</a>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -72,18 +74,39 @@
             </div>
         </div>
         <script>
-            if(document.getElementById('reset')){
-                document.getElementById('reset').addEventListener('click',function(){
-                    var id = $(this).attr('data-id')
-                    $.ajax({
-                        url:'/api/competitions/'+id,
-                        type:'patch',
-                        success(){
-                            window.location.reload()
-                        }
-                    })
+            // if(document.getElementsByClassName('reset')){    
+
+            //     document.getElementsByClassName('reset').addEventListener('click',function(){
+                    
+            //     })
+            // }
+
+            $(document).ready(function(){
+                $('.reset').click(function(){
+                    if(confirm('真的要重新开始'+ $(this).attr('data-name') +'吗')){
+                        var id = $(this).attr('data-id')
+                        $.ajax({
+                            url:'/api/competitions/'+id,
+                            type:'patch',
+                            success(){
+                                window.location.reload()
+                            }
+                        })
+                    }
                 })
-            }
+                $('.delete').click(function(){
+                    if(confirm('真的要删除'+ $(this).attr('data-name') +'吗')){
+                        var id = $(this).attr('data-id')
+                        $.ajax({
+                            url:'/api/competitions/'+id,
+                            type:'delete',
+                            success(){
+                                window.location.reload()
+                            }
+                        })
+                    }
+                })
+            })
 
             document.getElementById('add').addEventListener('click', function () {
                 document.getElementById('form').classList.toggle('form-active')

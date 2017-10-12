@@ -70,20 +70,20 @@ router.put('/:competitionId/hosts/:hostId', checkLogin, checkAdmin, (req, res) =
     role: 1,
     competition: competitionId
   }, {
-    $set: {
-      name,
-      pw: crypto
-        .createHash('sha256')
-        .update(password)
-        .digest('hex')
-    }
-  }, (error) => {
-    if (error) {
-      res.send({ status: 'error', message: error })
-    } else {
-      res.send({ status: 'success', message: `/manage/competitions/${competitionId}/hosts` })
-    }
-  })
+      $set: {
+        name,
+        pw: crypto
+          .createHash('sha256')
+          .update(password)
+          .digest('hex')
+      }
+    }, (error) => {
+      if (error) {
+        res.send({ status: 'error', message: error })
+      } else {
+        res.send({ status: 'success', message: `/manage/competitions/${competitionId}/hosts` })
+      }
+    })
 })
 
 // PUT /api/competitions/:competitionId/raters/:raterId
@@ -114,20 +114,20 @@ router.put('/:competitionId/raters/:raterId', checkLogin, checkAdmin, (req, res)
     role: 2,
     competition: competitionId
   }, {
-    $set: {
-      name,
-      pw: crypto
-        .createHash('sha256')
-        .update(password)
-        .digest('hex')
-    }
-  }, (error) => {
-    if (error) {
-      res.send({ status: 'error', message: error })
-    } else {
-      res.send({ status: 'success', message: `/manage/competitions/${competitionId}/raters` })
-    }
-  })
+      $set: {
+        name,
+        pw: crypto
+          .createHash('sha256')
+          .update(password)
+          .digest('hex')
+      }
+    }, (error) => {
+      if (error) {
+        res.send({ status: 'error', message: error })
+      } else {
+        res.send({ status: 'success', message: `/manage/competitions/${competitionId}/raters` })
+      }
+    })
 })
 
 // PUT /api/competitions/:competitionId/screen/:screenId
@@ -158,20 +158,20 @@ router.put('/:competitionId/screen/:screenId', checkLogin, checkAdmin, (req, res
     role: 3,
     competition: competitionId
   }, {
-    $set: {
-      name,
-      pw: crypto
-        .createHash('sha256')
-        .update(password)
-        .digest('hex')
-    }
-  }, (error) => {
-    if (error) {
-      res.send({ status: 'error', message: error })
-    } else {
-      res.send({ status: 'success', message: `/manage/competitions/${competitionId}/screen` })
-    }
-  })
+      $set: {
+        name,
+        pw: crypto
+          .createHash('sha256')
+          .update(password)
+          .digest('hex')
+      }
+    }, (error) => {
+      if (error) {
+        res.send({ status: 'error', message: error })
+      } else {
+        res.send({ status: 'success', message: `/manage/competitions/${competitionId}/screen` })
+      }
+    })
 })
 
 // PUT /api/competitions/:competitionId/items/:itemId
@@ -198,18 +198,18 @@ router.put('/:competitionId/items/:itemId', checkLogin, checkAdmin, (req, res) =
     _id: itemId,
     competition: competitionId
   }, {
-    $set: {
-      name,
-      note,
-      value
-    }
-  }, (error) => {
-    if (error) {
-      res.send({ status: 'error', message: error })
-    } else {
-      res.send({ status: 'success', message: `/manage/competitions/${competitionId}/items` })
-    }
-  })
+      $set: {
+        name,
+        note,
+        value
+      }
+    }, (error) => {
+      if (error) {
+        res.send({ status: 'error', message: error })
+      } else {
+        res.send({ status: 'success', message: `/manage/competitions/${competitionId}/items` })
+      }
+    })
 })
 
 // PUT /api/competitions/:competitionId/participants/:participantId
@@ -287,37 +287,37 @@ router.delete('/:competitionId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId
 
   Promise
-  .all([
-    userModels
-      .remove({ competition: competitionId })
-      .exec(),
-    itemModels
-      .remove({ competition: competitionId })
-      .exec()
-  ])
-  .then(() => participantModels.find({ competition: competitionId }).exec()).then((participants) => {
-    participants.forEach((participant, i) => {
-      fs.unlink(`public/competition/${participant.logo}`)
-      fs.unlink(`public/competition/${participant.report}`)
+    .all([
+      userModels
+        .remove({ competition: competitionId })
+        .exec(),
+      itemModels
+        .remove({ competition: competitionId })
+        .exec()
+    ])
+    .then(() => participantModels.find({ competition: competitionId }).exec()).then((participants) => {
+      participants.forEach((participant, i) => {
+        fs.unlink(`public/competition/${participant.logo}`)
+        fs.unlink(`public/competition/${participant.report}`)
 
-      if (i === participants.length - 1) {
-        return participantModels
+        if (i === participants.length - 1) {
+          return participantModels
+            .remove({ _id: participant._id, competition: competitionId })
+            .exec()
+        }
+
+        participantModels
           .remove({ _id: participant._id, competition: competitionId })
           .exec()
-      }
-
-      participantModels
-        .remove({ _id: participant._id, competition: competitionId })
-        .exec()
+      })
     })
-  })
-  .then(() => competitionModels.remove({ _id: competitionId }).exec())
-  .then(() => {
-    res.send({ status: 'success', message: '/manage/competitions' })
-  })
-  .catch((error) => {
-    res.send({ status: 'error', message: error })
-  })
+    .then(() => competitionModels.remove({ _id: competitionId }).exec())
+    .then(() => {
+      res.send({ status: 'success', message: '/manage/competitions' })
+    })
+    .catch((error) => {
+      res.send({ status: 'error', message: error })
+    })
 })
 
 // DELETE /api/competitions/:competitionId/hosts/:hostId
@@ -424,31 +424,31 @@ router.delete('/:competitionId/participants/:participantId', checkLogin, checkAd
 router.patch('/:competitionId', checkLogin, checkAdmin, (req, res) => {
   const competitionId = req.params.competitionId
 
-  async function resetCompetition () {
+  async function resetCompetition() {
     await scoreModels
       .remove({ competition: competitionId })
       .exec()
     await participantModels.updateMany({
       competition: competitionId
     }, {
-      $set: {
-        status: 0,
-        order: 0,
-        score: 0
-      }
-    }).exec()
+        $set: {
+          status: 0,
+          order: 0,
+          score: 0
+        }
+      }).exec()
     await competitionModels
       .update({ _id: competitionId }, { $set: { status: 0, participant: 0 } })
       .exec()
     return true
   }
   resetCompetition()
-  .then(() => {
-    res.send({ status: 'success', message: '/manage/competitions' })
-  })
-  .catch((error) => {
-    res.send({ status: 'error', message: error })
-  })
+    .then(() => {
+      res.send({ status: 'success', message: '/manage/competitions' })
+    })
+    .catch((error) => {
+      res.send({ status: 'error', message: error })
+    })
 })
 
 module.exports = router

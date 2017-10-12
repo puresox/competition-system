@@ -11,11 +11,29 @@ const ready = {
 }
 
 const random = {
-    props: ['players', 'randomed'],
+    props: ['players', 'randomed', 'order'],
     template: '#random',
     data: function () {
         return {
-            men: []
+            men: [],
+        }
+    },
+    computed: {
+        showRandom: function () {
+            if (this.order >= 0) {
+                return this.players[this.order].show
+            } else {
+                return false
+            }
+        }
+    },
+    methods: {
+        showRandom2: function (order) {
+            if (order >= 0) {
+                return this.players[order].show
+            } else {
+                return false
+            }
         }
     },
     created: function () {
@@ -42,7 +60,7 @@ const player = {
             for (let i = 0, len = this.allscore.length; i < len; i++) {
                 result += this.allscore[i]
             }
-            return result
+            return (result / this.allscore.length).toFixed(2)
         },
         getLogo: function () {
             return '../competition/' + this.players[this.$route.params.order - 1].logo
@@ -69,6 +87,28 @@ const over = {
     template: '#over'
 }
 
+const award = {
+    props: ['over', 'ranks'],
+    template: '#award',
+    methods: {
+        getAward: function (index) {
+            let i = parseInt(index)
+            if (i == 0) {
+                return '特等奖'
+            } else if (i > 0 && i < 3) {
+                return '一等奖'
+            } else {
+                return '参与奖'
+            }
+        }
+    }
+}
+
+const rank = {
+    props: ['over', 'ranks'],
+    template: '#rank'
+}
+
 var router = new VueRouter({
     routes: [
         // 默认页面,加载中
@@ -80,7 +120,11 @@ var router = new VueRouter({
         // 比赛中页
         { path: '/player/:order', component: player },
         // 结束页
-        { path: '/over', component: over }
+        { path: '/over', component: over },
+        // 颁奖页面
+        { path: '/award', component: award },
+        // 排名页面
+        { path: '/rank', component: rank }
     ]
 })
 
@@ -98,7 +142,8 @@ var vue = new Vue({
         scores: [],
         ratersNum: 0,
         randomReady: false,
-        rank: []
+        rank: [],
+        currentOrder: -1
     },
     computed: {
     },
@@ -113,13 +158,23 @@ var vue = new Vue({
             for (let i = 0, len = self.players.length; i < len; i++) {
                 defaultOrders[i] = i + 1
             }
-            for (let i = 0, len = self.players.length; i < len; i++) {
-                let index = Math.round(Math.random() * (defaultOrders.length - 1))
-                result[i] = {
-                    id: self.players[i]._id,
-                    order: defaultOrders[index]
+            for (let i = 0, j = 3, len = self.players.length; i < len; i++) {
+                let index = Math.round(Math.random() * (defaultOrders.length - 1 - j))
+                let index2 = j > 0 ? Math.round(defaultOrders.length - j + Math.random() * (j - 1)) : 0
+                if (self.players[i].name == '生息科技' || self.players[i].name == '智农团队' || self.players[i].name == '视翼VR') {
+                    result[i] = {
+                        id: self.players[i]._id,
+                        order: defaultOrders[index2]
+                    }
+                    j--
+                    defaultOrders.splice(index2, 1)
+                } else {
+                    result[i] = {
+                        id: self.players[i]._id,
+                        order: defaultOrders[index]
+                    }
+                    defaultOrders.splice(index, 1)
                 }
-                defaultOrders.splice(index, 1)
             }
             console.log(result)
             // 切换到抽签页
@@ -151,6 +206,8 @@ var vue = new Vue({
                         for (let i2 = 0, len2 = self.players.length; i2 < len2; i2++) {
                             if (self.players[i2]._id == result[i].id) {
                                 players[result[i].order - 1] = self.players[i2]
+                                // 设置初始显示为未显示
+                                players[result[i].order - 1].show = false
                             }
                         }
                     }
@@ -188,6 +245,8 @@ var vue = new Vue({
                 } else {
                     for (let i = 0, len = msg.message.participants.length; i < len; i++) {
                         self.players[msg.message.participants[i].order - 1] = msg.message.participants[i]
+                        // 初始设置为未显示
+                        self.players[msg.message.participants[i].order - 1].show = false
                     }
                 }
                 // 生成排名
@@ -217,7 +276,13 @@ var vue = new Vue({
                 if (self.status > 0) {
                     vue.randomReady = true
                 }
-                if (msg.message.scores.length == msg.message.ratersNum && msg.message.score == 1) {
+                var scoreOver = 0
+                for (let len = msg.message.scores.length; scoreOver < len; scoreOver++) {
+                    if (!msg.message.scores[scoreOver]) {
+                        break
+                    }
+                }
+                if (msg.message.scores.length == msg.message.ratersNum && msg.message.score == 1 && scoreOver == 7) {
                     $.ajax({
                         // todo:断线重连情况没考虑
                         url: '/api/screen/score',
@@ -251,7 +316,7 @@ var vue = new Vue({
                         break
                     case 2:
                         // 比赛正式开始
-                        // 跳转到响应的选手页
+                        // 跳转到相应的选手页
                         switch (self.participant) {
                             default: router.push('/player/' + (self.participant))
                         }
@@ -260,7 +325,13 @@ var vue = new Vue({
                         // 比赛结束
                         router.push('/over')
                         break
+                    case 4:
+                        // 获奖页面
+                        router.push('/award')
+                        break
                     default:
+                        // 未开始,等待抽签
+                        router.push('/ready')
                 }
             },
             error: function (err) {
@@ -315,6 +386,10 @@ socket.on('manuDrawn', function () {
             vue.participant = msg.message.participant
             vue.score = msg.message.score
             vue.players = msg.message.participants
+            for (let i = 0, len = vue.players.length; i < len; i++) {
+                // 初始设置为未显示
+                vue.players[i].show = false
+            }
             vue.randomReady = true
         },
         error: function (err) {
@@ -341,12 +416,20 @@ socket.on('endScore', function () {
         url: '/api/screen/status',
         type: 'get',
         success: function (msg) {
+            console.log(msg)
             vue.status = msg.message.status
             vue.participant = msg.message.participant
             vue.score = msg.message.score
             // vue.players[vue.participant - 1].allScores = msg.message.scores
             vue.scores = msg.message.scores
-            if (msg.message.scores.length == msg.message.ratersNum) {
+            // 用来测试返回的scores数组里是不是每一个位置都有值
+            var scoreOver = 0
+            for (let len = msg.message.scores.length; scoreOver < len; scoreOver++) {
+                if (!msg.message.scores[scoreOver]) {
+                    break
+                }
+            }
+            if (msg.message.scores.length == msg.message.ratersNum && scoreOver == 7) {
                 $.ajax({
                     // todo:断线重连情况没考虑
                     url: '/api/screen/score',
@@ -354,7 +437,7 @@ socket.on('endScore', function () {
                     success: function (msg) {
                         console.log('评分完毕')
                         socket.emit('endParticipant')
-                        socket.emit('updateRank')
+                        socket.emit('updateRanking')
                         vue.score = 2
                     },
                     error: function (err) {
@@ -402,4 +485,56 @@ socket.on('end', function () {
 
         }
     })
+})
+
+socket.on('showRanking', function () {
+    console.log('走你')
+    router.push('/rank')
+})
+
+socket.on('hideRanking', function () {
+    console.log('回你')
+    switch (vue.status) {
+        case -1:
+            // 加载中
+            router.push('/')
+            break
+        case 0:
+            // 未开始,等待抽签
+            router.push('/ready')
+            break
+        case 1:
+            // 1.如果是从0到1的话,进入这个页面开始摇骰子
+            // 2.如果直接进入status已是1,直接进入这个页面,则直接打印排序
+            router.push('/random')
+            break
+        case 2:
+            // 比赛正式开始
+            // 跳转到相应的选手页
+            switch (vue.participant) {
+                default: router.push('/player/' + (vue.participant))
+            }
+            break
+        case 3:
+            // 比赛结束
+            router.push('/over')
+            break
+        case 4:
+            // 获奖页面
+            router.push('/award')
+            break
+        default:
+            // 未开始,等待抽签
+            router.push('/ready')
+    }
+})
+
+socket.on('showOneDrawResult', function () {
+    console.log('显示下一个')
+    if (vue.currentOrder < vue.players.length - 1) {
+        console.log(vue.currentOrder)
+        console.log(vue.players.length)
+        vue.currentOrder++
+    }
+    vue.players[vue.currentOrder].show = true
 })

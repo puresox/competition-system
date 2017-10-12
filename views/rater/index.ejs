@@ -30,17 +30,27 @@
         <div id="spa" class="container">
             <img src="../system-img/pad.jpg" alt="" class="img-bkg">
             <div class="hide" v-bind:class="{ 'players-panel':panels.players }">
-                <div class="switch-sort">
-                    <div class="">按顺序</div>
-                    <div class="">按排名</div>
+                <div class="switch-sort" @click="switchSort">
+                    <div class="switch-sort-item" :class="{ 'switch-sort-selected':sortMode }">按顺序</div>
+                    <div class="switch-sort-item" :class="{ 'switch-sort-selected':!sortMode }">按排名</div>
                 </div>
                 <div class="players-list">
-                    <template v-for="(player, index) in players">
-                        <div class="list-item" @click="jumpToPlayer(index+1)">
-                            <div class="item-index">{{ index + 1 }}号</div>
-                            <div class="item-name">{{ player.name }}</div>
-                        </div>
-                    </template>
+                    <div v-show="sortMode">
+                        <template v-for="(player, index) in players">
+                            <div class="list-item" @click="jumpToPlayer(index+1)">
+                                <div class="item-index">{{ index + 1 }}号</div>
+                                <div class="item-name">{{ player.name }}</div>
+                            </div>
+                        </template>
+                    </div>
+                    <div v-show="!sortMode">
+                        <template v-for="(player, index) in rank">
+                            <div class="list-item">
+                                <div class="item-index">{{ player.score }}</div>
+                                <div class="item-name">{{ player.name }}</div>
+                            </div>
+                        </template>
+                    </div>
                 </div>
             </div>
             <div class="hide" v-bind:class="{ 'instruction-panel':panels.instruction }">
@@ -61,7 +71,7 @@
                     </div>
                     <div class="menu-item" @click="showIntructionPanel">
                         <i class="iconfont">&#xe66b;</i>
-                        <span>查看文档</span>
+                        <span>商业计划书</span>
                     </div>
                     <div class="menu-item" @click="showScorePanel">
                         <i class="iconfont">&#xe604;</i>
@@ -130,8 +140,7 @@
                         </div>
                         <div class="player-intro">
                             <p>简介</p>
-                            <div>
-                                {{ playerData.introduction }}
+                            <div v-html="playerData.introduction">
                             </div>
                         </div>
                     </div>

@@ -14,17 +14,19 @@
             <input type="file" name="report" value="">
             <input type="submit" name="report" value="添加参赛队伍">
         </form>
-        <form id="form2" class="form" data-action="" style="height: 20em">
+        <form id="form2" class="form" method="post" data-action="" style="height: 20em" target="frameFile" enctype="multipart/form-data" name="fileinfo">
             <input id="changename" type="text" name="name" value="" placeholder="参赛作品">
             <textarea id="changeintro" name="introduction" placeholder="简介"></textarea>
             <input type="file" name="logo" value="">
             <input type="file" name="report" value="">
             <button id="putchange">提交</button>
         </form>
+        <iframe name='frameFile' style='display: none;'></iframe>,
         <div class="main-list">
             <table class="competition">
                 <thead>
                     <tr>
+                        <th>序号</th>
                         <th>参赛项目</th>
                         <th>简介</th>
                         <th>头像</th>
@@ -34,6 +36,7 @@
                 <tbody>
                     <% participants.forEach((participant, i)=>{ %>
                         <tr>
+                            <td><%= i + 1 %></td>
                             <td class="participant-name">
                                 <%= participant.name %>
                             </td>
@@ -94,15 +97,15 @@
         })
         // 提交修改监听
         document.getElementById('putchange').addEventListener('click', function () {
-            var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/hosts/'
+            var url = '/api/competitions/' + document.getElementsByClassName('side-hd')[0].getAttribute('data-id') + '/participants/'
                 + document.getElementById('form2').getAttribute('data-id')
-            var formData = new FormData($("#form2"))
+            var formData = new FormData(document.forms.namedItem("fileinfo"))
             $.ajax({
                 url: url,
                 type: 'put',
                 data: formData,
-                async: false,
-                cache: false,
+                // async: false,
+                // cache: false,
                 contentType: false,
                 processData: false,
                 success: function () {

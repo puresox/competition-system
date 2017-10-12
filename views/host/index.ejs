@@ -75,6 +75,7 @@
                     </div>
                     <div class="begin-match" v-if="btns.begin">
                         <div class="btn-begin" v-on:click="beginMatch">开始比赛</div>
+                        <div class="btn-begin" v-on:click="showNextOne">显示下一个</div>
                     </div>
                 </div>
             </div>
@@ -96,19 +97,32 @@
                         </div>
                     </div>
                     <div class="wrapper-btn">
-                        <div class="btn-score" v-on:click="beginTiming" v-if="timing">开始计时</div>
-                        <div class="btn-score" v-on:click="stopTiming" v-else>停止计时</div>
-                        <div class="btn-score" v-if="btns.score" v-on:click="beginScoring">
-                            开始打分
+                        <div class="wrap-btn-row">
+                            <div class="btn-score" v-on:click="beginTiming">开始计时</div>
+                            <div class="btn-score" v-if="btns.score" v-on:click="beginScoring">
+                                开始打分
+                            </div>
+                            <div class="btn-score--disable" v-if="btns.scoring">
+                                正在评分
+                            </div>
+                            <div class="btn-next" v-if="btns.next" v-on:click="nextParticipant">
+                                下一组
+                            </div>
+                            <div class="btn-next" v-if="btns.over" v-on:click="overMatch">
+                                结束比赛
+                            </div>
+                            <div class="btn-next" v-if="btns.over" v-on:click="overMatch">
+                                显示获奖
+                            </div>
                         </div>
-                        <div class="btn-score--disable" v-if="btns.scoring">
-                            正在评分
-                        </div>
-                        <div class="btn-next" v-if="btns.next" v-on:click="nextParticipant">
-                            下一组
-                        </div>
-                        <div class="btn-next" v-if="btns.over" v-on:click="overMatch">
-                            结束比赛
+                        <div class="wrap-btn-row">
+                            <div class="btn-score" v-on:click="stopTiming">停止计时</div>
+                            <div class="btn-rank" v-on:click="showRank">
+                                显示排名
+                            </div>
+                            <div class="btn-rank" v-on:click="hideRank">
+                                隐藏排名
+                            </div>
                         </div>
                     </div>
                 </div>

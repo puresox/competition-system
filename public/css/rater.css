@@ -172,6 +172,7 @@ a {
     width: 90%;
     height: 90%;
     box-shadow: 0 2px 10px #909090;
+    color: white;
 }
 
 .main-waiting span {
@@ -218,7 +219,27 @@ a {
 }
 
 .switch-sort {
+    display: flex;
     position: absolute;
+    width: 160px;
+    height: 40px;
+    top: 20px;
+    color: white;
+    font-size: 24px;
+    background-color: #ACACAC;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.switch-sort-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.switch-sort-selected {
+    background-color: rgb(246, 204, 61);
 }
 
 .players-list {
@@ -229,6 +250,7 @@ a {
     border-radius: 5px;
     flex-wrap: wrap;
     padding: 2em;
+    overflow: auto;
 }
 
 .list-item {
@@ -397,7 +419,7 @@ a {
 }
 
 .player-intro div {
-    margin-top: 1.5em;
+    margin-top: 1em;
     text-align: start;
     font-size: 16px;
     color: white;

@@ -17,7 +17,7 @@
         <div id="spa" class="container">
             <img src="../system-img/screen.jpg" alt="" class="img-bkg">
             <router-view class="main" v-bind:players="players" v-bind:scoring="score" v-bind:allscore="scores" v-bind:num="ratersNum"
-                ref="test" v-bind:randomed="randomReady" v-bind:ranks="rank"></router-view>
+                ref="test" v-bind:randomed="randomReady" v-bind:ranks="rank" v-bind:order="currentOrder"></router-view>
         </div>
         <template id="load">
             <div>
@@ -35,23 +35,26 @@
             <div>
                 <div class="main-random">
                     <div class="random-hd">
-                        <span>抽签结果</span>
+                        <span>抽签</span>
                     </div>
                     <div class="order-list">
+                        <span v-if="showRandom"></span>
                         <template v-for="(player, index) in players">
                             <transition name="player-order">
-                                <div class="random-item" v-if="randomed">
+                                <div class="random-item" v-show="player.show">
                                     <div class="random-index">{{ player.order }}号</div>
                                     <div class="random-name">{{ player.name }}</div>
                                 </div>
                             </transition>
                         </template>
-                        <!--<template v-for="(man, index) in men">
+                        <!--
+                        <template v-for="(man, index) in men">
                             <div class="random-item">
                                 <div class="random-index">{{ index }}</div>
                                 <div class="random-name">{{ man }}</div>
                             </div>
-                        </template>-->
+                        </template>
+                        -->
                     </div>
                 </div>
             </div>
@@ -74,13 +77,52 @@
                     <div class="scores" v-if="scoring == 1 || scoring == 2">
                         <span class="rater-score">评委打分</span>
                         <div class="score-list">
+                        <!--
                             <template v-for="score in num">
                                 <div class="score--unknown" v-if="!allscore[score - 1]">?</div>
                                 <div class="score" v-else>{{ allscore[score - 1] }}</div>
                             </template>
+                        -->
+                            <div class="score-item">
+                                <div class="score--unknown" v-if="!allscore[0]">?</div>
+                                <div class="score" v-else>{{ allscore[0] }}</div>
+                                <span class="score-rater">一号评委</span>
+                            </div>
+                            <div class="score-item">
+                                <div class="score--unknown" v-if="!allscore[1]">?</div>
+                                <div class="score" v-else>{{ allscore[1] }}</div>
+                                <span class="score-rater">二号评委</span>
+                            </div>
+                            <div class="score-item">
+                                <div class="score--unknown" v-if="!allscore[2]">?</div>
+                                <div class="score" v-else>{{ allscore[2] }}</div>
+                                <span class="score-rater">三号评委</span>
+                            </div>
+                        </div>
+                        <div class="score-list">
+                            <div class="score-item">
+                                <div class="score--unknown" v-if="!allscore[3]">?</div>
+                                <div class="score" v-else>{{ allscore[3] }}</div>
+                                <span class="score-rater">四号评委</span>
+                            </div>
+                            <div class="score-item">
+                                <div class="score--unknown" v-if="!allscore[4]">?</div>
+                                <div class="score" v-else>{{ allscore[4] }}</div>
+                                <span class="score-rater">五号评委</span>
+                            </div>
+                            <div class="score-item">
+                                <div class="score--unknown" v-if="!allscore[5]">?</div>
+                                <div class="score" v-else>{{ allscore[5] }}</div>
+                                <span class="score-rater">六号评委</span>
+                            </div>
+                            <div class="score-item">
+                                <div class="score--unknown" v-if="!allscore[6]">?</div>
+                                <div class="score" v-else>{{ allscore[6] }}</div>
+                                <span class="score-rater">七号评委</span>
+                            </div>
                         </div>
                         <div class="result" v-if="scoring == 2">
-                            <p>总分:<span>{{ totalScore }}</span>分</p>
+                            <p>总分:<span>{{ totalScore }}</span></p>
                         </div>
                     </div>
                 </div>
@@ -96,6 +138,25 @@
                         </div>
                     </template>
                 </div>
+            </div>
+        </template>
+        <template id="award">
+            <div>
+                <div class="match-result">
+                    <template v-for="(rankItem, index) in ranks">
+                        <div class="rank-item">
+                            <div class="award-index">{{ getAward(index) }}</div>
+                            <div class="rank-name">{{ rankItem.name }}</div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+        <template id="rank">
+            <div>
+                <iframe src="/screen/ranking" class="rank-pannel">
+                    
+                </iframe>
             </div>
         </template>
         <script src="../js/screen.js"></script>

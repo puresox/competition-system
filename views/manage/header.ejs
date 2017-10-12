@@ -13,9 +13,9 @@
     <body>
         <div class="container">
             <div class="side">
-                <span class="side-hd" data-id="<%= competitionId %>">
+                <a class="side-hd" data-id="<%= competitionId %>" href="/manage/">
                     比赛设置
-                </span>
+                </a>
                 <a href="/manage/competitions/<%= competitionId %>/hosts">
                     <i class="iconfont">&#xe61e;</i>
                     主持人
@@ -35,5 +35,9 @@
                 <a href="/manage/competitions/<%= competitionId %>/scores">
                     <i class="iconfont">&#xe61e;</i>
                     评分状态
+                </a>
+                <a href="/manage/competitions/<%= competitionId %>/screen">
+                    <i class="iconfont">&#xe61e;</i>
+                    添加屏幕
                 </a>
             </div>
