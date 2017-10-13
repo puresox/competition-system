@@ -367,17 +367,18 @@ a {
 .player-simple {
     display: flex;
     width: 80%;
-    height: 200px;
+    height: 180px;
     background-color: rgba(104, 126, 136, .6);
     border-radius: 5px;
 }
 
 .player-intro {
     width: 80%;
-    height: 300px;
+    height: 360px;
     background-color: rgba(104, 126, 136, .6);
     border-radius: 5px;
     padding: 2em;
+    overflow: auto;
     box-sizing: border-box;
 }
 
