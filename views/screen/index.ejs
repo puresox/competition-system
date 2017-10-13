@@ -75,7 +75,12 @@
                         </div>
                     </div>
                     <div class="scores" v-if="scoring == 1 || scoring == 2">
-                        <span class="rater-score">评委打分</span>
+                        <div class="rater-score-container">
+                            <span class="rater-score">评委打分</span>
+                            <div class="result" v-if="scoring == 2">
+                                <p>总分:<span>{{ totalScore }}</span></p>
+                            </div>
+                        </div>
                         <div class="score-list">
                         <!--
                             <template v-for="score in num">
@@ -121,9 +126,7 @@
                                 <span class="score-rater">七号评委</span>
                             </div>
                         </div>
-                        <div class="result" v-if="scoring == 2">
-                            <p>总分:<span>{{ totalScore }}</span></p>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -134,7 +137,7 @@
                     <template v-for="(rankItem, index) in ranks">
                         <div class="rank-item">
                             <div class="rank-index">第{{ index + 1 }}名</div>
-                            <div class="rank-name">{{ rankItem.name }}<span>{{rankItem.score}}分</span></div>
+                            <div class="rank-name">{{rankItem.order}}号 {{ rankItem.name }}<span>{{rankItem.score}}分</span></div>
                         </div>
                     </template>
                 </div>

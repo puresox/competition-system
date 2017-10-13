@@ -493,8 +493,10 @@ var vue = new Vue({
                     case 3:
                         // 比赛结束
                         router.push('/over')
+                        break
                     case 4:
-                    // 获奖情况
+                        // 获奖情况
+                        break
                     default:
                         router.push('/')
                 }

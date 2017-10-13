@@ -43,7 +43,7 @@
                 justify-content: center;
                 align-items: center;
                 width: 100%;
-                height: 6em;
+                height: 5em;
                 font-size: 26px;
             }
 
@@ -87,7 +87,7 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                width: 80px;
+                width: 50px;
                 min-height: 45px;
                 background-color: rgb(246, 204, 61);
                 color: black;
@@ -102,7 +102,7 @@
                 min-height: 45px;
                 background-color: rgb(38, 111, 153);
                 color: white;
-                letter-spacing: .2em;
+                /* letter-spacing: .2em; */
                 font-weight: bold;
                 padding-left: .2em;
                 /*max-width: 20em;*/
@@ -111,11 +111,20 @@
                 white-space: nowrap;
             }
 
+            .rank-name-select{
+                background-color: rgb(222, 194, 96);
+                color: black;
+            }
+
             .rank-name span {
-                color: red;
-                letter-spacing: .2em;
+                color: rgb(246, 204, 61);
+                /* letter-spacing: .2em; */
                 font-weight: bold;
                 margin-left: .3em;
+            }
+
+            .rank-name-select span{
+                color: black;
             }
         </style>
     </head>
@@ -130,9 +139,9 @@
                 <div class="body">
                     <template v-for="(rankItem, index) in rank">
                         <div class="rank-item" v-if="rankItem.score != '尚未评'">
-                            <div class="rank-index" v-if="rankItem.scored == 1">第{{ index + 1 }}名</div>
+                            <div class="rank-index" v-if="rankItem.scored == 1">{{ index + 1 }}</div>
                             <div class="rank-index" v-else>---</div>
-                            <div class="rank-name">{{ rankItem.name }}<span>{{rankItem.score}}分</span></div>
+                            <div class="rank-name" :class="selectedStyle(rankItem.order)">{{rankItem.order}}号 {{ rankItem.name }}<span>{{rankItem.score}}分</span></div>
                         </div>
                     </template>
                 </div>
@@ -147,7 +156,20 @@
                     players: [],
                     rank: [],
                     minute: '',
-                    second: ''
+                    second: '',
+                    order: 0,
+                },
+                computed:{
+                
+                },
+                methods:{
+                    selectedStyle:function(index){
+                        if(index == this.order){
+                            return 'rank-name-select'
+                        } else {
+                            return ''
+                        }
+                    }
                 },
                 created: function () {
                     let self = this
@@ -157,6 +179,7 @@
                         success: function (msg) {
                             console.log(msg)
                             self.rank = self.players = msg.message.participants
+                            self.order = msg.message.participant
                             // 生成排名
                             this.rank = msg.message.participants
                             // 还没分的给个0
@@ -200,6 +223,7 @@
                         vue.rank = vue.players = msg.message.participants
                         // 生成排名
                         vue.rank = msg.message.participants
+                        vue.order = msg.message.participant
                         // 还没分的给个0
                         for (let i = 0, len = vue.rank.length; i < len; i++) {
                             if (!vue.rank[i].score) {

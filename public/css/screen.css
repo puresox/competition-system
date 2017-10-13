@@ -29,6 +29,7 @@ a {
     left: 0px;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 .main-ready {
@@ -80,7 +81,7 @@ a {
     display: flex;
     flex-direction: column;
     width: 90%;
-    height: 70%;
+    height: 80%;
     background-color: rgba(104, 126, 136, .6);
     border-radius: 5px;
     flex-wrap: wrap;
@@ -97,7 +98,7 @@ a {
     margin-bottom: .1em;
     font-weight: bold;
     padding: .2em;
-    max-width: 21em;
+    /* max-width: 21em; */
     box-sizing: border-box;
     border-radius: 5px;
     overflow: hidden;
@@ -129,7 +130,7 @@ a {
     text-align: start;
     background-color: rgb(38, 111, 153);
     color: white;
-    letter-spacing: .2em;
+    /* letter-spacing: .2em; */
     font-weight: bold;
     padding-left: .2em;
     overflow: hidden;
@@ -138,8 +139,8 @@ a {
 }
 
 .rank-name span {
-    color: red;
-    letter-spacing: .2em;
+    color: rgb(246, 204, 61);
+    /* letter-spacing: .2em; */
     font-weight: bold;
     margin-left: .3em;
 }
@@ -277,6 +278,7 @@ a {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    margin-left: 2em;
 }
 
 .result p {
@@ -288,7 +290,7 @@ a {
 
 .result span {
     letter-spacing: .1em;
-    color: rgb(0, 219, 255);
+    color: rgb(246, 204, 61);
     font-size: 46px;
     font-weight: bolder;
     margin-left: 1em;
@@ -302,4 +304,9 @@ a {
 .rank-pannel {
     width: 100%;
     height: 100%;
+}
+
+.rater-score-container {
+    display: flex;
+    align-items: center;
 }

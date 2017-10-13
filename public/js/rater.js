@@ -649,6 +649,7 @@ socket.on('beginScore', function () {
         players: false,
         instruction: false
     }
+    router.push(`/player/${vue.participant}`);
     vue.score = 1
     vue.$refs.child.btns.message = false
     vue.$refs.child.btns.score = true
