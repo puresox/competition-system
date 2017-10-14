@@ -70,9 +70,11 @@
                             <span>{{ playerData.order }}号</span>
                             <span>{{ playerData.name }}</span>
                         </div>
+                        <!--
                         <div class="player-intro">
                             {{ playerData.introduction }}
                         </div>
+                        -->
                     </div>
                     <div class="scores" v-if="scoring == 1 || scoring == 2">
                         <div class="rater-score-container">
@@ -136,7 +138,7 @@
                 <div class="match-result">
                     <template v-for="(rankItem, index) in ranks">
                         <div class="rank-item">
-                            <div class="rank-index">第{{ index + 1 }}名</div>
+                            <div class="rank-index">{{ index + 1 }}</div>
                             <div class="rank-name">{{rankItem.order}}号 {{ rankItem.name }}<span>{{rankItem.score}}分</span></div>
                         </div>
                     </template>
